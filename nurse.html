@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everwell Medical Clinic — Nurse Dashboard</title>
+<meta name="description" content="Everwell nurse dashboard — manage triage, vitals, and patient safety.">
+<meta name="theme-color" content="#16211A">
+
+<!-- Preconnect hints -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg: #F1F3EC;
+--bg-soft: #E7ECE1;
+--cream: #FAF8F3;
+--ink: #1E2A22;
+--ink-soft: #4A554C;
+--sage: #4F6B57;
+--sage-light: #8AA491;
+--sage-deep: #16211A;
+--clay: #DCCAB3;
+--gold: #B99B67;
+--line: rgba(30,42,34,0.12);
+--radius-sm: 8px;
+--radius-md: 18px;
+--radius-lg: 22px;
+--radius-xl: 100px;
+--transition-fast: 0.2s ease;
+--transition-med: 0.35s ease;
+--shadow-sm: 0 2px 8px rgba(22,33,26,0.06);
+--shadow-md: 0 8px 24px rgba(22,33,26,0.1);
+--shadow-lg: 0 16px 48px rgba(22,33,26,0.14);
+--focus-ring: 0 0 0 3px rgba(79,107,87,0.45);
+--danger: #8B2E2E;
+--danger-light: #C25A5A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+background:var(--bg);
+color:var(--ink);
+font-family:'Instrument Sans',sans-serif;
+font-weight:400;
+min-height:100vh;
+}
+a{color:inherit;text-decoration:none;}
+:focus-visible{outline:2px solid var(--sage);outline-offset:2px;}
+.skip-link{
+position:fixed;top:-100px;left:1rem;z-index:999;
+background:var(--sage-deep);color:var(--cream);
+padding:0.7rem 1.2rem;border-radius:var(--radius-sm);
+font-size:0.85rem;transition:top .2s ease;
+}
+.skip-link:focus{top:0.8rem;}
+
+/* NAV */
+.admin-nav{
+position:fixed;top:0;left:0;width:100%;z-index:100;
+background:var(--sage-deep);
+display:flex;align-items:center;justify-content:space-between;
+padding:1.2rem 4vw;
+}
+.nav-left{display:flex;align-items:center;gap:2rem;}
+.nav-menu-btn{
+display:none;align-items:center;justify-content:center;
+width:36px;height:36px;border-radius:8px;
+background:transparent;border:1px solid rgba(250,248,243,0.2);
+color:var(--cream);cursor:pointer;
+transition:background .25s;
+}
+.nav-menu-btn:hover{background:rgba(250,248,243,0.08);}
+.nav-menu-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;}
+.nav-mark{
+font-family:'Fraunces',serif;font-size:1.4rem;font-weight:500;
+letter-spacing:-0.015em;color:var(--cream);
+}
+.nav-mark em{font-style:italic;font-weight:400;color:var(--sage-light);}
+.nav-brand-sep{width:1px;height:20px;background:rgba(250,248,243,0.2);}
+.nav-label{font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(250,248,243,0.55);font-weight:500;}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.nav-avatar{
+width:32px;height:32px;border-radius:50%;
+background:var(--sage);color:var(--cream);
+display:flex;align-items:center;justify-content:center;
+font-size:0.78rem;font-weight:500;
+cursor:pointer;
+}
+.nav-logout{
+font-size:0.82rem;color:rgba(250,248,243,0.5);
+transition:color .3s;
+}
+.nav-logout:hover{color:var(--cream);}
+
+/* LAYOUT */
+.admin-body{
+display:flex;
+padding-top:60px;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:240px;
+background:var(--cream);
+border-right:1px solid var(--line);
+position:fixed;top:60px;bottom:0;left:0;
+padding:1.5rem 0;
+overflow-y:auto;
+z-index:50;
+}
+.sidebar-section{margin-bottom:1.6rem;}
+.sidebar-label{
+font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;
+color:var(--ink-soft);opacity:0.55;font-weight:500;
+padding:0 1.2rem;margin-bottom:0.6rem;
+}
+.sidebar-link{
+display:flex;align-items:center;gap:0.75rem;
+padding:0.6rem 1.2rem;
+font-size:0.85rem;color:var(--ink-soft);
+transition:color .3s, background .3s;
+border-left:2px solid transparent;
+cursor:pointer;
+}
+.sidebar-link:hover{color:var(--sage-deep);background:rgba(30,42,34,0.03);}
+.sidebar-link.active{
+color:var(--sage-deep);font-weight:500;
+background:rgba(79,107,87,0.08);
+border-left-color:var(--sage);
+}
+.sidebar-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sidebar-badge{
+margin-left:auto;
+font-size:0.68rem;font-weight:600;
+background:var(--sage-deep);color:var(--cream);
+padding:0.15rem 0.5rem;border-radius:100px;
+}
+
+/* MAIN CONTENT */
+.admin-main{
+margin-left:240px;flex:1;
+padding:2rem 2.4rem;
+}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:2rem;}
+.page-header h1{
+font-family:'Fraunces',serif;font-weight:400;
+font-size:1.8rem;color:var(--sage-deep);letter-spacing:-0.01em;
+}
+.page-header p{font-size:0.88rem;color:var(--ink-soft);margin-top:0.3rem;}
+
+/* STAT CARDS */
+.stats-row{
+display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;
+margin-bottom:2.4rem;
+}
+.stat-card{
+background:var(--cream);
+border:1px solid var(--line);
+border-radius:var(--radius-md);
+padding:1.4rem;
+}
+.stat-card .stat-icon{
+width:36px;height:36px;border-radius:50%;
+background:var(--bg-soft);
+display:flex;align-items:center;justify-content:center;
+margin-bottom:0.8rem;
+}
+.stat-card .stat-icon svg{width:18px;height:18px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.stat-card .stat-value{
+font-family:'Fraunces',serif;font-size:1.8rem;color:var(--sage-deep);
+}
+.stat-card .stat-label{
+font-size:0.78rem;color:var(--ink-soft);margin-top:0.2rem;
+}
+.stat-card .stat-change{
+font-size:0.72rem;margin-top:0.4rem;
+}
+.stat-card .stat-change.up{color:var(--sage);}
+.stat-card .stat-change.down{color:var(--danger-light);}
+
+/* CARDS */
+.card{
+background:var(--cream);
+border:1px solid var(--line);
+border-radius:var(--radius-md);
+padding:1.6rem;
+margin-bottom:1.6rem;
+}
+.card-header{
+display:flex;align-items:center;justify-content:space-between;
+margin-bottom:1.2rem;
+}
+.card-header h3{
+font-family:'Fraunces',serif;font-weight:500;font-size:1.08rem;color:var(--sage-deep);
+}
+.card-header .card-action{
+font-size:0.8rem;color:var(--sage);transition:color .3s;
+cursor:pointer;
+}
+.card-header .card-action:hover{color:var(--sage-deep);}
+
+/* TABLE */
+.admin-table{width:100%;border-collapse:collapse;}
+.admin-table th{
+font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
+color:var(--ink-soft);opacity:0.7;font-weight:500;
+text-align:left;padding:0.7rem 0.8rem;border-bottom:1px solid var(--line);
+}
+.admin-table td{
+padding:0.8rem 0.8rem;font-size:0.85rem;color:var(--ink);
+border-bottom:1px solid var(--line);
+}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:rgba(30,42,34,0.02);}
+
+.status-pill{
+display:inline-block;font-size:0.72rem;font-weight:500;
+padding:0.2rem 0.6rem;border-radius:100px;
+}
+.status-pill.checked-in{background:rgba(185,155,103,0.15);color:var(--gold);}
+.status-pill.triage{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.completed{background:rgba(30,42,34,0.08);color:var(--ink-soft);}
+.priority-pill{display:inline-block;font-size:0.68rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;padding:0.18rem 0.48rem;border-radius:100px;background:rgba(139,46,46,0.1);color:var(--danger);margin-left:0.35rem;}
+.date-status{font-size:0.8rem;color:var(--ink-soft);white-space:nowrap;}
+.date-status.overdue{color:var(--danger);font-weight:600;}
+.date-status.today{color:var(--sage);font-weight:600;}
+
+/* GRID LAYOUT */
+.content-grid{
+display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;
+}
+
+/* QUICK ACTIONS */
+.quick-actions{
+display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;
+}
+.quick-btn{
+display:flex;align-items:center;gap:0.6rem;
+padding:0.9rem 1rem;
+background:var(--bg-soft);
+border:1px solid var(--line);
+border-radius:var(--radius-sm);
+font-size:0.82rem;color:var(--ink);
+cursor:pointer;
+transition:background .3s, border-color .3s;
+}
+.quick-btn:hover{background:var(--cream);border-color:var(--sage-light);}
+.quick-btn svg{width:16px;height:16px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* ACTIVITY */
+.activity-list{list-style:none;}
+.activity-item{
+display:flex;align-items:flex-start;gap:0.8rem;
+padding:0.7rem 0;
+border-bottom:1px solid var(--line);
+}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{
+width:8px;height:8px;border-radius:50%;
+background:var(--sage);flex-shrink:0;margin-top:0.35rem;
+}
+.activity-text{font-size:0.82rem;color:var(--ink);line-height:1.5;}
+.activity-time{font-size:0.72rem;color:var(--ink-soft);opacity:0.6;margin-top:0.15rem;}
+
+/* TOAST */
+.toast{
+position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);
+background:var(--sage-deep);color:var(--cream);
+padding:0.9rem 1.8rem;border-radius:var(--radius-xl);
+font-size:0.85rem;font-weight:500;
+box-shadow:var(--shadow-lg);
+opacity:0;pointer-events:none;
+transition:transform 0.4s ease, opacity 0.4s ease;
+z-index:200;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.toast.error{background:#8B2E2E;}
+.toast.success{background:var(--sage);}
+
+/* MOBILE */
+@media(max-width:980px){
+.stats-row{grid-template-columns:repeat(2,1fr);}
+.content-grid{grid-template-columns:1fr;}
+}
+@media(max-width:760px){
+.sidebar{
+transform:translateX(-100%);
+transition:transform var(--transition-med);
+box-shadow:var(--shadow-lg);
+}
+.sidebar.open{transform:translateX(0);}
+.sidebar-scrim{
+position:fixed;inset:60px 0 0 0;z-index:49;
+background:rgba(22,33,26,0.4);
+opacity:0;pointer-events:none;transition:opacity var(--transition-med);
+}
+.sidebar-scrim.open{opacity:1;pointer-events:auto;}
+.nav-menu-btn{display:inline-flex;}
+.admin-main{margin-left:0;padding:1.4rem 1.2rem;}
+.stats-row{grid-template-columns:1fr 1fr;}
+.sidebar-link{padding:0.8rem 1.2rem;}
+}
+
+/* PRELOADER */
+.preloader{
+position:fixed;inset:0;z-index:2000;
+background:var(--sage-deep);
+display:flex;align-items:center;justify-content:center;
+transition:transform .8s cubic-bezier(.65,0,.35,1);
+}
+.preloader-mark{
+font-family:'Fraunces',serif;font-size:2rem;color:var(--cream);
+letter-spacing:-0.01em;overflow:hidden;
+}
+.preloader-mark span{
+display:inline-block;
+opacity:0;
+transform:translateY(100%);
+animation:letterUp .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes letterUp{
+to{opacity:1;transform:translateY(0);}
+}
+.preloader.done{transform:translateY(-100%);}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+
+/* TOOLBAR / SEARCH */
+.section-toolbar{
+display:flex;align-items:center;justify-content:space-between;
+gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem;
+}
+.search-input{
+flex:1;min-width:180px;max-width:320px;
+padding:0.65rem 1rem;
+border-radius:var(--radius-sm);
+border:1px solid var(--line);
+background:var(--cream);
+font-size:0.85rem;color:var(--ink);outline:none;
+transition:border-color .2s, box-shadow .2s;
+}
+.search-input:focus{border-color:var(--sage);box-shadow:var(--focus-ring);}
+
+/* BUTTONS */
+.btn-primary{
+background:var(--sage-deep);color:var(--cream);border:none;
+padding:0.65rem 1.3rem;border-radius:var(--radius-xl);
+font-size:0.82rem;font-weight:500;cursor:pointer;
+display:inline-flex;align-items:center;gap:0.45rem;
+transition:background .25s, transform .2s;
+}
+.btn-primary:hover{background:var(--sage);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-primary svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+
+.icon-btn{
+background:none;border:none;cursor:pointer;color:var(--ink-soft);
+padding:0.35rem;border-radius:6px;
+transition:color .2s, background .2s;
+display:inline-flex;
+}
+.icon-btn:hover{color:var(--sage-deep);background:rgba(30,42,34,0.06);}
+.icon-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+
+/* NURSE SPECIFIC */
+.allergy-banner{
+background:rgba(139,46,46,0.08);border:1px solid rgba(139,46,46,0.2);
+border-radius:var(--radius-sm);
+padding:0.8rem 1rem;margin-bottom:1rem;
+display:flex;align-items:center;gap:0.6rem;
+}
+.allergy-banner svg{width:16px;height:16px;stroke:var(--danger);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.allergy-banner span{font-size:0.82rem;color:var(--danger);}
+.allergy-banner strong{font-weight:600;}
+
+/* MODAL */
+.modal-overlay{
+position:fixed;inset:0;z-index:800;
+background:rgba(22,33,26,0.55);backdrop-filter:blur(3px);
+display:flex;align-items:center;justify-content:center;padding:2rem;
+opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+.modal-box{
+position:relative;background:var(--cream);border-radius:var(--radius-lg);
+padding:2rem 2rem 1.8rem;width:100%;max-width:440px;
+box-shadow:var(--shadow-lg);
+transform:translateY(14px) scale(.98);transition:transform .3s ease;
+}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1);}
+.modal-close{
+position:absolute;top:1.2rem;right:1.2rem;
+background:none;border:none;cursor:pointer;color:var(--ink-soft);
+}
+.modal-close svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;}
+.modal-title{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--sage-deep);margin-bottom:1.4rem;}
+
+.form-group{margin-bottom:1.2rem;}
+.form-label{display:block;font-size:0.75rem;font-weight:600;color:var(--ink-soft);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em;}
+.form-input, .form-select, .form-textarea{
+width:100%;padding:0.75rem 0.9rem;border-radius:var(--radius-sm);
+border:1px solid var(--line);background:var(--bg-soft);
+font-size:0.88rem;color:var(--ink);outline:none;font-family:inherit;
+transition:border-color .2s, box-shadow .2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus{border-color:var(--sage);box-shadow:var(--focus-ring);background:var(--cream);}
+.form-textarea{height:100px;resize:vertical;}
+.modal-submit{
+width:100%;padding:0.85rem;border:none;border-radius:var(--radius-xl);
+background:var(--sage-deep);color:var(--cream);
+font-size:0.88rem;font-weight:600;cursor:pointer;
+transition:background .25s;margin-top:0.4rem;
+}
+.modal-submit:hover{background:var(--sage);}
+
+.vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+
+</style>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+<div class="preloader-mark" id="preloaderMark">Everwell</div>
+</div>
+
+<a href="#main-content" class="skip-link">Skip to content</a>
+
+<!-- NAV -->
+<nav class="admin-nav">
+<div class="nav-left">
+<button class="nav-menu-btn" id="menuToggle" aria-label="Toggle menu">
+<svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+</button>
+<span class="nav-mark">Ever<em>well</em></span>
+<span class="nav-brand-sep"></span>
+<span class="nav-label">Nurse</span>
+</div>
+<div class="nav-right">
+<div class="nav-avatar" title="Nurse User">NU</div>
+<a href="homepage.html" class="nav-logout">Log Out</a>
+</div>
+</nav>
+
+<div class="admin-body">
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-section">
+<div class="sidebar-label">Overview</div>
+<a class="sidebar-link active" data-section="dashboard">
+<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+Dashboard
+</a>
+<a class="sidebar-link" data-section="triage">
+<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+Triage Queue
+<span class="sidebar-badge" id="badgeTriage">0</span>
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">Clinical</div>
+<a class="sidebar-link" data-section="patients">
+<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+Patients & Allergies
+</a>
+<a class="sidebar-link" data-section="vitals">
+<svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+Vitals Entry
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">System</div>
+<a class="sidebar-link" data-section="settings">
+<svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+Settings
+</a>
+</div>
+</aside>
+
+<!-- MAIN -->
+<main class="admin-main" id="main-content" tabindex="-1">
+
+<!-- ===================== DASHBOARD ===================== -->
+<section class="section active" id="section-dashboard">
+<div class="page-header">
+<h1>Nurse Dashboard</h1>
+<p>Welcome back. Here is the current triage status at Everwell Medical Clinic.</p>
+</div>
+
+<div class="stats-row">
+<div class="stat-card">
+<div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+<div class="stat-value" id="statAwaiting">0</div>
+<div class="stat-label">Awaiting Triage</div>
+<div class="stat-change down">Patients waiting for vitals</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+<div class="stat-value" id="statTriagedToday">0</div>
+<div class="stat-label">Triaged Today</div>
+<div class="stat-change up">Successfully processed</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+<div class="stat-value" id="statAllergyAlerts">0</div>
+<div class="stat-label">Allergy Alerts</div>
+<div class="stat-change down">Action required</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+<div class="stat-value" id="statSeenToday">0</div>
+<div class="stat-label">Patients Seen</div>
+<div class="stat-change up">Total seen today</div>
+</div>
+</div>
+
+<div class="allergy-banner" id="dashAllergyBanner" style="display:none;">
+<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+<span id="dashAllergyText"></span>
+</div>
+
+<div class="content-grid">
+<div class="card">
+<div class="card-header">
+<h3>Triage Queue</h3>
+<a class="card-action" onclick="goToSection('triage')">View All →</a>
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Patient</th><th>Wait Time</th><th>Action</th></tr>
+</thead>
+<tbody id="dashTriageBody"></tbody>
+</table>
+</div>
+
+<div class="card">
+<div class="card-header">
+<h3>Recent Triage Activity</h3>
+</div>
+<ul class="activity-list" id="dashActivityList"></ul>
+</div>
+</div>
+
+<div class="card" style="margin-top:0.4rem;">
+<div class="card-header">
+<h3>Quick Actions</h3>
+</div>
+<div class="quick-actions">
+<button class="quick-btn" onclick="goToSection('vitals')">
+<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+New Triage Entry
+</button>
+<button class="quick-btn" onclick="goToSection('patients'); setTimeout(()=>document.getElementById('patientSearch').focus(), 100);">
+<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+Look Up Patient
+</button>
+<button class="quick-btn" onclick="openVitalsModal(null, true)">
+<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+Vitals Template
+</button>
+<button class="quick-btn" onclick="goToSection('patients')">
+<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+View Allergies
+</button>
+</div>
+</div>
+</section>
+
+<!-- ===================== TRIAGE QUEUE ===================== -->
+<section class="section" id="section-triage">
+<div class="page-header">
+<h1>Triage Queue</h1>
+<p>Manage patients waiting for vital signs and clinical assessment.</p>
+</div>
+<div class="card">
+<div class="section-toolbar">
+<input type="text" class="search-input" id="triageSearch" placeholder="Search patient or service…">
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Patient</th><th>Urgent / Heavy Service</th><th>Waiting Date</th><th>Booking Status</th><th>Allergies</th><th></th></tr>
+</thead>
+<tbody id="triageQueueBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== PATIENTS & ALLERGIES ===================== -->
+<section class="section" id="section-patients">
+<div class="page-header">
+<h1>Patients & Allergies</h1>
+<p>Quick lookup for patient clinical alerts and allergy information.</p>
+</div>
+<div class="card">
+<div class="section-toolbar">
+<input type="text" class="search-input" id="patientSearch" placeholder="Search by patient name…">
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Patient</th><th>Last Visit</th><th>Allergies</th><th>Prescriptions</th><th></th></tr>
+</thead>
+<tbody id="patientDirectoryBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== VITALS ENTRY ===================== -->
+<section class="section" id="section-vitals">
+<div class="page-header">
+<h1>Vitals Entry</h1>
+<p>Select a patient and their appointment to record vital signs.</p>
+</div>
+<div class="card">
+<div class="card-header">
+<h3>Quick Triage Entry</h3>
+</div>
+<div style="padding:1.5rem; max-width:420px;">
+    <div class="form-group">
+        <label class="form-label">Patient</label>
+        <select class="form-select" id="vitalsPatientSelect" onchange="onVitalsPatientChange(this.value)">
+            <option value="">Select a patient…</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="form-label">Appointment</label>
+        <select class="form-select" id="vitalsApptSelect" disabled>
+            <option value="">Select a patient first…</option>
+        </select>
+    </div>
+    <button class="btn-primary" id="vitalsEntryBtn" style="margin-top:0.5rem;" disabled onclick="openVitalsFromEntry()">+ Record Vitals</button>
+</div>
+</div>
+</section>
+
+<!-- ===================== SETTINGS ===================== -->
+<section class="section" id="section-settings">
+<div class="page-header">
+<h1>Settings</h1>
+<p>Nurse profile and dashboard preferences.</p>
+</div>
+<div class="card settings-form">
+<form id="settingsForm">
+<div class="form-group">
+<label class="form-label">Display Name</label>
+<input class="form-input" id="settingDisplayName" name="displayName" placeholder="e.g. Nurse Ramirez">
+</div>
+<button type="submit" class="modal-submit" style="width:auto;padding:0.75rem 1.6rem;">Save Settings</button>
+</form>
+</div>
+</section>
+
+</main>
+</div>
+
+<!-- GENERIC MODAL -->
+<div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close">
+<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+<h3 class="modal-title" id="modalTitle">Title</h3>
+<form id="modalForm"></form>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========================================================
+   UTILITY FUNCTIONS
+   ======================================================== */
+function escapeHtml(str){ return String(str==null?'':str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function waitMinutesReal(scheduledAt){
+    const diff = Math.round((Date.now() - new Date(scheduledAt).getTime())/60000);
+    return diff > 0 ? diff : 0;
+}
+
+function priorityServiceRank(service, urgency=''){
+    const text = `${service || ''} ${urgency || ''}`.toLowerCase().replace(/[-_]/g, ' ');
+    if(/emergency|urgent|critical|stat/.test(text)) return 3;
+    if(/heart monitoring|cardiac|cardio|cardiology|ob[ /-]?gyn|obstetric|gynaec|gynec|surgery|surgical|dialysis|chemotherapy|infusion/.test(text)) return 2;
+    if(/imaging|diagnostic|mri|ct scan|computed tomography|ultrasound|x ray|xray|mammogram|endoscopy|colonoscopy|specialist|procedure/.test(text)) return 1;
+    return 0;
+}
+
+function startOfToday(){
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+}
+
+function daysUntilBooking(scheduledAt){
+    const booking = new Date(scheduledAt);
+    if(Number.isNaN(booking.getTime())) return null;
+    booking.setHours(0, 0, 0, 0);
+    return Math.round((booking.getTime() - startOfToday().getTime()) / 86400000);
+}
+
+function bookingDateLabel(scheduledAt){
+    const date = new Date(scheduledAt);
+    return Number.isNaN(date.getTime()) ? '—' : date.toLocaleDateString([], {year:'numeric', month:'short', day:'numeric'});
+}
+
+function bookingStatusLabel(scheduledAt){
+    const days = daysUntilBooking(scheduledAt);
+    if(days === null) return {text:'Date unavailable', className:'overdue'};
+    if(days === 0) return {text:'Today', className:'today'};
+    if(days > 0) return {text:`In ${days} day${days === 1 ? '' : 's'}`, className:''};
+    const overdue = Math.abs(days);
+    return {text:`${overdue} day${overdue === 1 ? '' : 's'} overdue`, className:'overdue'};
+}
+
+/* ========================================================
+   STATE & BACKEND API FETCHING
+   ======================================================== */
+let currentDashboardData = {
+    stats: { awaiting: 0, triagedToday: 0, allergyAlerts: 0, seenToday: 0 },
+    allergyAlertsCount: 0,
+    triagePreview: [],
+    activity: []
+};
+
+let currentTriageQueue = [];
+let currentPatientDirectory = [];
+
+// Fetch Dashboard Overview Stats, Activity, and Preview from DB
+async function fetchDashboardData(){
+    try {
+        const res = await fetch('/api/dashboard');
+        const data = await res.json();
+        currentDashboardData = {
+            stats: data.stats || { awaiting: 0, triagedToday: 0, allergyAlerts: 0, seenToday: 0 },
+            allergyAlertsCount: data.allergyAlertsCount || 0,
+            triagePreview: data.triagePreview || [],
+            activity: data.activity || []
+        };
+    } catch(e) {
+        console.error('Failed to load dashboard data:', e);
+    }
+}
+
+// Fetch Real Triage Queue from DB
+async function fetchTriageQueue(){
+    try{
+        const res = await fetch('/api/triage-queue');
+        const data = await res.json();
+        currentTriageQueue = (data.queue || []).map(row => ({
+            appointmentId: row.appointment_id,
+            patientId: row.patient_id,
+            patient: `${row.first_name} ${row.last_name}`,
+            service: row.service_name || row.service_category_name || 'Visit',
+            urgency: row.urgency || row.priority || row.service_category_name || row.service_category || '',
+            scheduledAt: row.scheduled_at,
+            allergies: row.allergies || ''
+        })).filter(a => priorityServiceRank(a.service, a.urgency) > 0)
+          .sort((a, b) => {
+              const aDate = new Date(a.scheduledAt).getTime();
+              const bDate = new Date(b.scheduledAt).getTime();
+              const safeA = Number.isNaN(aDate) ? Infinity : aDate;
+              const safeB = Number.isNaN(bDate) ? Infinity : bDate;
+              return safeA - safeB || priorityServiceRank(b.service, b.urgency) - priorityServiceRank(a.service, a.urgency) || a.patient.localeCompare(b.patient);
+          });
+    }catch(e){
+        console.error('Failed to load triage queue:', e);
+        currentTriageQueue = [];
+    }
+}
+
+// Fetch Patient Directory from DB
+async function fetchPatientDirectory(){
+    try{
+        const res = await fetch('/api/patient-directory');
+        const data = await res.json();
+        currentPatientDirectory = (data.patients || []).map(p => ({
+            patientId: p.patient_id,
+            name: `${p.first_name} ${p.last_name}`,
+            lastVisit: p.last_visit ? new Date(p.last_visit).toLocaleDateString() : null,
+            allergies: p.allergies || ''
+        }));
+    }catch(e){
+        console.error('Failed to load patient directory:', e);
+        currentPatientDirectory = [];
+    }
+}
+
+// One patient can have several prescription_items rows flattened
+// together (one per medication on a prescription) — group them by
+// patient so the directory can show a per-patient summary without
+// an extra fetch per row.
+let currentPrescriptionsByPatient = {};
+
+async function fetchAllPrescriptions(){
+    try{
+        const res = await fetch('/api/prescriptions');
+        const data = await res.json();
+        const grouped = {};
+        const seen = new Set();
+        // Rows arrive newest-prescribed-first (prescriptions.js orders by
+        // prescribed_at DESC), so the first time we see a given medication
+        // name for a patient is their most recent prescription of it —
+        // skip any further repeats of that same name for that patient.
+        (data.prescriptions || []).forEach(item => {
+            if(!item.patient_id || !item.generic_name) return;
+            const key = `${item.patient_id}::${item.generic_name}`;
+            if(seen.has(key)) return;
+            seen.add(key);
+            if(!grouped[item.patient_id]) grouped[item.patient_id] = [];
+            grouped[item.patient_id].push({
+                name: item.generic_name,
+                dosage: item.dosage,
+                status: item.dispensing_status
+            });
+        });
+        currentPrescriptionsByPatient = grouped;
+    }catch(e){
+        console.error('Failed to load prescriptions:', e);
+        currentPrescriptionsByPatient = {};
+    }
+}
+
+/* ========================================================
+   UI LOGIC & RENDER
+   ======================================================== */
+function goToSection(id){
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    
+    const target = document.getElementById('section-' + id);
+    if(target) target.classList.add('active');
+    
+    const link = document.querySelector(`.sidebar-link[data-section="${id}"]`);
+    if(link) link.classList.add('active');
+    
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarScrim').classList.remove('open');
+    
+    render();
+}
+
+function showToast(msg, type='success'){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    setTimeout(() => t.classList.add('show'), 10);
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Modal handling
+const modalOverlay = document.getElementById('modalOverlay');
+const modalForm = document.getElementById('modalForm');
+const modalTitle = document.getElementById('modalTitle');
+
+function openModal(title, html, onSave){
+    modalTitle.textContent = title;
+    modalForm.innerHTML = html;
+    modalOverlay.classList.add('open');
+    modalForm.onsubmit = (e) => {
+        e.preventDefault();
+        onSave(new FormData(modalForm));
+        modalOverlay.classList.remove('open');
+    };
+}
+
+document.getElementById('modalCloseBtn').onclick = () => modalOverlay.classList.remove('open');
+modalOverlay.onclick = (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('open'); };
+
+function render(){
+    // Badges
+    document.getElementById('badgeTriage').textContent = currentTriageQueue.length;
+
+    // Dashboard Stats (Powered by Neon DB)
+    if(document.getElementById('section-dashboard').classList.contains('active')){
+        document.getElementById('statAwaiting').textContent = currentDashboardData.stats.awaiting;
+        document.getElementById('statTriagedToday').textContent = currentDashboardData.stats.triagedToday;
+        document.getElementById('statAllergyAlerts').textContent = currentDashboardData.stats.allergyAlerts;
+        document.getElementById('statSeenToday').textContent = currentDashboardData.stats.seenToday;
+
+        const dashTriageBody = document.getElementById('dashTriageBody');
+        dashTriageBody.innerHTML = currentDashboardData.triagePreview.length ? currentDashboardData.triagePreview.map(a => `
+            <tr>
+                <td>${escapeHtml(a.patient)}</td>
+                <td>${waitMinutesReal(a.scheduledAt)}m</td>
+                <td style="text-align:right">
+                    <button class="icon-btn" onclick="openVitalsModal('${a.appointmentId}')" title="Record Vitals"><svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4z"/></svg></button>
+                </td>
+            </tr>
+        `).join('') : `<tr><td colspan="3" class="empty-state">No patients waiting for triage.</td></tr>`;
+
+        const dashActivityList = document.getElementById('dashActivityList');
+        dashActivityList.innerHTML = currentDashboardData.activity.length ? currentDashboardData.activity.map(a => `
+            <li class="activity-item">
+                <div class="activity-dot"></div>
+                <div class="activity-text">
+                    <div>${escapeHtml(a.text)}</div>
+                    <div class="activity-time">${new Date(a.time).toLocaleTimeString()}</div>
+                </div>
+            </li>
+        `).join('') : `<li class="activity-item"><div class="activity-text">No recent activity</div></li>`;
+
+        const allergyBanner = document.getElementById('dashAllergyBanner');
+        if(currentDashboardData.allergyAlertsCount > 0){
+            allergyBanner.style.display = 'flex';
+            document.getElementById('dashAllergyText').innerHTML = `<strong>Clinical Alert:</strong> ${currentDashboardData.allergyAlertsCount} patients in today's list have recorded allergies.`;
+        } else {
+            allergyBanner.style.display = 'none';
+        }
+    }
+
+    // Triage Queue Section
+    if(document.getElementById('section-triage').classList.contains('active')){
+        const body = document.getElementById('triageQueueBody');
+        const q = (document.getElementById('triageSearch').value || '').trim().toLowerCase();
+        const filteredQueue = q ? currentTriageQueue.filter(a =>
+            a.patient.toLowerCase().includes(q) || a.service.toLowerCase().includes(q)
+        ) : currentTriageQueue;
+        body.innerHTML = filteredQueue.length ? filteredQueue.map(a => `
+                <tr>
+                    <td>${escapeHtml(a.patient)}<span class="priority-pill">Priority</span></td>
+                    <td>${escapeHtml(a.service)}<span class="priority-pill">Priority</span></td>
+                    <td>${bookingDateLabel(a.scheduledAt)}</td>
+                    <td><span class="date-status ${bookingStatusLabel(a.scheduledAt).className}">${bookingStatusLabel(a.scheduledAt).text}</span></td>
+                    <td><span style="color:var(--danger);font-weight:600;">${a.allergies ? escapeHtml(a.allergies) : 'None'}</span></td>
+                    <td style="text-align:right">
+                        <button class="icon-btn" onclick="markTriageDone('${a.appointmentId}')" title="Mark as Done"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></button>
+                    </td>
+                </tr>
+        `).join('') : `<tr><td colspan="6" class="empty-state">No urgent or heavy-service bookings are waiting for triage.</td></tr>`;
+    }
+
+    // Patients Section
+    if(document.getElementById('section-patients').classList.contains('active')){
+        const body = document.getElementById('patientDirectoryBody');
+        const pq = (document.getElementById('patientSearch').value || '').trim().toLowerCase();
+        const filteredPatients = pq ? currentPatientDirectory.filter(p => p.name.toLowerCase().includes(pq)) : currentPatientDirectory;
+        body.innerHTML = filteredPatients.length ? filteredPatients.map(p => {
+            const rx = currentPrescriptionsByPatient[p.patientId] || [];
+            const rxSummary = rx.length
+                ? rx.map(r => `${escapeHtml(r.name)}${r.dosage ? ' ' + escapeHtml(r.dosage) : ''} (${escapeHtml(r.status || 'pending')})`).join(', ')
+                : '';
+            return `
+            <tr>
+                <td>${escapeHtml(p.name)}</td>
+                <td>${p.lastVisit || '—'}</td>
+                <td><span style="${p.allergies ? 'color:var(--danger);font-weight:600;' : 'opacity:0.5;'}">${p.allergies ? escapeHtml(p.allergies) : 'No allergies recorded'}</span></td>
+                <td><span style="${rxSummary ? '' : 'opacity:0.5;'}">${rxSummary || 'None on file'}</span></td>
+                <td style="text-align:right">
+                    <button class="icon-btn" onclick="openAllergyModal('${p.patientId}', '${escapeHtml(p.name)}')" title="Add Allergy"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+                </td>
+            </tr>
+        `;
+        }).join('') : `<tr><td colspan="5" class="empty-state">No patients found.</td></tr>`;
+    }
+}
+
+function goToVitalsEntryForPatient(patientId){
+    goToSection('vitals');
+    const select = document.getElementById('vitalsPatientSelect');
+    select.value = patientId;
+    onVitalsPatientChange(patientId);
+}
+
+async function markTriageDone(appointmentId){
+    try{
+        const res = await fetch('/api/record-vitals', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ appointmentId })
+        });
+        const result = await res.json();
+        if(res.ok){
+            showToast('Marked as done — sent to doctor');
+            await Promise.all([fetchDashboardData(), fetchTriageQueue()]);
+            render();
+            populateVitalsPatientSelect();
+        } else {
+            showToast(result.error || 'Could not update this patient', 'error');
+        }
+    }catch(e){
+        console.error('Mark triage done failed:', e);
+        showToast('Something went wrong. Please try again.', 'error');
+    }
+}
+
+// patient-allergies.js only supports GET and POST — no way to edit
+// or remove an existing allergy yet, so this is add-only for now.
+function openAllergyModal(patientId, patientName){
+    const html = `
+        <div class="form-group">
+            <label class="form-label">Patient</label>
+            <input class="form-input" value="${escapeHtml(patientName)}" disabled>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Allergen</label>
+            <input class="form-input" name="allergenDescription" required placeholder="e.g. Penicillin, Shellfish">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Reaction (optional)</label>
+            <input class="form-input" name="reactionDescription" placeholder="e.g. Hives, difficulty breathing">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Severity</label>
+            <select class="form-select" name="severity" required>
+                <option value="Mild">Mild</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Severe">Severe</option>
+            </select>
+        </div>
+        <button type="submit" class="modal-submit">Add Allergy</button>
+    `;
+    openModal(`Add Allergy — ${patientName}`, html, async (data) => {
+        try{
+            const res = await fetch('/api/patient-allergies', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    patientId,
+                    allergenDescription: data.get('allergenDescription'),
+                    reactionDescription: data.get('reactionDescription') || null,
+                    severity: data.get('severity')
+                })
+            });
+            const result = await res.json();
+            if(res.ok){
+                showToast('Allergy added');
+                await fetchPatientDirectory();
+                render();
+            } else {
+                showToast(result.error || 'Could not add this allergy', 'error');
+            }
+        }catch(e){
+            console.error('Add allergy failed:', e);
+            showToast('Something went wrong. Please try again.', 'error');
+        }
+    });
+}
+
+// ===== VITALS ENTRY PAGE =====
+function populateVitalsPatientSelect(){
+    const select = document.getElementById('vitalsPatientSelect');
+    const seen = new Set();
+    const waiting = currentTriageQueue.filter(a => {
+        if(seen.has(a.patientId)) return false;
+        seen.add(a.patientId);
+        return true;
+    });
+    select.innerHTML = waiting.length
+        ? '<option value="">Select a patient…</option>' + waiting.map(a => `<option value="${a.patientId}">${escapeHtml(a.patient)}</option>`).join('')
+        : '<option value="">No priority patients waiting</option>';
+}
+
+function onVitalsPatientChange(patientId){
+    const apptSelect = document.getElementById('vitalsApptSelect');
+    const btn = document.getElementById('vitalsEntryBtn');
+    btn.disabled = true;
+    if(!patientId){
+        apptSelect.innerHTML = '<option value="">Select a patient first…</option>';
+        apptSelect.disabled = true;
+        return;
+    }
+    const appts = currentTriageQueue.filter(a => String(a.patientId) === String(patientId));
+    if(appts.length === 0){
+        apptSelect.innerHTML = '<option value="">No appointment currently needs triage</option>';
+        apptSelect.disabled = true;
+        return;
+    }
+    apptSelect.innerHTML = '<option value="">Select an appointment…</option>' + appts.map(a => {
+        const dt = new Date(a.scheduledAt);
+        return `<option value="${a.appointmentId}">${dt.toLocaleDateString()} ${dt.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})} — ${escapeHtml(a.service)}</option>`;
+    }).join('');
+    apptSelect.disabled = false;
+}
+
+document.getElementById('vitalsApptSelect').addEventListener('change', () => {
+    document.getElementById('vitalsEntryBtn').disabled = !document.getElementById('vitalsApptSelect').value;
+});
+
+function openVitalsFromEntry(){
+    const patientSelect = document.getElementById('vitalsPatientSelect');
+    const apptSelect = document.getElementById('vitalsApptSelect');
+    const patientName = patientSelect.selectedOptions[0]?.textContent || '';
+    const appointmentId = apptSelect.value;
+    if(!appointmentId) return;
+    openVitalsModal(appointmentId, false, patientName);
+}
+
+/* ========================================================
+   ACTIONS & MODALS
+   ======================================================== */
+function openVitalsModal(apptId=null, isTemplate=false, patientName=''){
+    let patient = patientName;
+    const fromTriageQueue = !!apptId;
+    if(fromTriageQueue){
+        const a = currentTriageQueue.find(x => String(x.appointmentId) === String(apptId));
+        if(a) patient = a.patient;
+    }
+
+    const html = `
+        <div class="form-group">
+            <label class="form-label">Patient Name</label>
+            <input class="form-input" name="patient" value="${escapeHtml(patient)}" required ${fromTriageQueue ? 'readonly' : ''}>
+        </div>
+        <div class="vitals-grid">
+            <div class="form-group">
+                <label class="form-label">Blood Pressure</label>
+                <input class="form-input" name="bp" placeholder="120/80">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Heart Rate (bpm)</label>
+                <input class="form-input" type="number" name="hr" placeholder="72">
+            </div>
+        </div>
+        <div class="vitals-grid">
+            <div class="form-group">
+                <label class="form-label">Temp (°C)</label>
+                <input class="form-input" type="number" step="0.1" name="temp" placeholder="36.5">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Resp. Rate</label>
+                <input class="form-input" type="number" name="rr" placeholder="16">
+            </div>
+        </div>
+        <div class="vitals-grid">
+            <div class="form-group">
+                <label class="form-label">Weight (kg)</label>
+                <input class="form-input" type="number" step="0.1" name="weight">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Height (cm)</label>
+                <input class="form-input" type="number" name="height">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Clinical Notes / Chief Complaint</label>
+            <textarea class="form-textarea" name="notes"></textarea>
+        </div>
+        <button type="submit" class="modal-submit">${isTemplate ? 'Save Template' : 'Submit to Doctor'}</button>
+    `;
+
+    openModal(isTemplate ? 'Vitals Template' : 'Record Vital Signs', html, async (data) => {
+        try{
+            const res = await fetch('/api/record-vitals', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    appointmentId: apptId || null,
+                    patientName: data.get('patient'),
+                    bloodPressure: data.get('bp') || null,
+                    pulseRateBpm: data.get('hr') ? Number(data.get('hr')) : null,
+                    temperatureCelsius: data.get('temp') ? Number(data.get('temp')) : null,
+                    respiratoryRate: data.get('rr') ? Number(data.get('rr')) : null,
+                    weightKg: data.get('weight') ? Number(data.get('weight')) : null,
+                    heightCm: data.get('height') ? Number(data.get('height')) : null,
+                    chiefComplaint: data.get('notes') || null
+                })
+            });
+            const result = await res.json();
+            if(res.ok){
+                showToast('Vitals recorded and sent to doctor');
+                await Promise.all([fetchDashboardData(), fetchTriageQueue()]);
+                render();
+                populateVitalsPatientSelect();
+            } else {
+                showToast(result.error || 'Could not record vitals', 'error');
+            }
+        }catch(e){
+            console.error('Record vitals failed:', e);
+            showToast('Something went wrong. Please try again.', 'error');
+        }
+    });
+}
+
+// Settings Form Handlers
+document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const displayName = document.getElementById('settingDisplayName').value;
+    try {
+        const res = await fetch('/api/settings', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ displayName })
+        });
+        if(res.ok) {
+            showToast('Settings saved successfully');
+            if(displayName) document.querySelector('.nav-avatar').title = displayName;
+        } else {
+            const data = await res.json();
+            showToast(data.error || 'Failed to save settings', 'error');
+        }
+    } catch(e) {
+        showToast('Failed to save settings', 'error');
+    }
+});
+
+// Sidebar Mobile Toggle
+document.getElementById('menuToggle').onclick = () => {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebarScrim').classList.add('open');
+};
+document.getElementById('sidebarScrim').onclick = () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarScrim').classList.remove('open');
+};
+
+// INITIALIZATION
+(function(){
+    // Sidebar links
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.onclick = () => goToSection(link.dataset.section);
+    });
+    
+    // Preloader
+    const preloader = document.getElementById('preloader');
+    const mark = document.getElementById('preloaderMark');
+    mark.innerHTML = mark.textContent.split('').map((ch,i) => `<span style="animation-delay:${0.15+i*0.025}s">${ch===' '?'&nbsp;':ch}</span>`).join('');
+    setTimeout(() => {
+        preloader.classList.add('done');
+        setTimeout(() => preloader.remove(), 800);
+    }, 800);
+    
+    // Initial fetch from Neon backend
+    Promise.all([
+        fetchDashboardData(),
+        fetchTriageQueue(),
+        fetchPatientDirectory(),
+        fetchAllPrescriptions()
+    ]).then(() => {
+        render();
+        populateVitalsPatientSelect();
+    });
+
+    document.getElementById('triageSearch').addEventListener('input', render);
+    document.getElementById('patientSearch').addEventListener('input', render);
+})();
+
+</script>
+</body>
+</html>

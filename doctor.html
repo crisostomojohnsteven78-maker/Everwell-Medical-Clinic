@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everwell Medical Clinic — Doctor Dashboard</title>
+<meta name="description" content="Everwell role-specific dashboards for Front Desk, Nurse, Doctor, Pharmacist, and Billing Staff.">
+<meta name="theme-color" content="#16211A">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg: #F1F3EC;
+--bg-soft: #E7ECE1;
+--cream: #FAF8F3;
+--ink: #1E2A22;
+--ink-soft: #4A554C;
+--sage: #4F6B57;
+--sage-light: #8AA491;
+--sage-deep: #16211A;
+--clay: #DCCAB3;
+--gold: #B99B67;
+--line: rgba(30,42,34,0.12);
+--radius-sm: 8px;
+--radius-md: 18px;
+--radius-lg: 22px;
+--radius-xl: 100px;
+--transition-fast: 0.2s ease;
+--transition-med: 0.35s ease;
+--shadow-sm: 0 2px 8px rgba(22,33,26,0.06);
+--shadow-md: 0 8px 24px rgba(22,33,26,0.1);
+--shadow-lg: 0 16px 48px rgba(22,33,26,0.14);
+--focus-ring: 0 0 0 3px rgba(79,107,87,0.45);
+--danger: #8B2E2E;
+--danger-light: #C25A5A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+[id]{scroll-margin-top:80px;}
+body{
+background:var(--bg);
+color:var(--ink);
+font-family:'Instrument Sans',sans-serif;
+font-weight:400;
+min-height:100vh;
+}
+a{color:inherit;text-decoration:none;}
+:focus-visible{outline:2px solid var(--sage);outline-offset:2px;}
+.skip-link{
+position:fixed;top:-100px;left:1rem;z-index:999;
+background:var(--sage-deep);color:var(--cream);
+padding:0.7rem 1.2rem;border-radius:var(--radius-sm);
+font-size:0.85rem;transition:top .2s ease;
+}
+.skip-link:focus{top:0.8rem;}
+
+/* NAV */
+.admin-nav{
+position:fixed;top:0;left:0;width:100%;z-index:100;
+background:var(--sage-deep);
+display:flex;align-items:center;justify-content:space-between;
+padding:1.2rem 4vw;
+height:60px;
+}
+.nav-left{display:flex;align-items:center;gap:2rem;}
+.nav-menu-btn{
+display:none;align-items:center;justify-content:center;
+width:36px;height:36px;border-radius:8px;
+background:transparent;border:1px solid rgba(250,248,243,0.2);
+color:var(--cream);cursor:pointer;
+transition:background .25s;
+}
+.nav-menu-btn:hover{background:rgba(250,248,243,0.08);}
+.nav-menu-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;}
+.nav-mark{
+font-family:'Fraunces',serif;font-size:1.4rem;font-weight:500;
+letter-spacing:-0.015em;color:var(--cream);
+}
+.nav-mark em{font-style:italic;font-weight:400;color:var(--sage-light);}
+.nav-brand-sep{width:1px;height:20px;background:rgba(250,248,243,0.2);}
+.nav-label{font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(250,248,243,0.55);font-weight:500;}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.nav-avatar{
+width:32px;height:32px;border-radius:50%;
+background:var(--sage);color:var(--cream);
+display:flex;align-items:center;justify-content:center;
+font-size:0.78rem;font-weight:500;
+cursor:pointer;
+}
+.nav-logout{
+font-size:0.82rem;color:rgba(250,248,243,0.5);
+transition:color .3s;
+}
+.nav-logout:hover{color:var(--cream);}
+
+
+/* LAYOUT */
+.admin-body{
+display:flex;
+padding-top:60px;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:240px;
+background:var(--cream);
+border-right:1px solid var(--line);
+position:fixed;top:60px;bottom:0;left:0;
+padding:1rem 0;
+overflow-y:auto;
+z-index:50;
+}
+.sidebar-section{margin-bottom:1.6rem;}
+.sidebar-label{
+font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;
+color:var(--ink-soft);opacity:0.55;font-weight:500;
+padding:0 1.2rem;margin-bottom:0.6rem;
+}
+.sidebar-link{
+display:flex;align-items:center;gap:0.75rem;
+padding:0.6rem 1.2rem;
+font-size:0.85rem;color:var(--ink-soft);
+transition:color .3s, background .3s;
+border-left:2px solid transparent;
+}
+.sidebar-link:hover{color:var(--sage-deep);background:rgba(30,42,34,0.03);}
+.sidebar-link.active{
+color:var(--sage-deep);font-weight:500;
+background:rgba(79,107,87,0.08);
+border-left-color:var(--sage);
+}
+.sidebar-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sidebar-badge{
+margin-left:auto;
+font-size:0.68rem;font-weight:600;
+background:var(--sage-deep);color:var(--cream);
+padding:0.15rem 0.5rem;border-radius:100px;
+}
+
+/* MAIN CONTENT */
+.admin-main{
+margin-left:240px;flex:1;
+padding:2rem 2.4rem;
+}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:2rem;}
+.page-header h1{
+font-family:'Fraunces',serif;font-weight:400;
+font-size:1.8rem;color:var(--sage-deep);letter-spacing:-0.01em;
+}
+.page-header p{font-size:0.88rem;color:var(--ink-soft);margin-top:0.3rem;}
+
+/* STAT CARDS */
+.stats-row{
+display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;
+margin-bottom:2.4rem;
+}
+.stat-card{
+background:var(--cream);
+border:1px solid var(--line);
+border-radius:var(--radius-md);
+padding:1.4rem;
+}
+.stat-card .stat-icon{
+width:36px;height:36px;border-radius:50%;
+background:var(--bg-soft);
+display:flex;align-items:center;justify-content:center;
+margin-bottom:0.8rem;
+}
+.stat-card .stat-icon svg{width:18px;height:18px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.stat-card .stat-value{
+font-family:'Fraunces',serif;font-size:1.8rem;color:var(--sage-deep);
+}
+.stat-card .stat-label{
+font-size:0.78rem;color:var(--ink-soft);margin-top:0.2rem;
+}
+.stat-card .stat-change{
+font-size:0.72rem;margin-top:0.4rem;
+}
+.stat-card .stat-change.up{color:var(--sage);}
+.stat-card .stat-change.down{color:var(--danger-light);}
+
+/* CARDS */
+.card{
+background:var(--cream);
+border:1px solid var(--line);
+border-radius:var(--radius-md);
+padding:1.6rem;
+margin-bottom:1.6rem;
+}
+.card-header{
+display:flex;align-items:center;justify-content:space-between;
+margin-bottom:1.2rem;
+}
+.card-header h3{
+font-family:'Fraunces',serif;font-weight:500;font-size:1.08rem;color:var(--sage-deep);
+}
+.card-header .card-action{
+font-size:0.8rem;color:var(--sage);transition:color .3s;
+}
+.card-header .card-action:hover{color:var(--sage-deep);}
+
+/* TABLE */
+.admin-table{width:100%;border-collapse:collapse;}
+.admin-table th{
+font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
+color:var(--ink-soft);opacity:0.7;font-weight:500;
+text-align:left;padding:0.7rem 0.8rem;border-bottom:1px solid var(--line);
+}
+.admin-table td{
+padding:0.8rem 0.8rem;font-size:0.85rem;color:var(--ink);
+border-bottom:1px solid var(--line);
+}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:rgba(30,42,34,0.02);}
+
+/* STATUS PILLS */
+.status-pill{
+display:inline-block;font-size:0.72rem;font-weight:500;
+padding:0.2rem 0.6rem;border-radius:100px;
+}
+.status-pill.confirmed{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.pending{background:rgba(185,155,103,0.15);color:var(--gold);}
+.status-pill.cancelled{background:rgba(139,46,46,0.1);color:var(--danger-light);}
+.status-pill.checked-in{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.triage{background:rgba(185,155,103,0.15);color:var(--gold);}
+.status-pill.in-progress{background:rgba(139,46,46,0.1);color:var(--danger-light);}
+.status-pill.completed{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.unpaid{background:rgba(139,46,46,0.1);color:var(--danger-light);}
+.status-pill.partial{background:rgba(185,155,103,0.15);color:var(--gold);}
+.status-pill.paid{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.flagged{background:rgba(139,46,46,0.15);color:var(--danger);}
+.status-pill.validated{background:rgba(79,107,87,0.1);color:var(--sage);}
+
+/* ACTION BUTTONS */
+.action-btn{
+display:inline-flex;align-items:center;gap:0.35rem;
+padding:0.3rem 0.7rem;
+background:var(--sage);color:var(--cream);
+border:none;border-radius:var(--radius-sm);
+font-size:0.72rem;font-weight:500;cursor:pointer;
+transition:background .3s;
+}
+.action-btn:hover{background:var(--sage-deep);}
+.action-btn.outline{
+background:transparent;color:var(--sage);
+border:1px solid var(--sage);
+}
+.action-btn.outline:hover{background:rgba(79,107,87,0.08);}
+.action-btn.danger{background:var(--danger);}
+.action-btn.danger:hover{background:#6b2222;}
+.action-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* SEARCH BAR */
+.search-bar{
+display:flex;align-items:center;gap:0.6rem;
+padding:0.7rem 1rem;
+background:var(--cream);border:1px solid var(--line);
+border-radius:var(--radius-md);
+margin-bottom:1.6rem;
+}
+.search-bar input{
+border:none;outline:none;background:transparent;
+font-size:0.88rem;color:var(--ink);flex:1;
+font-family:'Instrument Sans',sans-serif;
+}
+.search-bar input::placeholder{color:var(--ink-soft);opacity:0.5;}
+.search-bar svg{width:18px;height:18px;stroke:var(--ink-soft);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* QUEUE BOARD */
+.queue-board{
+display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;
+margin-bottom:1.6rem;
+}
+.queue-column{
+background:var(--cream);border:1px solid var(--line);
+border-radius:var(--radius-md);padding:1rem;
+}
+.queue-column h4{
+font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
+color:var(--ink-soft);font-weight:500;margin-bottom:0.8rem;
+padding-bottom:0.5rem;border-bottom:1px solid var(--line);
+}
+.queue-card{
+padding:0.7rem 0.8rem;margin-bottom:0.5rem;
+background:var(--bg-soft);border-radius:var(--radius-sm);
+font-size:0.8rem;
+}
+.queue-card:last-child{margin-bottom:0;}
+.queue-card .qc-name{font-weight:500;color:var(--sage-deep);}
+.queue-card .qc-service{font-size:0.72rem;color:var(--ink-soft);margin-top:0.15rem;}
+.queue-card .qc-time{font-size:0.68rem;color:var(--ink-soft);opacity:0.6;margin-top:0.2rem;}
+
+/* ALLERGY BANNER */
+.allergy-banner{
+background:rgba(139,46,46,0.08);border:1px solid rgba(139,46,46,0.2);
+border-radius:var(--radius-sm);
+padding:0.8rem 1rem;margin-bottom:1rem;
+display:flex;align-items:center;gap:0.6rem;
+}
+.allergy-banner svg{width:16px;height:16px;stroke:var(--danger);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.allergy-banner span{font-size:0.82rem;color:var(--danger);}
+.allergy-banner strong{font-weight:600;}
+
+/* ALERT STRIP */
+.alert-strip{
+background:rgba(185,155,103,0.1);border:1px solid rgba(185,155,103,0.25);
+border-radius:var(--radius-sm);
+padding:0.8rem 1rem;margin-bottom:1rem;
+display:flex;align-items:center;gap:0.6rem;
+}
+.alert-strip svg{width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.alert-strip span{font-size:0.82rem;color:var(--gold);}
+.alert-strip strong{font-weight:600;}
+
+/* GRID LAYOUT */
+.content-grid{
+display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;
+}
+.content-grid-3{
+display:grid;grid-template-columns:2fr 1fr;gap:1.6rem;
+}
+
+/* QUICK ACTIONS */
+.quick-actions{
+display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;
+}
+.quick-btn{
+display:flex;align-items:center;gap:0.6rem;
+padding:0.9rem 1rem;
+background:var(--bg-soft);
+border:1px solid var(--line);
+border-radius:var(--radius-sm);
+font-size:0.82rem;color:var(--ink);
+cursor:pointer;
+transition:background .3s, border-color .3s;
+}
+.quick-btn:hover{background:var(--cream);border-color:var(--sage-light);}
+.quick-btn svg{width:16px;height:16px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* ACTIVITY */
+.activity-list{list-style:none;}
+.activity-item{
+display:flex;align-items:flex-start;gap:0.8rem;
+padding:0.7rem 0;
+border-bottom:1px solid var(--line);
+}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{
+width:8px;height:8px;border-radius:50%;
+background:var(--sage);flex-shrink:0;margin-top:0.35rem;
+}
+.activity-text{font-size:0.82rem;color:var(--ink);line-height:1.5;}
+.activity-time{font-size:0.72rem;color:var(--ink-soft);opacity:0.6;margin-top:0.15rem;}
+
+/* TOAST */
+.toast{
+position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);
+background:var(--sage-deep);color:var(--cream);
+padding:0.9rem 1.8rem;border-radius:var(--radius-xl);
+font-size:0.85rem;font-weight:500;
+box-shadow:var(--shadow-lg);
+opacity:0;pointer-events:none;
+transition:transform 0.4s ease, opacity 0.4s ease;
+z-index:200;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.toast.error{background:#8B2E2E;}
+.toast.success{background:var(--sage);}
+
+/* FILTER BAR */
+.filter-bar{
+display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem;flex-wrap:wrap;
+}
+.filter-btn{
+padding:0.35rem 0.8rem;border-radius:100px;
+font-size:0.75rem;font-weight:500;
+background:var(--bg-soft);color:var(--ink-soft);
+border:1px solid var(--line);cursor:pointer;
+transition:background .3s, color .3s;
+}
+.filter-btn.active{background:var(--sage-deep);color:var(--cream);border-color:var(--sage-deep);}
+.filter-btn:hover{border-color:var(--sage);}
+.card-header .filter-bar{margin-bottom:0;}
+
+/* DRUG ALERT */
+.drug-alert{
+background:rgba(139,46,46,0.08);border:1px solid rgba(139,46,46,0.2);
+border-radius:var(--radius-sm);
+padding:0.9rem 1rem;margin-bottom:0.8rem;
+}
+.drug-alert h5{font-size:0.82rem;color:var(--danger);margin-bottom:0.3rem;font-weight:600;}
+.drug-alert p{font-size:0.78rem;color:var(--ink-soft);line-height:1.4;}
+
+/* COLLECTION BAR */
+.collection-bar{
+display:flex;align-items:center;gap:0.8rem;
+padding:1rem 1.2rem;background:var(--bg-soft);
+border-radius:var(--radius-sm);margin-bottom:0.8rem;
+}
+.collection-bar .cb-label{font-size:0.78rem;color:var(--ink-soft);min-width:120px;}
+.collection-bar .cb-amount{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--sage-deep);}
+
+/* MOBILE */
+@media(max-width:980px){
+.stats-row{grid-template-columns:repeat(2,1fr);}
+.content-grid,.content-grid-3{grid-template-columns:1fr;}
+.queue-board{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:760px){
+.sidebar{
+transform:translateX(-100%);
+transition:transform var(--transition-med);
+box-shadow:var(--shadow-lg);
+}
+.sidebar.open{transform:translateX(0);}
+.sidebar-scrim{
+position:fixed;inset:60px 0 0 0;z-index:49;
+background:rgba(22,33,26,0.4);
+opacity:0;pointer-events:none;transition:opacity var(--transition-med);
+}
+.sidebar-scrim.open{opacity:1;pointer-events:auto;}
+.nav-menu-btn{display:inline-flex;}
+.admin-main{margin-left:0;padding:1.4rem 1.2rem;}
+.stats-row{grid-template-columns:1fr 1fr;}
+.queue-board{grid-template-columns:1fr;}
+.sidebar-link{padding:0.8rem 1.2rem;}
+.icon-btn{padding:0.55rem;}
+}
+
+/* ===== SPLASH / PRELOADER ===== */
+.preloader{
+position:fixed;inset:0;z-index:2000;
+background:var(--sage-deep);
+display:flex;align-items:center;justify-content:center;
+transition:transform .8s cubic-bezier(.65,0,.35,1);
+}
+.preloader-mark{
+font-family:'Fraunces',serif;font-size:2rem;color:var(--cream);
+letter-spacing:-0.01em;overflow:hidden;
+}
+.preloader-mark span{
+display:inline-block;
+opacity:0;
+transform:translateY(100%);
+animation:letterUp .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes letterUp{
+to{opacity:1;transform:translateY(0);}
+}
+.preloader.done{transform:translateY(-100%);}
+@media (prefers-reduced-motion: reduce){
+.preloader-mark span{animation-duration:.01ms !important;}
+*{transition-duration:.01ms !important;animation-duration:.01ms !important;}
+html{scroll-behavior:auto;}
+}
+
+/* ===== FUNCTIONAL UI ADD-ONS ===== */
+.icon-btn{
+background:none;border:none;cursor:pointer;color:var(--ink-soft);
+padding:0.35rem;border-radius:6px;
+transition:color .2s, background .2s;
+display:inline-flex;
+}
+.icon-btn:hover{color:var(--sage-deep);background:rgba(30,42,34,0.06);}
+.icon-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.status-select{
+font-size:0.72rem;font-weight:500;border-radius:100px;
+padding:0.25rem 1.4rem 0.25rem 0.65rem;
+border:1px solid var(--line);cursor:pointer;
+appearance:none;-webkit-appearance:none;
+background-repeat:no-repeat;background-position:right 0.5rem center;background-size:9px;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A554C' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+.status-select.checked-in, .status-select.confirmed, .status-select.completed{background-color:rgba(79,107,87,0.1);color:var(--sage);}
+.status-select.triage, .status-select.pending{background-color:rgba(185,155,103,0.15);color:var(--gold);}
+.status-select.in-progress, .status-select.cancelled{background-color:rgba(139,46,46,0.1);color:var(--danger-light);}
+.empty-state{padding:2rem 1rem;text-align:center;color:var(--ink-soft);font-size:0.85rem;}
+.muted-cell{color:var(--ink-soft);opacity:0.6;font-size:0.8rem;}
+
+.modal-overlay{
+position:fixed;inset:0;z-index:800;
+background:rgba(22,33,26,0.55);backdrop-filter:blur(3px);
+display:flex;align-items:center;justify-content:center;padding:2rem;
+opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+.modal-box{
+position:relative;background:var(--cream);border-radius:var(--radius-lg);
+padding:2rem 2rem 1.8rem;width:100%;max-width:480px;
+box-shadow:var(--shadow-lg);
+transform:translateY(14px) scale(.98);transition:transform .3s ease;
+max-height:88vh;overflow-y:auto;
+}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1);}
+.modal-close{
+position:absolute;top:1rem;right:1rem;width:30px;height:30px;border-radius:50%;
+border:1px solid var(--line);background:transparent;color:var(--ink-soft);
+display:flex;align-items:center;justify-content:center;cursor:pointer;
+transition:background .2s, color .2s;
+}
+.modal-close:hover{background:var(--sage-deep);color:var(--cream);border-color:var(--sage-deep);}
+.modal-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+.modal-title{font-family:'Fraunces',serif;font-weight:500;font-size:1.3rem;color:var(--sage-deep);margin-bottom:1.3rem;}
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:0.76rem;font-weight:500;color:var(--ink-soft);margin-bottom:0.4rem;}
+.form-input, .form-select, .form-textarea{
+width:100%;padding:0.65rem 0.85rem;border-radius:var(--radius-sm);
+border:1px solid var(--line);background:var(--bg-soft);
+font-size:0.85rem;color:var(--ink);outline:none;font-family:inherit;
+transition:border-color .2s, box-shadow .2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus{border-color:var(--sage);box-shadow:var(--focus-ring);}
+.form-textarea{resize:vertical;min-height:76px;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+.modal-submit{width:100%;margin-top:0.5rem;padding:0.8rem;border:none;border-radius:var(--radius-xl);background:var(--sage-deep);color:var(--cream);font-size:0.88rem;font-weight:500;cursor:pointer;transition:background .25s;}
+.modal-submit:hover{background:var(--sage);}
+.form-hint{font-size:0.72rem;color:var(--ink-soft);opacity:0.75;margin:-0.6rem 0 1rem;}
+.vitals-summary{background:var(--bg-soft,#f4f4f0);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1.1rem;}
+.vitals-grid-display{display:grid;grid-template-columns:repeat(2,1fr);gap:0.35rem 1rem;font-size:0.82rem;}
+.search-input{
+width:100%;max-width:320px;
+padding:0.6rem 0.9rem;border-radius:var(--radius-sm);
+border:1px solid var(--line);background:var(--cream);
+font-size:0.85rem;color:var(--ink);outline:none;
+}
+.search-input:focus{border-color:var(--sage);box-shadow:var(--focus-ring);}
+.settings-form{max-width:520px;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+.doctor-switcher{position:relative;}
+.doctor-avatar-btn{width:32px;height:32px;border-radius:50%;background:var(--sage);color:var(--cream);border:2px solid transparent;display:flex;align-items:center;justify-content:center;font:500 0.78rem 'Instrument Sans',sans-serif;cursor:pointer;transition:background .25s,border-color .25s,transform .25s;}
+.doctor-avatar-btn:hover,.doctor-avatar-btn[aria-expanded="true"]{background:var(--sage-light);border-color:rgba(250,248,243,0.7);transform:translateY(-1px);}
+.doctor-avatar-btn:focus-visible{outline:2px solid var(--cream);outline-offset:3px;}
+.doctor-menu{position:absolute;top:calc(100% + 0.7rem);right:0;width:245px;padding:0.55rem;background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-6px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease;z-index:300;}
+.doctor-menu.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0);}
+.doctor-menu-title{padding:0.45rem 0.65rem 0.55rem;border-bottom:1px solid var(--line);font-size:0.68rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft);}
+.doctor-menu-list{display:grid;gap:0.2rem;margin-top:0.35rem;max-height:270px;overflow-y:auto;}
+.doctor-option{display:flex;align-items:center;gap:0.6rem;width:100%;padding:0.65rem;border:0;border-radius:var(--radius-sm);background:transparent;color:var(--ink);font:400 0.82rem 'Instrument Sans',sans-serif;text-align:left;cursor:pointer;transition:background .2s,color .2s;}
+.doctor-option:hover{background:var(--bg-soft);color:var(--sage-deep);}
+.doctor-option.active{background:rgba(79,107,87,0.12);color:var(--sage-deep);font-weight:600;}
+.doctor-option:disabled{opacity:0.6;cursor:wait;}
+.doctor-option-check{margin-left:auto;color:var(--sage);font-size:1rem;}
+.doctor-menu-empty{padding:0.75rem 0.65rem;color:var(--ink-soft);font-size:0.8rem;font-style:italic;}
+@media(max-width:760px){
+ .admin-nav{padding-left:1rem;padding-right:1rem;}
+ .nav-left{gap:0.8rem;min-width:0;}
+ .nav-brand-sep,.nav-label,.nav-logout{display:none;}
+ .nav-right{gap:0.55rem;}
+ .doctor-menu{right:-0.35rem;width:min(245px,calc(100vw - 2rem));}
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<div class="preloader" id="preloader">
+<div class="preloader-mark" id="preloaderMark">Everwell</div>
+</div>
+<script>
+(function(){
+var preloader = document.getElementById('preloader');
+var mark = document.getElementById('preloaderMark');
+var text = mark.textContent;
+mark.innerHTML = text.split('').map(function(ch,i){return '<span style="animation-delay:'+(0.15+i*0.025)+'s">'+(ch===' '?'&nbsp;':ch)+'</span>';}).join('');
+var dismissed = false;
+function dismissPreloader(){
+if(dismissed) return;
+dismissed = true;
+preloader.classList.add('done');
+setTimeout(function(){ preloader.remove(); }, 500);
+}
+setTimeout(dismissPreloader, 800);
+})();
+</script>
+
+<!-- NAV -->
+<nav class="admin-nav">
+<div class="nav-left">
+<button type="button" class="nav-menu-btn" id="navMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar-doctor">
+<svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+</button>
+<span class="nav-mark">Ever<em>well</em></span>
+<span class="nav-brand-sep"></span>
+<span class="nav-label" id="navRoleLabel">Doctor</span>
+</div>
+	<div class="nav-right">
+	<div class="doctor-switcher" id="doctorSwitcher">
+	<button type="button" class="doctor-avatar-btn" id="navAvatar" title="Choose doctor" aria-label="Choose doctor to view as" aria-expanded="false" aria-controls="doctorMenu">DR</button>
+	<div class="doctor-menu" id="doctorMenu" role="menu" aria-label="Choose doctor to view as">
+	<div class="doctor-menu-title">View dashboard as</div>
+	<div class="doctor-menu-list" id="doctorMenuList"><div class="doctor-menu-empty">Loading doctors…</div></div>
+	</div>
+	<span id="activeDoctorStatus" class="sr-only" aria-live="polite">Loading doctors</span>
+	</div>
+<a href="homepage.html" class="nav-logout">Log Out</a>
+</div>
+</nav>
+
+<div class="admin-body">
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+<aside class="sidebar" id="sidebar-doctor" role="navigation" aria-label="Doctor sections">
+<div class="sidebar-section">
+<div class="sidebar-label">Navigation</div>
+<a href="#" class="sidebar-link active" data-section="dashboard">
+<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+Dashboard
+</a>
+<a href="#" class="sidebar-link" data-section="patients">
+<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+My Patients
+<span class="sidebar-badge" id="badgePatients">0</span>
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">Clinical</div>
+<a href="#" class="sidebar-link" data-section="records">
+<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+Medical Records
+</a>
+<a href="#" class="sidebar-link" id="navConsultWorkspace">
+<svg viewBox="0 0 24 24"><path d="M9 12h6M12 9v6M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
+Consultation Workspace
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">Referrals</div>
+<a href="#" class="sidebar-link" data-section="referrals">
+<svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+Referrals
+<span class="sidebar-badge" id="badgeReferrals">0</span>
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">System</div>
+<a href="#" class="sidebar-link" data-section="settings">
+<svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+Settings
+</a>
+</div>
+</aside>
+
+<!-- MAIN CONTENT AREA -->
+<main class="admin-main" id="main-content" tabindex="-1">
+
+<!-- ===================== DASHBOARD ===================== -->
+<section class="section active" id="section-dashboard">
+<div class="page-header">
+<h1>Doctor Dashboard</h1>
+<p id="doctorSubtitle">Clinical work queue — Doctor. Today's patients and consultation workspace.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-row">
+<div class="stat-card">
+<div class="stat-icon">
+<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+</div>
+<div class="stat-value" id="statMyPatients">0</div>
+<div class="stat-label">My Patients Today</div>
+<div class="stat-change up" id="statMyPatientsSub">—</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">
+<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+</div>
+<div class="stat-value" id="statPendingConsults">0</div>
+<div class="stat-label">Ready for Consult</div>
+<div class="stat-change down" id="statPendingConsultsSub">—</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">
+<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>
+</div>
+<div class="stat-value" id="statRx">0</div>
+<div class="stat-label">Medications Today</div>
+<div class="stat-change up">Sent to pharmacy partners</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">
+<svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+</div>
+<div class="stat-value" id="statPendingReferrals">0</div>
+<div class="stat-label">Pending Referrals</div>
+<div class="stat-change up">Across all patients</div>
+</div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card">
+<div class="card-header">
+<h3>Quick Actions</h3>
+</div>
+<div class="quick-actions">
+<button class="quick-btn" onclick="openConsultModal()">
+<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+Consultation Workspace
+</button>
+<button class="quick-btn" onclick="openConsultModal()">
+<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+New SOAP Note
+</button>
+<button class="quick-btn" onclick="openReferralModal('Pharmacy Referral')">
+<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>
+New Medication
+</button>
+<button class="quick-btn" onclick="openReferralModal()">
+<svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+Create Referral
+</button>
+<button class="quick-btn" onclick="goToSection('records'); setTimeout(()=>document.getElementById('recordsSearch').focus(),80);">
+<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+Patient Visit History
+</button>
+<button class="quick-btn" onclick="goToSection('patients');">
+<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+My Patient List
+</button>
+</div>
+</div>
+
+<!-- Recent Activity -->
+<div class="card">
+<div class="card-header">
+<h3>Recent Activity</h3>
+</div>
+<ul class="activity-list" id="dashActivityList"></ul>
+</div>
+</section>
+
+<!-- ===================== MY PATIENTS ===================== -->
+<section class="section" id="section-patients">
+<div class="page-header">
+<h1>My Patients</h1>
+<p>Today's clinical work queue.</p>
+</div>
+<div class="card">
+<div class="card-header">
+<h3>My Patients Today</h3>
+<div class="filter-bar" id="docFilterBar">
+<button class="filter-btn active" data-filter="All">All</button>
+<button class="filter-btn" data-filter="scheduled">Scheduled</button>
+<button class="filter-btn" data-filter="in-progress">In Progress</button>
+<button class="filter-btn" data-filter="completed">Completed</button>
+</div>
+</div>
+<table class="admin-table">
+<thead>
+<tr>
+<th>Patient</th>
+<th>Service</th>
+<th>Time</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="doctorPatientsBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== REFERRALS ===================== -->
+<section class="section" id="section-referrals">
+<div class="page-header">
+<h1>Referrals</h1>
+<p>Pharmacy, lab, and hospital referrals you've sent.</p>
+</div>
+<div class="card">
+<div class="card-header">
+<h3>Pending Referrals</h3>
+<button class="action-btn outline" onclick="openReferralModal()">+ New</button>
+</div>
+<table class="admin-table">
+<thead>
+<tr>
+<th>Patient</th>
+<th>Type</th>
+<th>Urgency</th>
+<th>Date</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="doctorReferralsBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== MEDICAL RECORDS ===================== -->
+<section class="section" id="section-records">
+<div class="page-header">
+<h1>Medical Records</h1>
+<p>Visit notes and SOAP records on file.</p>
+</div>
+<div class="card" id="recordsCard">
+<div class="card-header">
+<h3>Visit Records</h3>
+<input type="text" class="search-input" id="recordsSearch" placeholder="Search by patient…">
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Patient</th><th>Service</th><th>Note</th><th>Date</th></tr>
+</thead>
+<tbody id="doctorRecordsBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== SETTINGS ===================== -->
+<section class="section" id="section-settings">
+<div class="page-header">
+<h1>Settings</h1>
+<p>Your display preferences for this dashboard.</p>
+</div>
+<div class="card settings-form">
+<div class="card-header">
+<h3>Settings</h3>
+</div>
+<form id="settingsForm">
+<div class="form-group">
+<label class="form-label">Your Display Name</label>
+<input class="form-input" id="settingDisplayName" name="displayName" placeholder="e.g. Doctor">
+</div>
+<button type="submit" class="modal-submit" style="width:auto;padding:0.75rem 1.6rem;">Save Settings</button>
+</form>
+</div>
+</section>
+
+</main>
+</div>
+
+<!-- GENERIC MODAL -->
+<div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close">
+<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+<h3 class="modal-title" id="modalTitle">Title</h3>
+<form id="modalForm"></form>
+</div>
+</div>
+<datalist id="patientList"></datalist>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========================================================
+   SIDEBAR / SECTION SWITCHING (Consultation Workspace opens a modal instead)
+   ======================================================== */
+const VALID_SECTIONS = ['dashboard','patients','referrals','records','settings'];
+document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    goToSection(link.dataset.section);
+  });
+});
+document.getElementById('navConsultWorkspace').addEventListener('click', e => {
+  e.preventDefault();
+  closeMobileSidebar();
+  openConsultModal();
+});
+function goToSection(section){
+  if(location.hash.slice(1) === section){ switchSection(section); return; }
+  location.hash = section;
+}
+function switchSection(section){
+  document.querySelectorAll('.sidebar-link[data-section]').forEach(l => {
+    const isActive = l.dataset.section === section;
+    l.classList.toggle('active', isActive);
+    if(isActive) l.setAttribute('aria-current','page'); else l.removeAttribute('aria-current');
+  });
+  document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === 'section-'+section));
+  document.getElementById('main-content').focus({preventScroll:true});
+  closeMobileSidebar();
+}
+function sectionFromHash(){
+  const s = location.hash.replace('#','');
+  return VALID_SECTIONS.includes(s) ? s : 'dashboard';
+}
+window.addEventListener('hashchange', () => switchSection(sectionFromHash()));
+
+/* ========================================================
+   MOBILE SIDEBAR DRAWER
+   ======================================================== */
+const sidebarEl = document.getElementById('sidebar-doctor');
+const sidebarScrim = document.getElementById('sidebarScrim');
+const navMenuBtn = document.getElementById('navMenuBtn');
+function openMobileSidebar(){
+  sidebarEl.classList.add('open');
+  sidebarScrim.classList.add('open');
+  navMenuBtn.setAttribute('aria-expanded','true');
+}
+function closeMobileSidebar(){
+  sidebarEl.classList.remove('open');
+  sidebarScrim.classList.remove('open');
+  navMenuBtn.setAttribute('aria-expanded','false');
+}
+navMenuBtn.addEventListener('click', () => {
+  sidebarEl.classList.contains('open') ? closeMobileSidebar() : openMobileSidebar();
+});
+sidebarScrim.addEventListener('click', closeMobileSidebar);
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeMobileSidebar(); });
+
+/* TOAST */
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ========================================================
+   EVERWELL SHARED DATA LAYER (same keys across all dashboards)
+   ======================================================== */
+const K = {
+	patients: 'everwell_patients',
+	appointments: 'everwell_appointments',
+	records: 'everwell_medical_records',
+	invoices: 'everwell_invoices',
+	referrals: 'everwell_referrals',
+	activity: 'everwell_admin_activity',
+	settings: 'everwell_clinic_settings'
+};
+function lsGet(key, fallback){ try{ const raw = localStorage.getItem(key); return raw!==null ? JSON.parse(raw) : fallback; }catch(e){ return fallback; } }
+function lsSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function escapeHtml(str){ return String(str==null?'':str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function formatTime(t){ if(!t) return '—'; const [h,m]=t.split(':').map(Number); const period=h>=12?'PM':'AM'; const hr=((h+11)%12)+1; return hr+':'+String(m).padStart(2,'0')+' '+period; }
+function logActivity(text){ const list = lsGet(K.activity, []); list.unshift({text, time:new Date().toISOString()}); lsSet(K.activity, list.slice(0,30)); }
+
+function seedIfEmpty(){
+	if(localStorage.getItem(K.patients) !== null) return;
+	const today = todayStr();
+	lsSet(K.patients, [
+		{id:uid(), name:'Maria Santos', email:'maria.santos@email.com', phone:'0917 123 4567', dob:'1990-04-12', lastVisit:today, allergies:''},
+		{id:uid(), name:'Jose Reyes', email:'jose.reyes@email.com', phone:'0918 234 5678', dob:'1985-11-02', lastVisit:today, allergies:''},
+		{id:uid(), name:'Ana Cruz', email:'ana.cruz@email.com', phone:'0919 345 6789', dob:'1994-06-23', lastVisit:today, allergies:'Sulfa Drugs'},
+		{id:uid(), name:'Pedro Lim', email:'pedro.lim@email.com', phone:'0920 456 7890', dob:'1978-01-15', lastVisit:today, allergies:''},
+		{id:uid(), name:'Lorna Diaz', email:'lorna.diaz@email.com', phone:'0921 567 8901', dob:'1988-09-30', lastVisit:today, allergies:'Penicillin'},
+		{id:uid(), name:'Carlos Tan', email:'carlos.tan@email.com', phone:'0922 678 9012', dob:'1996-03-08', lastVisit:today, allergies:'Latex'},
+		{id:uid(), name:'Ben Torres', email:'ben.torres@email.com', phone:'0923 789 0123', dob:'1982-07-19', lastVisit:today, allergies:''},
+		{id:uid(), name:'Nina Gao', email:'nina.gao@email.com', phone:'0924 890 1234', dob:'1999-12-05', lastVisit:today, allergies:''},
+		{id:uid(), name:'Rosa Vega', email:'rosa.vega@email.com', phone:'0925 901 2345', dob:'1975-02-28', lastVisit:today, allergies:''},
+		{id:uid(), name:'Tomas Yu', email:'tomas.yu@email.com', phone:'0926 012 3456', dob:'1991-10-11', lastVisit:today, allergies:''}
+	]);
+	lsSet(K.appointments, [
+		{id:uid(), patient:'Maria Santos', service:'General Checkup', date:today, time:'09:00', status:'Confirmed', stage:'Checked In', type:'Scheduled'},
+		{id:uid(), patient:'Jose Reyes', service:'Cardiology Consult', date:today, time:'09:45', status:'Confirmed', stage:'In Progress', type:'Scheduled'},
+		{id:uid(), patient:'Ana Cruz', service:'Lab Results Review', date:today, time:'10:30', status:'Pending', stage:'Checked In', type:'Scheduled'},
+		{id:uid(), patient:'Pedro Lim', service:'Pharmacy Pickup', date:today, time:'11:15', status:'Confirmed', stage:'Checked In', type:'Scheduled'},
+		{id:uid(), patient:'Lorna Diaz', service:'OB/GYN Consult', date:today, time:'13:00', status:'Pending', stage:'Triage', type:'Scheduled'},
+		{id:uid(), patient:'Carlos Tan', service:'X-Ray & Imaging', date:today, time:'14:30', status:'Cancelled', stage:'Waiting', type:'Walk-in'},
+		{id:uid(), patient:'Ben Torres', service:'Follow-up', date:today, time:'15:00', status:'Pending', stage:'Waiting', type:'Walk-in'},
+		{id:uid(), patient:'Nina Gao', service:'General Consult', date:today, time:'15:30', status:'Pending', stage:'Waiting', type:'Walk-in'},
+		{id:uid(), patient:'Rosa Vega', service:'Vaccination', date:today, time:'08:45', status:'Confirmed', stage:'Completed', type:'Scheduled'},
+		{id:uid(), patient:'Tomas Yu', service:'Follow-up', date:today, time:'08:30', status:'Confirmed', stage:'Completed', type:'Scheduled'}
+	]);
+	lsSet(K.records, [
+		{id:uid(), patient:'Ana Cruz', note:'Lab results reviewed — cholesterol within normal range.', date:today},
+		{id:uid(), patient:'Maria Santos', note:'Annual physical completed, no concerns noted.', date:today}
+	]);
+	lsSet(K.invoices, [
+		{id:uid(), patient:'Jose Reyes', description:'Cardiology Consult', amount:2500, date:today, status:'Paid'},
+		{id:uid(), patient:'Pedro Lim', description:'Pharmacy Pickup — Losartan 50mg', amount:850, date:today, status:'Paid'},
+		{id:uid(), patient:'Lorna Diaz', description:'OB/GYN Consult', amount:3200, date:today, status:'Unpaid'}
+	]);
+	lsSet(K.referrals, [
+		{id:uid(), patient:'Carlos Tan', type:'Hospital Referral', details:"Referred to partner hospital for advanced imaging.", date:today, status:'Pending'},
+		{id:uid(), patient:'Jose Reyes', type:'Hospital Referral', details:"Referred to partner hospital for a cardiac MRI.", date:today, status:'Completed'},
+		{id:uid(), patient:'Lorna Diaz', type:'Lab Referral', details:"Referred to partner lab for an ultrasound.", date:today, status:'Pending'},
+		{id:uid(), patient:'Ana Cruz', type:'Lab Referral', details:"Referred to partner clinic for dermatology.", date:today, status:'Pending'},
+		{id:uid(), patient:'Lorna Diaz', type:'Pharmacy Referral', details:"Medication: Amoxicillin 500mg, twice daily for 7 days.", date:today, status:'Pending'},
+		{id:uid(), patient:'Maria Santos', type:'Pharmacy Referral', details:"Medication: Losartan 50mg, once daily.", date:today, status:'Completed'}
+	]);
+	lsSet(K.activity, [
+		{text:'<strong>Maria Santos</strong> checked in for her annual physical.', time:new Date(Date.now()-5*60000).toISOString()},
+		{text:'<strong>Dr. Rivera</strong> uploaded lab results for Ana Cruz.', time:new Date(Date.now()-18*60000).toISOString()},
+			{text:'Medication dispensed — <strong>Losartan 50mg</strong>.', time:new Date(Date.now()-32*60000).toISOString()},
+		{text:'<strong>Ana Cruz</strong> scheduled a follow-up for next week.', time:new Date(Date.now()-60*60000).toISOString()},
+		{text:'System backup completed successfully.', time:new Date(Date.now()-120*60000).toISOString()}
+	]);
+}
+function populatePatientDatalist(){
+	document.getElementById('patientList').innerHTML = currentRealPatients.map(p=>`<option value="${escapeHtml(p.name)}">`).join('');
+}
+
+/* ---------------- MODAL ---------------- */
+const modalOverlay = document.getElementById('modalOverlay');
+const modalTitleEl = document.getElementById('modalTitle');
+const modalForm = document.getElementById('modalForm');
+document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', e=>{ if(e.target===modalOverlay) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && modalOverlay.classList.contains('open')) closeModal(); });
+function openModal(title, fieldsHtml, onSubmit){
+	modalTitleEl.textContent = title;
+	modalForm.innerHTML = fieldsHtml + '<button type="submit" class="modal-submit">Save</button>';
+	modalForm.onsubmit = function(e){ e.preventDefault(); onSubmit(new FormData(modalForm)); };
+	modalOverlay.classList.add('open');
+	modalOverlay.setAttribute('aria-hidden','false');
+	const firstInput = modalForm.querySelector('input, select, textarea');
+	if(firstInput) setTimeout(()=>firstInput.focus(), 60);
+}
+function closeModal(){
+	modalOverlay.classList.remove('open');
+	modalOverlay.setAttribute('aria-hidden','true');
+}
+
+/* ---------------- STATUS HELPERS (real appointment.status values) ---------------- */
+function stagePillClass(status){
+	return { 'scheduled':'pending', 'checked-in':'checked-in', 'in-progress':'in-progress', 'completed':'completed', 'cancelled':'pending', 'no-show':'pending' }[status] || 'pending';
+}
+function stageLabel(status){
+	return (status || '').split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+/* ---------------- FILTER STATE ---------------- */
+let currentFilter = 'All';
+document.querySelectorAll('#docFilterBar .filter-btn').forEach(btn=>{
+	btn.addEventListener('click', ()=>{
+		document.querySelectorAll('#docFilterBar .filter-btn').forEach(b=>b.classList.remove('active'));
+		btn.classList.add('active');
+		currentFilter = btn.dataset.filter;
+		renderPatientsTable();
+	});
+});
+let recordsSearch = '';
+document.getElementById('recordsSearch').addEventListener('input', e=>{ recordsSearch = e.target.value; renderRecords(); });
+
+/* ---------------- RENDER ---------------- */
+// ===== REAL DATA (Neon, via /api) =====
+// Referrals are real clinic data — patients, doctors, hospitals, and
+// referrals themselves are fetched live, not from localStorage.
+// (Everything else on this dashboard — patients list elsewhere,
+// medical records, appointments — is still demo data; out of scope
+// for this pass.)
+let currentRealPatients = [];
+let currentRealDoctors = [];
+let currentRealHospitals = [];
+let currentRealReferrals = [];
+let currentRealMedications = [];
+
+async function fetchRealMedications(){
+	try{
+		const res = await fetch('/api/medications');
+		const data = await res.json();
+		currentRealMedications = data.medications || [];
+	}catch(e){
+		console.error('Failed to load medications:', e);
+		currentRealMedications = [];
+	}
+}
+
+async function fetchRealPatients(){
+	try{
+		const res = await fetch('/api/patients');
+		const data = await res.json();
+		currentRealPatients = (data.patients || []).map(p => ({ id: p.patient_id, name: `${p.first_name} ${p.last_name}` }));
+	}catch(e){
+		console.error('Failed to load patients:', e);
+		currentRealPatients = [];
+	}
+}
+
+async function fetchRealDoctors(){
+	try{
+		const res = await fetch('/api/doctors');
+		if(!res.ok) throw new Error(`Request failed: ${res.status}`);
+		const data = await res.json();
+		currentRealDoctors = data.doctors || [];
+	}catch(e){
+		console.error('Failed to load doctors:', e);
+		currentRealDoctors = [];
+	}
+}
+
+async function fetchRealHospitals(){
+	try{
+		const res = await fetch('/api/hospitals');
+		const data = await res.json();
+		currentRealHospitals = data.hospitals || [];
+	}catch(e){
+		console.error('Failed to load hospitals:', e);
+		currentRealHospitals = [];
+	}
+}
+
+async function fetchRealReferrals(){
+	try{
+		const res = await fetch('/api/referrals');
+		const data = await res.json();
+		currentRealReferrals = data.referrals || [];
+	}catch(e){
+		console.error('Failed to load referrals:', e);
+		currentRealReferrals = [];
+	}
+}
+
+// ===== ACTING-AS DOCTOR (no login/session exists yet on this
+// dashboard, so "which doctor is this" is picked here instead —
+// persisted per-browser so it sticks across reloads). Everything
+// scoped to "my patients" (today's queue, dashboard stats) uses
+// this doctor's real appointments. =====
+const ACTIVE_DOCTOR_KEY = 'everwell_active_doctor_id';
+let currentActiveDoctorId = null;
+let currentDoctorAppointments = [];
+
+function getSavedActiveDoctorId(){
+	return localStorage.getItem(ACTIVE_DOCTOR_KEY);
+}
+function setActiveDoctorId(id){
+	currentActiveDoctorId = id;
+	localStorage.setItem(ACTIVE_DOCTOR_KEY, id);
+}
+
+function populateActiveDoctorSelect(){
+	const menu = document.getElementById('doctorMenu');
+	const menuList = document.getElementById('doctorMenuList');
+	const avatar = document.getElementById('navAvatar');
+	const status = document.getElementById('activeDoctorStatus');
+	if(!currentRealDoctors.length){
+		menuList.innerHTML = '<div class="doctor-menu-empty">No doctors available</div>';
+		status.textContent = 'No doctors available';
+		applyDoctorName('Doctor');
+		return;
+	}
+	const saved = getSavedActiveDoctorId();
+	const validSaved = currentRealDoctors.some(d => String(d.user_id) === String(saved));
+	const initial = validSaved ? saved : (currentRealDoctors[0] ? currentRealDoctors[0].user_id : null);
+	if(initial){
+		setActiveDoctorId(initial);
+		const doc = currentRealDoctors.find(d => String(d.user_id) === String(initial));
+		if(doc){
+			applyDoctorName(doc.full_name);
+			status.textContent = `Viewing as ${doc.full_name}`;
+		}
+	}
+	function renderDoctorMenu(){
+		menuList.innerHTML = currentRealDoctors.map(d => {
+			const active = String(d.user_id) === String(currentActiveDoctorId);
+			return `<button type="button" class="doctor-option${active ? ' active' : ''}" role="menuitem" data-doctor-id="${escapeHtml(d.user_id)}"${active ? ' aria-current="true"' : ''}>${escapeHtml(d.full_name)}${active ? '<span class="doctor-option-check" aria-hidden="true">✓</span>' : ''}</button>`;
+		}).join('');
+	}
+	function closeDoctorMenu(){
+		menu.classList.remove('open');
+		avatar.setAttribute('aria-expanded','false');
+	}
+	function openDoctorMenu(){
+		renderDoctorMenu();
+		menu.classList.add('open');
+		avatar.setAttribute('aria-expanded','true');
+	}
+	if(!avatar.dataset.menuReady){
+		avatar.dataset.menuReady = 'true';
+		avatar.addEventListener('click', () => menu.classList.contains('open') ? closeDoctorMenu() : openDoctorMenu());
+		document.addEventListener('click', e => { if(!document.getElementById('doctorSwitcher').contains(e.target)) closeDoctorMenu(); });
+		document.addEventListener('keydown', e => { if(e.key === 'Escape'){ closeDoctorMenu(); avatar.focus(); } });
+	}
+	menuList.onclick = async e => {
+		const option = e.target.closest('.doctor-option');
+		if(!option || option.disabled) return;
+		const selectedId = option.dataset.doctorId;
+		if(String(selectedId) === String(currentActiveDoctorId)){ closeDoctorMenu(); return; }
+		setActiveDoctorId(selectedId);
+		const doc = currentRealDoctors.find(d => String(d.user_id) === String(selectedId));
+		if(doc){
+			applyDoctorName(doc.full_name);
+			status.textContent = `Loading appointments for ${doc.full_name}`;
+		}
+		menuList.querySelectorAll('.doctor-option').forEach(button => button.disabled = true);
+		await Promise.all([fetchDoctorAppointments(), fetchDoctorRecords()]);
+		renderPatientsTable();
+		renderRecords();
+		renderStats();
+		updateBadges();
+		renderDoctorMenu();
+		if(doc) status.textContent = `Viewing as ${doc.full_name}`;
+		closeDoctorMenu();
+		showToast(`Now viewing ${doc ? doc.full_name : 'doctor dashboard'}`, 'success');
+	};
+	renderDoctorMenu();
+}
+
+async function fetchDoctorAppointments(){
+	if(!currentActiveDoctorId){ currentDoctorAppointments = []; return; }
+	try{
+		const res = await fetch(`/api/appointments?doctorId=${encodeURIComponent(currentActiveDoctorId)}`);
+		const data = await res.json();
+		currentDoctorAppointments = data.appointments || [];
+	}catch(e){
+		console.error('Failed to load doctor appointments:', e);
+		currentDoctorAppointments = [];
+	}
+}
+
+let currentDoctorRecords = [];
+
+async function fetchDoctorRecords(){
+	if(!currentActiveDoctorId){ currentDoctorRecords = []; return; }
+	try{
+		const res = await fetch(`/api/medical-records?doctorId=${encodeURIComponent(currentActiveDoctorId)}`);
+		const data = await res.json();
+		currentDoctorRecords = data.records || [];
+	}catch(e){
+		console.error('Failed to load doctor records:', e);
+		currentDoctorRecords = [];
+	}
+}
+
+function renderAll(){
+	renderStats();
+	renderPatientsTable();
+	renderReferralsCard();
+	renderRecords();
+	renderActivity();
+	updateBadges();
+}
+function renderActivity(){
+	const list = lsGet(K.activity, []).slice(0,6);
+	const el = document.getElementById('dashActivityList');
+	el.innerHTML = list.length ? list.map(a=>`
+		<li class="activity-item">
+			<span class="activity-dot"></span>
+			<div>
+				<div class="activity-text">${a.text}</div>
+				<div class="activity-time">${new Date(a.time).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+			</div>
+		</li>
+	`).join('') : `<li class="empty-state">No recent activity.</li>`;
+}
+function updateBadges(){
+	const today = todayStr();
+	const appts = currentDoctorAppointments.filter(a => a.scheduled_at && a.scheduled_at.slice(0,10)===today);
+	document.getElementById('badgePatients').textContent = appts.length;
+	document.getElementById('badgeReferrals').textContent = currentRealReferrals.filter(r=>r.status==='pending').length;
+}
+function renderStats(){
+	const today = todayStr();
+	const appts = currentDoctorAppointments.filter(a => a.scheduled_at && a.scheduled_at.slice(0,10)===today);
+	const ready = appts.filter(a=>a.status==='in-progress');
+
+	document.getElementById('statMyPatients').textContent = appts.length;
+	document.getElementById('statMyPatientsSub').textContent = `${ready.length} ready to see`;
+	document.getElementById('statPendingConsults').textContent = ready.length;
+	const next = ready.slice().sort((a,b)=> new Date(a.scheduled_at) - new Date(b.scheduled_at))[0];
+	document.getElementById('statPendingConsultsSub').textContent = next ? `Next: ${new Date(next.scheduled_at).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})}` : 'Queue is clear';
+	document.getElementById('statRx').textContent = currentRealReferrals.filter(r=>r.referral_type==='Pharmacy Referral' && r.sent_at && r.sent_at.slice(0,10)===today).length;
+	document.getElementById('statPendingReferrals').textContent = currentRealReferrals.filter(r=>r.status==='pending').length;
+}
+function renderPatientsTable(){
+	const today = todayStr();
+	let appts = currentDoctorAppointments.filter(a => a.scheduled_at && a.scheduled_at.slice(0,10)===today)
+		.sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+	if(currentFilter!=='All') appts = appts.filter(a=>a.status===currentFilter);
+	const body = document.getElementById('doctorPatientsBody');
+	body.innerHTML = appts.length ? appts.map(a=>{
+		const dt = new Date(a.scheduled_at);
+		const timeStr = dt.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+		const action = a.status==='in-progress'
+			? `<button class="action-btn" onclick="openConsultModal('${a.appointment_id}')"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Consult</button>`
+			: `<span class="muted-cell">${stageLabel(a.status)}</span>`;
+		return `
+			<tr>
+				<td>${escapeHtml(`${a.patient_first_name} ${a.patient_last_name}`)}</td>
+				<td>${escapeHtml(a.service_name || a.category_name || a.appointment_type || '—')}</td>
+				<td>${timeStr}</td>
+				<td><span class="status-pill ${stagePillClass(a.status)}">${stageLabel(a.status)}</span></td>
+				<td>${action}</td>
+			</tr>`;
+	}).join('') : `<tr><td colspan="5" class="empty-state">No patients match this view.</td></tr>`;
+}
+function renderReferralsCard(){
+	const list = currentRealReferrals.filter(r=>r.status==='pending').sort((a,b)=> new Date(b.created_at) - new Date(a.created_at));
+	const body = document.getElementById('doctorReferralsBody');
+	body.innerHTML = list.length ? list.map(r=>`
+		<tr>
+			<td>${escapeHtml(`${r.patient_first_name} ${r.patient_last_name}`)}</td>
+			<td>${escapeHtml(r.referral_type)}</td>
+			<td>${escapeHtml(r.urgency_level || 'Routine')}</td>
+			<td>${r.created_at ? new Date(r.created_at).toLocaleDateString() : '—'}</td>
+			<td><select class="status-select pending" onchange="updateReferralStatus('${r.referral_id}', this.value)">
+				<option value="pending" selected>Pending</option>
+				<option value="completed">Completed</option>
+			</select></td>
+		</tr>
+	`).join('') : `<tr><td colspan="5" class="empty-state">No pending referrals.</td></tr>`;
+}
+async function updateReferralStatus(referralId, status){
+	try{
+		const res = await fetch('/api/update-referral-status', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({ referralId, status })
+		});
+		if(res.ok){
+			logActivity(`Referral marked <strong>${escapeHtml(status)}</strong>.`);
+			await fetchRealReferrals();
+			renderReferralsCard();
+			updateBadges();
+		} else {
+			const data = await res.json().catch(()=>({}));
+			showToast(data.error || 'Could not update this referral', 'error');
+		}
+	}catch(e){
+		console.error('Update referral status failed:', e);
+		showToast('Something went wrong. Please try again.', 'error');
+	}
+	showToast('Referral updated','success');
+}
+function renderRecords(){
+	let list = currentDoctorRecords.slice();
+	const q = recordsSearch.trim().toLowerCase();
+	if(q) list = list.filter(r => `${r.patient_first_name} ${r.patient_last_name}`.toLowerCase().includes(q));
+	const body = document.getElementById('doctorRecordsBody');
+	body.innerHTML = list.length ? list.map(r=>{
+		const note = r.diagnosis_description || r.assessment || r.subjective || 'No summary recorded';
+		const date = r.created_at ? r.created_at.slice(0,10) : '—';
+		const appt = currentDoctorAppointments.find(a => String(a.appointment_id) === String(r.appointment_id));
+		const service = appt ? (appt.service_name || appt.appointment_type || '—') : '—';
+		return `<tr style="cursor:pointer;" onclick="openRecordDetailModal('${r.record_id}')"><td>${escapeHtml(`${r.patient_first_name} ${r.patient_last_name}`)}</td><td>${escapeHtml(service)}</td><td>${escapeHtml(note)}</td><td>${escapeHtml(date)}</td></tr>`;
+	}).join('') : `<tr><td colspan="4" class="empty-state">No visit records yet.</td></tr>`;
+}
+function openRecordDetailModal(recordId){
+	const r = currentDoctorRecords.find(x => String(x.record_id) === String(recordId));
+	if(!r) return;
+	const appt = currentDoctorAppointments.find(a => String(a.appointment_id) === String(r.appointment_id));
+	const service = appt ? (appt.service_name || appt.appointment_type || '—') : '—';
+	const date = r.created_at ? new Date(r.created_at).toLocaleString() : '—';
+	const vitals = [
+		r.blood_pressure ? `BP ${r.blood_pressure}` : null,
+		r.pulse_rate_bpm ? `HR ${r.pulse_rate_bpm} bpm` : null,
+		r.temperature_celsius ? `Temp ${r.temperature_celsius}°C` : null,
+		r.weight_kg ? `Weight ${r.weight_kg} kg` : null,
+	].filter(Boolean).join(' · ');
+
+	modalTitleEl.textContent = `${r.patient_first_name} ${r.patient_last_name} — ${service}`;
+	modalForm.innerHTML = `
+		<div class="form-group"><label class="form-label">Date</label><div>${escapeHtml(date)}</div></div>
+		${vitals ? `<div class="form-group"><label class="form-label">Vitals at triage</label><div>${escapeHtml(vitals)}</div></div>` : ''}
+		<div class="form-group"><label class="form-label">Subjective</label><div>${escapeHtml(r.subjective || '—')}</div></div>
+		<div class="form-group"><label class="form-label">Objective</label><div>${escapeHtml(r.objective || '—')}</div></div>
+		<div class="form-group"><label class="form-label">Assessment</label><div>${escapeHtml(r.assessment || '—')}</div></div>
+		<div class="form-group"><label class="form-label">Plan</label><div>${escapeHtml(r.plan || '—')}</div></div>
+		${r.diagnosis_description ? `<div class="form-group"><label class="form-label">Diagnosis</label><div>${escapeHtml(r.diagnosis_description)}</div></div>` : ''}
+		<button type="button" class="modal-submit" onclick="closeModal()">Close</button>
+	`;
+	modalForm.onsubmit = function(e){ e.preventDefault(); closeModal(); };
+	modalOverlay.classList.add('open');
+	modalOverlay.setAttribute('aria-hidden','false');
+}
+
+/* ---------------- CONSULTATION ---------------- */
+async function openConsultModal(apptId){
+	// apptId is now a real appointment_id (from the real My Patients
+	// queue) rather than a fake local id, so we look it up from the
+	// real fetched appointments and pull real triage vitals for it.
+	const appt = apptId ? currentDoctorAppointments.find(x => String(x.appointment_id) === String(apptId)) : null;
+	const patientName = appt ? `${appt.patient_first_name} ${appt.patient_last_name}` : '';
+
+	let vitalsHtml = '';
+	if(appt){
+		try{
+			const res = await fetch(`/api/appointment-vitals?appointmentId=${encodeURIComponent(apptId)}`);
+			const data = await res.json();
+			const v = data.vitals;
+			vitalsHtml = v
+				? `<div class="vitals-summary">
+					<div class="form-label" style="margin-bottom:0.5rem;">Vitals from Triage</div>
+					<div class="vitals-grid-display">
+						<span>BP: <strong>${escapeHtml(v.blood_pressure || '—')}</strong></span>
+						<span>HR: <strong>${v.pulse_rate_bpm ?? '—'}</strong> bpm</span>
+						<span>Temp: <strong>${v.temperature_celsius ?? '—'}</strong> °C</span>
+						<span>RR: <strong>${v.respiratory_rate ?? '—'}</strong></span>
+						<span>Weight: <strong>${v.weight_kg ?? '—'}</strong> kg</span>
+						<span>Urgency: <strong>${escapeHtml(v.urgency_level || '—')}</strong></span>
+					</div>
+					${v.chief_complaint ? `<div class="form-hint" style="margin-top:0.5rem;">Chief complaint: ${escapeHtml(v.chief_complaint)}</div>` : ''}
+				</div>`
+				: `<div class="form-hint">No triage vitals recorded yet for this visit.</div>`;
+		}catch(e){
+			console.error('Failed to load vitals:', e);
+			vitalsHtml = `<div class="form-hint">Could not load triage vitals.</div>`;
+		}
+	}
+
+	const patientAppointmentFields = appt
+		? `<div class="form-group"><label class="form-label">Patient</label><input class="form-input" name="patient" required value="${escapeHtml(patientName)}" readonly></div>`
+		: `
+			<div class="form-group"><label class="form-label">Patient</label>
+				<select class="form-select" name="patientId" id="consultPatientSelect" onchange="onConsultPatientChange(this.value)" required><option value="">Select a patient…</option>${currentRealPatients.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')}</select>
+			</div>
+			<div class="form-group"><label class="form-label">Appointment</label>
+				<select class="form-select" name="appointmentId" id="consultAppointmentSelect" required disabled><option value="">Select a patient first…</option></select>
+			</div>
+		`;
+
+	const fields = `
+		${vitalsHtml}
+		${patientAppointmentFields}
+		<div class="form-group"><label class="form-label">Subjective</label><textarea class="form-textarea" name="subjective" placeholder="What the patient reports…"></textarea></div>
+		<div class="form-group"><label class="form-label">Objective</label><textarea class="form-textarea" name="objective" placeholder="Exam findings, vitals summary…"></textarea></div>
+		<div class="form-group"><label class="form-label">Assessment</label><textarea class="form-textarea" name="assessment" required placeholder="Clinical assessment…"></textarea></div>
+		<div class="form-group"><label class="form-label">Plan</label><textarea class="form-textarea" name="plan" placeholder="Treatment plan, follow-up…"></textarea></div>
+		<div class="form-group"><label class="form-label">Diagnosis</label><input class="form-input" name="diagnosis" placeholder="e.g. Acute bronchitis"></div>
+		<div class="form-group"><label class="form-label">Prescribe Medication</label>
+			<select class="form-select" name="rx">
+				<option value="">None</option>
+				${currentRealMedications.map(m => `<option value="${m.medication_id}">${escapeHtml(m.generic_name)}</option>`).join('')}
+			</select>
+		</div>
+		<div class="form-hint">Prescribing from this workspace isn't connected to the pharmacy's records yet — use the pharmacist dashboard directly for now.</div>
+		<div class="form-group"><label class="form-label">Refer Patient</label>
+			<select class="form-select" name="referralType" id="soapReferralType" onchange="document.getElementById('soapReferralExtra').style.display = this.value==='None' ? 'none' : 'block'">
+				<option>None</option>
+				<option>Pharmacy Referral</option>
+				<option>Lab Referral</option>
+				<option>Hospital Referral</option>
+			</select>
+		</div>
+		<div id="soapReferralExtra" style="display:none;">
+			<div class="form-group"><label class="form-label">Destination Facility</label>
+				<select class="form-select" name="hospitalId"><option value="">Select a facility…</option>${currentRealHospitals.map(h => `<option value="${h.hospital_id}">${escapeHtml(h.hospital_name)}</option>`).join('')}</select>
+			</div>
+			<div class="form-group"><label class="form-label">Urgency</label>
+				<select class="form-select" name="urgencyLevel">
+					<option>Routine</option>
+					<option>Urgent</option>
+					<option>Emergency</option>
+				</select>
+			</div>
+			<div class="form-group"><label class="form-label">Reason for Referral</label><textarea class="form-textarea" name="reasonForReferral" placeholder="Clinical reason for this referral…"></textarea></div>
+		</div>
+	`;
+	openModal(appt?`Consult — ${patientName}`:'New SOAP Note', fields, async (fd)=>{
+		const resolvedAppointmentId = appt ? appt.appointment_id : fd.get('appointmentId');
+		const resolvedPatientId = appt ? appt.patient_id : fd.get('patientId');
+		const patient = appt ? patientName : (currentRealPatients.find(p => String(p.id) === String(resolvedPatientId))?.name || '');
+		const subjective = (fd.get('subjective')||'').trim();
+		const objective = (fd.get('objective')||'').trim();
+		const assessment = (fd.get('assessment')||'').trim();
+		const plan = (fd.get('plan')||'').trim();
+		const diagnosis = (fd.get('diagnosis')||'').trim();
+		const rxMedicationId = fd.get('rx');
+		const rxMedication = rxMedicationId ? currentRealMedications.find(m => String(m.medication_id) === String(rxMedicationId)) : null;
+		const rx = rxMedication ? rxMedication.generic_name : '';
+		const referralType = fd.get('referralType');
+		const hospitalId = fd.get('hospitalId');
+		const urgencyLevel = fd.get('urgencyLevel');
+		const reasonForReferral = (fd.get('reasonForReferral')||'').trim();
+		if(!resolvedAppointmentId){
+			showToast('Select a patient and one of their appointments.', 'error');
+			return;
+		}
+		if(!assessment) return;
+		if(referralType && referralType!=='None' && (!hospitalId || !reasonForReferral)){
+			showToast('Select a facility and enter a reason for the referral.', 'error');
+			return;
+		}
+
+		try{
+			const res = await fetch('/api/medical-records', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					appointmentId: resolvedAppointmentId,
+					doctorId: currentActiveDoctorId,
+					subjective: subjective || null,
+					objective: objective || null,
+					assessment,
+					plan: plan || null,
+					diagnosisDescription: diagnosis || null
+				})
+			});
+			const data = await res.json();
+			if(!res.ok){
+				showToast(data.error || 'Could not save this consultation', 'error');
+				return;
+			}
+
+			await fetch('/api/update-appointment-status', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({ appointmentId: resolvedAppointmentId, status: 'completed' })
+			});
+
+			// Prescribing from here still isn't wired to the real
+			// prescriptions table — stays local/demo, same as before.
+			const referrals = lsGet(K.referrals, []);
+			let addedRx = false;
+			if(rx){
+				referrals.push({id:uid(), patient, type:'Pharmacy Referral', details:`Medication: ${rx}`, date:todayStr(), status:'Pending'});
+				addedRx = true;
+			}
+			if(addedRx) lsSet(K.referrals, referrals);
+
+			let addedReferral = false;
+			if(referralType && referralType!=='None'){
+				try{
+					const refRes = await fetch('/api/create-referral', {
+						method: 'POST',
+						headers: {'Content-Type': 'application/json'},
+						body: JSON.stringify({
+							patientId: resolvedPatientId,
+							appointmentId: resolvedAppointmentId,
+							referringDoctorId: currentActiveDoctorId,
+							hospitalId,
+							referralType,
+							reasonForReferral,
+							urgencyLevel
+						})
+					});
+					const refData = await refRes.json();
+					if(refRes.ok){
+						addedReferral = true;
+						await fetchRealReferrals();
+						renderReferralsCard();
+					}else{
+						showToast(refData.error || 'Consultation saved, but the referral could not be created', 'error');
+					}
+				}catch(e){
+					console.error('Create referral failed:', e);
+					showToast('Consultation saved, but the referral could not be created', 'error');
+				}
+			}
+
+			logActivity(`Consultation completed for <strong>${escapeHtml(patient)}</strong>.`);
+			if(addedRx) logActivity(`Medication sent to pharmacy for <strong>${escapeHtml(patient)}</strong>.`);
+			if(addedReferral) logActivity(`New ${referralType.toLowerCase()} created for <strong>${escapeHtml(patient)}</strong>.`);
+
+			closeModal();
+			showToast('Consultation saved','success');
+			await Promise.all([fetchDoctorAppointments(), fetchDoctorRecords()]);
+			renderAll();
+		}catch(e){
+			console.error('Save consultation failed:', e);
+			showToast('Something went wrong. Please try again.', 'error');
+		}
+	});
+}
+function openReferralModal(defaultType){
+	const patientOptions = currentRealPatients.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
+	const doctorOptions = currentRealDoctors.map(d => `<option value="${d.user_id}">${escapeHtml(d.full_name)}</option>`).join('');
+	const hospitalOptions = currentRealHospitals.map(h => `<option value="${h.hospital_id}">${escapeHtml(h.hospital_name)}</option>`).join('');
+	const type = defaultType || 'Pharmacy Referral';
+	const fields = `
+		<div class="form-group"><label class="form-label">Patient</label>
+			<select class="form-select" name="patientId" id="referralPatientSelect" onchange="onReferralPatientChange(this.value)" required><option value="">Select a patient…</option>${patientOptions}</select>
+		</div>
+		<div class="form-group"><label class="form-label">Appointment</label>
+			<select class="form-select" name="appointmentId" id="referralAppointmentSelect" required disabled><option value="">Select a patient first…</option></select>
+		</div>
+		<div class="form-group"><label class="form-label">Referring Doctor</label>
+			<select class="form-select" name="referringDoctorId" required><option value="">Select a doctor…</option>${doctorOptions}</select>
+		</div>
+		<div class="form-group"><label class="form-label">Type</label>
+			<select class="form-select" name="referralType">
+				<option ${type==='Pharmacy Referral'?'selected':''}>Pharmacy Referral</option>
+				<option ${type==='Lab Referral'?'selected':''}>Lab Referral</option>
+				<option ${type==='Hospital Referral'?'selected':''}>Hospital Referral</option>
+			</select>
+		</div>
+		<div class="form-group"><label class="form-label">Destination Facility</label>
+			<select class="form-select" name="hospitalId" required><option value="">Select a facility…</option>${hospitalOptions}</select>
+		</div>
+		<div class="form-group"><label class="form-label">Urgency</label>
+			<select class="form-select" name="urgencyLevel">
+				<option>Routine</option>
+				<option>Urgent</option>
+				<option>Emergency</option>
+			</select>
+		</div>
+		<div class="form-group"><label class="form-label">Reason for Referral</label><textarea class="form-textarea" name="reasonForReferral" required placeholder="Clinical reason for this referral…"></textarea></div>
+	`;
+	openModal('New Referral', fields, async (fd)=>{
+		const patientId = fd.get('patientId');
+		const appointmentId = fd.get('appointmentId');
+		const referringDoctorId = fd.get('referringDoctorId');
+		const hospitalId = fd.get('hospitalId');
+		const referralType = fd.get('referralType');
+		const reasonForReferral = (fd.get('reasonForReferral')||'').trim();
+		const urgencyLevel = fd.get('urgencyLevel');
+		if(!patientId || !appointmentId || !referringDoctorId || !hospitalId || !reasonForReferral){
+			showToast('Select a patient, appointment, doctor, and facility, and enter a reason.', 'error');
+			return;
+		}
+
+		try{
+			const res = await fetch('/api/create-referral', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({ patientId, appointmentId, referringDoctorId, hospitalId, referralType, reasonForReferral, urgencyLevel })
+			});
+			const data = await res.json();
+			if(res.ok){
+				logActivity(`New ${referralType.toLowerCase()} created.`);
+				closeModal();
+				showToast('Referral created','success');
+				await fetchRealReferrals();
+				renderReferralsCard();
+				updateBadges();
+			} else {
+				showToast(data.error || 'Could not create this referral', 'error');
+			}
+		}catch(e){
+			console.error('Create referral failed:', e);
+			showToast('Something went wrong. Please try again.', 'error');
+		}
+	});
+}
+
+async function onConsultPatientChange(patientId){
+	const select = document.getElementById('consultAppointmentSelect');
+	if(!patientId){
+		select.innerHTML = '<option value="">Select a patient first…</option>';
+		select.disabled = true;
+		return;
+	}
+	select.innerHTML = '<option value="">Loading…</option>';
+	select.disabled = true;
+	try{
+		const res = await fetch(`/api/appointments?patientId=${encodeURIComponent(patientId)}&doctorId=${encodeURIComponent(currentActiveDoctorId)}`);
+		const data = await res.json();
+		const appts = data.appointments || [];
+		if(appts.length === 0){
+			select.innerHTML = '<option value="">No appointments with you for this patient</option>';
+			return;
+		}
+		select.innerHTML = '<option value="">Select an appointment…</option>' + appts.map(a => {
+			const dt = new Date(a.scheduled_at);
+			return `<option value="${a.appointment_id}">${dt.toLocaleDateString()} ${dt.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})} — ${escapeHtml(a.service_name || a.appointment_type || 'Visit')} (${escapeHtml(a.status)})</option>`;
+		}).join('');
+		select.disabled = false;
+	}catch(e){
+		console.error('Failed to load appointments:', e);
+		select.innerHTML = '<option value="">Could not load appointments</option>';
+	}
+}
+
+async function onReferralPatientChange(patientId){
+	const select = document.getElementById('referralAppointmentSelect');
+	if(!patientId){
+		select.innerHTML = '<option value="">Select a patient first…</option>';
+		select.disabled = true;
+		return;
+	}
+	select.innerHTML = '<option value="">Loading…</option>';
+	select.disabled = true;
+	try{
+		const res = await fetch(`/api/appointments?patientId=${encodeURIComponent(patientId)}`);
+		const data = await res.json();
+		const appts = data.appointments || [];
+		if(appts.length === 0){
+			select.innerHTML = '<option value="">No appointments for this patient</option>';
+			return;
+		}
+		select.innerHTML = '<option value="">Select an appointment…</option>' + appts.map(a => {
+			const dt = new Date(a.scheduled_at);
+			return `<option value="${a.appointment_id}">${dt.toLocaleDateString()} ${dt.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})} — ${escapeHtml(a.appointment_type || 'Visit')}</option>`;
+		}).join('');
+		select.disabled = false;
+	}catch(e){
+		console.error('Failed to load appointments:', e);
+		select.innerHTML = '<option value="">Could not load appointments</option>';
+	}
+}
+
+/* ---------------- SETTINGS ---------------- */
+const PROFILE_KEY = 'everwell_profile_doctor';
+function applyDoctorName(displayName){
+	document.getElementById('navAvatar').textContent = displayName.trim().charAt(0).toUpperCase() + (displayName.trim().split(' ')[1]?displayName.trim().split(' ')[1].charAt(0).toUpperCase():'');
+	document.getElementById('doctorSubtitle').textContent = `Clinical work queue — ${displayName}. Today's patients and consultation workspace.`;
+}
+function loadSettingsForm(){
+	const s = lsGet(PROFILE_KEY, {displayName:'Doctor'});
+	document.getElementById('settingDisplayName').value = s.displayName;
+	applyDoctorName(s.displayName);
+}
+document.getElementById('settingsForm').addEventListener('submit', e=>{
+	e.preventDefault();
+	const displayName = document.getElementById('settingDisplayName').value.trim() || 'Doctor';
+	lsSet(PROFILE_KEY, {displayName});
+	applyDoctorName(displayName);
+	showToast('Settings saved','success');
+});
+
+/* ---------------- INIT ---------------- */
+seedIfEmpty();
+loadSettingsForm();
+Promise.all([fetchRealPatients(), fetchRealDoctors(), fetchRealHospitals(), fetchRealReferrals(), fetchRealMedications()]).then(async () => {
+	populatePatientDatalist();
+	populateActiveDoctorSelect();
+	await Promise.all([fetchDoctorAppointments(), fetchDoctorRecords()]);
+	renderAll();
+	switchSection(sectionFromHash());
+});
+</script>
+</body>
+</html>

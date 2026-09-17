@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everwell Medical Clinic — Front Desk Dashboard</title>
+<meta name="description" content="Everwell role-specific dashboards for Front Desk, Nurse, Doctor, Pharmacist, and Billing Staff.">
+<meta name="theme-color" content="#16211A">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg: #F1F3EC;
+--bg-soft: #E7ECE1;
+--cream: #FAF8F3;
+--ink: #1E2A22;
+--ink-soft: #4A554C;
+--sage: #4F6B57;
+--sage-light: #8AA491;
+--sage-deep: #16211A;
+--clay: #DCCAB3;
+--gold: #B99B67;
+--line: rgba(30,42,34,0.12);
+--radius-sm: 8px;
+--radius-md: 18px;
+--radius-lg: 22px;
+--radius-xl: 100px;
+--transition-fast: 0.2s ease;
+--transition-med: 0.35s ease;
+--shadow-sm: 0 2px 8px rgba(22,33,26,0.06);
+--shadow-md: 0 8px 24px rgba(22,33,26,0.1);
+--shadow-lg: 0 16px 48px rgba(22,33,26,0.14);
+--focus-ring: 0 0 0 3px rgba(79,107,87,0.45);
+--danger: #8B2E2E;
+--danger-light: #C25A5A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+[id]{scroll-margin-top:80px;}
+body{
+background:var(--bg);
+color:var(--ink);
+font-family:'Instrument Sans',sans-serif;
+font-weight:400;
+min-height:100vh;
+}
+a{color:inherit;text-decoration:none;}
+
+/* NAV */
+.admin-nav{
+position:fixed;top:0;left:0;width:100%;z-index:100;
+background:var(--sage-deep);
+display:flex;align-items:center;justify-content:space-between;
+padding:1.2rem 4vw;
+height:60px;
+}
+.nav-left{display:flex;align-items:center;gap:2rem;}
+.nav-menu-btn{
+display:none;align-items:center;justify-content:center;
+width:36px;height:36px;border-radius:8px;
+background:transparent;border:1px solid rgba(250,248,243,0.2);
+color:var(--cream);cursor:pointer;
+transition:background .25s;
+}
+.nav-menu-btn:hover{background:rgba(250,248,243,0.08);}
+.nav-menu-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;}
+.nav-mark{
+font-family:'Fraunces',serif;font-size:1.4rem;font-weight:500;
+letter-spacing:-0.015em;color:var(--cream);
+}
+.nav-mark em{font-style:italic;font-weight:400;color:var(--sage-light);}
+.nav-brand-sep{width:1px;height:20px;background:rgba(250,248,243,0.2);}
+.nav-label{font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(250,248,243,0.55);font-weight:500;}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.nav-avatar{
+width:32px;height:32px;border-radius:50%;
+background:var(--sage);color:var(--cream);
+display:flex;align-items:center;justify-content:center;
+font-size:0.78rem;font-weight:500;
+cursor:pointer;
+}
+.nav-logout{
+font-size:0.82rem;color:rgba(250,248,243,0.5);
+transition:color .3s;
+}
+.nav-logout:hover{color:var(--cream);}
+
+
+/* LAYOUT */
+.admin-body{
+display:flex;
+padding-top:60px;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:240px;
+background:var(--cream);
+border-right:1px solid var(--line);
+position:fixed;top:60px;bottom:0;left:0;
+padding:1rem 0;
+overflow-y:auto;
+z-index:50;
+}
+.sidebar-section{margin-bottom:1.6rem;}
+.sidebar-label{
+font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;
+color:var(--ink-soft);opacity:0.55;font-weight:500;
+padding:0 1.2rem;margin-bottom:0.6rem;
+}
+.sidebar-link{
+display:flex;align-items:center;gap:0.75rem;
+padding:0.6rem 1.2rem;
+font-size:0.85rem;color:var(--ink-soft);
+transition:color .3s, background .3s;
+border-left:2px solid transparent;
+}
+.sidebar-link:hover{color:var(--sage-deep);background:rgba(30,42,34,0.03);}
+.sidebar-link.active{
+color:var(--sage-deep);font-weight:500;
+background:rgba(79,107,87,0.08);
+border-left-color:var(--sage);
+}
+.sidebar-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sidebar-badge{
+margin-left:auto;
+font-size:0.68rem;font-weight:600;
+background:var(--sage-deep);color:var(--cream);
+padding:0.15rem 0.5rem;border-radius:100px;
+}
+
+/* MAIN CONTENT */
+.admin-main{
+margin-left:240px;flex:1;
+padding:2rem 2.4rem;
+}
+.admin-main:focus{outline:none;}
+
+/* SECTIONS (one page at a time) */
+.section{display:none;}
+.section.active{display:block;}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:2rem;}
+.page-header h1{
+font-family:'Fraunces',serif;font-weight:400;
+font-size:1.8rem;color:var(--sage-deep);letter-spacing:-0.01em;
+}
+.page-header p{font-size:0.88rem;color:var(--ink-soft);margin-top:0.3rem;}
+
+/* STAT CARDS */
+.stats-row{
+display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;
+margin-bottom:2.4rem;
+}
+.stat-card{
+background:var(--cream);
+border:1px solid var(--line);
+border-radius:var(--radius-md);
+padding:1.4rem;
+}
+.stat-card .stat-icon{
+width:36px;height:36px;border-radius:50%;
+background:var(--bg-soft);
+display:flex;align-items:center;justify-content:center;
+margin-bottom:0.8rem;
+}
+.stat-card .stat-icon svg{width:18px;height:18px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.stat-card .stat-value{
+font-family:'Fraunces',serif;font-size:1.8rem;color:var(--sage-deep);
+}
+.stat-card .stat-label{
+font-size:0.78rem;color:var(--ink-soft);margin-top:0.2rem;
+}
+.stat-card .stat-change{
+font-size:0.72rem;margin-top:0.4rem;
+}
+.stat-card .stat-change.up{color:var(--sage);}
+.stat-card .stat-change.down{color:var(--danger-light);}
+
+/* CARDS */
+.card{
+background:var(--cream);
+border:1px solid var(--line);
+border-radius:var(--radius-md);
+padding:1.6rem;
+margin-bottom:1.6rem;
+}
+.card-header{
+display:flex;align-items:center;justify-content:space-between;
+margin-bottom:1.2rem;
+}
+.card-header h3{
+font-family:'Fraunces',serif;font-weight:500;font-size:1.08rem;color:var(--sage-deep);
+}
+.card-header .card-action{
+font-size:0.8rem;color:var(--sage);transition:color .3s;
+}
+.card-header .card-action:hover{color:var(--sage-deep);}
+
+/* TABLE */
+.admin-table{width:100%;border-collapse:collapse;}
+.admin-table th{
+font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
+color:var(--ink-soft);opacity:0.7;font-weight:500;
+text-align:left;padding:0.7rem 0.8rem;border-bottom:1px solid var(--line);
+}
+.admin-table td{
+padding:0.8rem 0.8rem;font-size:0.85rem;color:var(--ink);
+border-bottom:1px solid var(--line);
+}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:rgba(30,42,34,0.02);}
+
+/* STATUS PILLS */
+.status-pill{
+display:inline-block;font-size:0.72rem;font-weight:500;
+padding:0.2rem 0.6rem;border-radius:100px;
+}
+.status-pill.confirmed{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.pending{background:rgba(185,155,103,0.15);color:var(--gold);}
+.status-pill.cancelled{background:rgba(139,46,46,0.1);color:var(--danger-light);}
+.status-pill.checked-in{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.triage{background:rgba(185,155,103,0.15);color:var(--gold);}
+.status-pill.in-progress{background:rgba(139,46,46,0.1);color:var(--danger-light);}
+.status-pill.completed{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.unpaid{background:rgba(139,46,46,0.1);color:var(--danger-light);}
+.status-pill.partial{background:rgba(185,155,103,0.15);color:var(--gold);}
+.status-pill.paid{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.flagged{background:rgba(139,46,46,0.15);color:var(--danger);}
+.status-pill.validated{background:rgba(79,107,87,0.1);color:var(--sage);}
+
+/* ACTION BUTTONS */
+.action-btn{
+display:inline-flex;align-items:center;gap:0.35rem;
+padding:0.3rem 0.7rem;
+background:var(--sage);color:var(--cream);
+border:none;border-radius:var(--radius-sm);
+font-size:0.72rem;font-weight:500;cursor:pointer;
+transition:background .3s;
+}
+.action-btn:hover{background:var(--sage-deep);}
+.action-btn.outline{
+background:transparent;color:var(--sage);
+border:1px solid var(--sage);
+}
+.action-btn.outline:hover{background:rgba(79,107,87,0.08);}
+.action-btn.danger{background:var(--danger);}
+.action-btn.danger:hover{background:#6b2222;}
+.action-btn svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+
+/* SEARCH BAR */
+.search-bar{
+display:flex;align-items:center;gap:0.6rem;
+padding:0.7rem 1rem;
+background:var(--cream);border:1px solid var(--line);
+border-radius:var(--radius-md);
+margin-bottom:1.6rem;
+}
+.search-bar input{
+border:none;outline:none;background:transparent;
+font-size:0.88rem;color:var(--ink);flex:1;
+font-family:'Instrument Sans',sans-serif;
+}
+.search-bar input::placeholder{color:var(--ink-soft);opacity:0.5;}
+.search-bar svg{width:18px;height:18px;stroke:var(--ink-soft);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* QUEUE BOARD */
+.queue-board{
+display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;
+margin-bottom:1.6rem;
+}
+.queue-column{
+background:var(--cream);border:1px solid var(--line);
+border-radius:var(--radius-md);padding:1rem;
+}
+.queue-column h4{
+font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
+color:var(--ink-soft);font-weight:500;margin-bottom:0.8rem;
+padding-bottom:0.5rem;border-bottom:1px solid var(--line);
+}
+.queue-card{
+padding:0.7rem 0.8rem;margin-bottom:0.5rem;
+background:var(--bg-soft);border-radius:var(--radius-sm);
+font-size:0.8rem;
+}
+.queue-card:last-child{margin-bottom:0;}
+.queue-card .qc-name{font-weight:500;color:var(--sage-deep);}
+.queue-card .qc-service{font-size:0.72rem;color:var(--ink-soft);margin-top:0.15rem;}
+.queue-card .qc-time{font-size:0.68rem;color:var(--ink-soft);opacity:0.6;margin-top:0.2rem;}
+
+/* ALLERGY BANNER */
+.allergy-banner{
+background:rgba(139,46,46,0.08);border:1px solid rgba(139,46,46,0.2);
+border-radius:var(--radius-sm);
+padding:0.8rem 1rem;margin-bottom:1rem;
+display:flex;align-items:center;gap:0.6rem;
+}
+.allergy-banner svg{width:16px;height:16px;stroke:var(--danger);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.allergy-banner span{font-size:0.82rem;color:var(--danger);}
+.allergy-banner strong{font-weight:600;}
+
+/* ALERT STRIP */
+.alert-strip{
+background:rgba(185,155,103,0.1);border:1px solid rgba(185,155,103,0.25);
+border-radius:var(--radius-sm);
+padding:0.8rem 1rem;margin-bottom:1rem;
+display:flex;align-items:center;gap:0.6rem;
+}
+.alert-strip svg{width:16px;height:16px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.alert-strip span{font-size:0.82rem;color:var(--gold);}
+.alert-strip strong{font-weight:600;}
+
+/* GRID LAYOUT */
+.content-grid{
+display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;
+}
+.content-grid-3{
+display:grid;grid-template-columns:2fr 1fr;gap:1.6rem;
+}
+
+/* QUICK ACTIONS */
+.quick-actions{
+display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;
+}
+.quick-btn{
+display:flex;align-items:center;gap:0.6rem;
+padding:0.9rem 1rem;
+background:var(--bg-soft);
+border:1px solid var(--line);
+border-radius:var(--radius-sm);
+font-size:0.82rem;color:var(--ink);
+cursor:pointer;
+transition:background .3s, border-color .3s;
+}
+.quick-btn:hover{background:var(--cream);border-color:var(--sage-light);}
+.quick-btn svg{width:16px;height:16px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* ACTIVITY */
+.activity-list{list-style:none;}
+.activity-item{
+display:flex;align-items:flex-start;gap:0.8rem;
+padding:0.7rem 0;
+border-bottom:1px solid var(--line);
+}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{
+width:8px;height:8px;border-radius:50%;
+background:var(--sage);flex-shrink:0;margin-top:0.35rem;
+}
+.activity-text{font-size:0.82rem;color:var(--ink);line-height:1.5;}
+.activity-time{font-size:0.72rem;color:var(--ink-soft);opacity:0.6;margin-top:0.15rem;}
+
+/* TOAST */
+.toast{
+position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);
+background:var(--sage-deep);color:var(--cream);
+padding:0.9rem 1.8rem;border-radius:var(--radius-xl);
+font-size:0.85rem;font-weight:500;
+box-shadow:var(--shadow-lg);
+opacity:0;pointer-events:none;
+transition:transform 0.4s ease, opacity 0.4s ease;
+z-index:200;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.toast.error{background:#8B2E2E;}
+.toast.success{background:var(--sage);}
+
+/* FILTER BAR */
+.filter-bar{
+display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem;flex-wrap:wrap;
+}
+.filter-btn{
+padding:0.35rem 0.8rem;border-radius:100px;
+font-size:0.75rem;font-weight:500;
+background:var(--bg-soft);color:var(--ink-soft);
+border:1px solid var(--line);cursor:pointer;
+transition:background .3s, color .3s;
+}
+.filter-btn.active{background:var(--sage-deep);color:var(--cream);border-color:var(--sage-deep);}
+.filter-btn:hover{border-color:var(--sage);}
+.card-header .filter-bar{margin-bottom:0;}
+
+/* DRUG ALERT */
+.drug-alert{
+background:rgba(139,46,46,0.08);border:1px solid rgba(139,46,46,0.2);
+border-radius:var(--radius-sm);
+padding:0.9rem 1rem;margin-bottom:0.8rem;
+}
+.drug-alert h5{font-size:0.82rem;color:var(--danger);margin-bottom:0.3rem;font-weight:600;}
+.drug-alert p{font-size:0.78rem;color:var(--ink-soft);line-height:1.4;}
+
+/* COLLECTION BAR */
+.collection-bar{
+display:flex;align-items:center;gap:0.8rem;
+padding:1rem 1.2rem;background:var(--bg-soft);
+border-radius:var(--radius-sm);margin-bottom:0.8rem;
+}
+.collection-bar .cb-label{font-size:0.78rem;color:var(--ink-soft);min-width:120px;}
+.collection-bar .cb-amount{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--sage-deep);}
+
+/* MOBILE */
+@media(max-width:980px){
+.stats-row{grid-template-columns:repeat(2,1fr);}
+.content-grid,.content-grid-3{grid-template-columns:1fr;}
+.queue-board{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:760px){
+.sidebar{
+transform:translateX(-100%);
+transition:transform var(--transition-med);
+box-shadow:var(--shadow-lg);
+}
+.sidebar.open{transform:translateX(0);}
+.sidebar-scrim{
+position:fixed;inset:60px 0 0 0;z-index:49;
+background:rgba(22,33,26,0.4);
+opacity:0;pointer-events:none;transition:opacity var(--transition-med);
+}
+.sidebar-scrim.open{opacity:1;pointer-events:auto;}
+.nav-menu-btn{display:inline-flex;}
+.admin-main{margin-left:0;padding:1.4rem 1.2rem;}
+.stats-row{grid-template-columns:1fr 1fr;}
+.queue-board{grid-template-columns:1fr;}
+.sidebar-link{padding:0.8rem 1.2rem;}
+}
+
+/* ===== SPLASH / PRELOADER ===== */
+.preloader{
+position:fixed;inset:0;z-index:2000;
+background:var(--sage-deep);
+display:flex;align-items:center;justify-content:center;
+transition:transform .8s cubic-bezier(.65,0,.35,1);
+}
+.preloader-mark{
+font-family:'Fraunces',serif;font-size:2rem;color:var(--cream);
+letter-spacing:-0.01em;overflow:hidden;
+}
+.preloader-mark span{
+display:inline-block;
+opacity:0;
+transform:translateY(100%);
+animation:letterUp .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes letterUp{
+to{opacity:1;transform:translateY(0);}
+}
+.preloader.done{transform:translateY(-100%);}
+@media (prefers-reduced-motion: reduce){
+.preloader-mark span{animation-duration:.01ms !important;}
+}
+
+/* ===== FUNCTIONAL UI ADD-ONS ===== */
+.icon-btn{
+background:none;border:none;cursor:pointer;color:var(--ink-soft);
+padding:0.35rem;border-radius:6px;
+transition:color .2s, background .2s;
+display:inline-flex;
+}
+.icon-btn:hover{color:var(--sage-deep);background:rgba(30,42,34,0.06);}
+.icon-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.status-select{
+font-size:0.72rem;font-weight:500;border-radius:100px;
+padding:0.25rem 1.4rem 0.25rem 0.65rem;
+border:1px solid var(--line);cursor:pointer;
+appearance:none;-webkit-appearance:none;
+background-repeat:no-repeat;background-position:right 0.5rem center;background-size:9px;
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A554C' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+}
+.status-select.checked-in, .status-select.confirmed, .status-select.completed{background-color:rgba(79,107,87,0.1);color:var(--sage);}
+.status-select.triage, .status-select.pending{background-color:rgba(185,155,103,0.15);color:var(--gold);}
+.status-select.in-progress, .status-select.cancelled{background-color:rgba(139,46,46,0.1);color:var(--danger-light);}
+.empty-state{padding:2rem 1rem;text-align:center;color:var(--ink-soft);font-size:0.85rem;}
+
+.modal-overlay{
+position:fixed;inset:0;z-index:800;
+background:rgba(22,33,26,0.55);backdrop-filter:blur(3px);
+display:flex;align-items:center;justify-content:center;padding:2rem;
+opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+.modal-box{
+position:relative;background:var(--cream);border-radius:var(--radius-lg);
+padding:2rem 2rem 1.8rem;width:100%;max-width:440px;
+box-shadow:var(--shadow-lg);
+transform:translateY(14px) scale(.98);transition:transform .3s ease;
+max-height:88vh;overflow-y:auto;
+}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1);}
+.modal-close{
+position:absolute;top:1rem;right:1rem;width:30px;height:30px;border-radius:50%;
+border:1px solid var(--line);background:transparent;color:var(--ink-soft);
+display:flex;align-items:center;justify-content:center;cursor:pointer;
+transition:background .2s, color .2s;
+}
+.modal-close:hover{background:var(--sage-deep);color:var(--cream);border-color:var(--sage-deep);}
+.modal-close svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+.modal-title{font-family:'Fraunces',serif;font-weight:500;font-size:1.3rem;color:var(--sage-deep);margin-bottom:1.3rem;}
+.form-group{margin-bottom:1rem;}
+.form-label{display:block;font-size:0.76rem;font-weight:500;color:var(--ink-soft);margin-bottom:0.4rem;}
+.form-input, .form-select, .form-textarea{
+width:100%;padding:0.65rem 0.85rem;border-radius:var(--radius-sm);
+border:1px solid var(--line);background:var(--bg-soft);
+font-size:0.85rem;color:var(--ink);outline:none;font-family:inherit;
+transition:border-color .2s, box-shadow .2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus{border-color:var(--sage);box-shadow:var(--focus-ring);}
+.form-textarea{resize:vertical;min-height:76px;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+.modal-submit{width:100%;margin-top:0.5rem;padding:0.8rem;border:none;border-radius:var(--radius-xl);background:var(--sage-deep);color:var(--cream);font-size:0.88rem;font-weight:500;cursor:pointer;transition:background .25s;}
+.modal-submit:hover{background:var(--sage);}
+.search-input{
+width:100%;max-width:260px;
+padding:0.6rem 0.9rem;border-radius:var(--radius-sm);
+border:1px solid var(--line);background:var(--cream);
+font-size:0.85rem;color:var(--ink);outline:none;
+}
+.search-input:focus{border-color:var(--sage);box-shadow:var(--focus-ring);}
+.settings-form{max-width:520px;}
+</style>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+<div class="preloader-mark" id="preloaderMark">Everwell</div>
+</div>
+<script>
+(function(){
+var preloader = document.getElementById('preloader');
+var mark = document.getElementById('preloaderMark');
+var text = mark.textContent;
+mark.innerHTML = text.split('').map(function(ch,i){return '<span style="animation-delay:'+(0.15+i*0.025)+'s">'+(ch===' '?'&nbsp;':ch)+'</span>';}).join('');
+var dismissed = false;
+function dismissPreloader(){
+if(dismissed) return;
+dismissed = true;
+preloader.classList.add('done');
+setTimeout(function(){ preloader.remove(); }, 500);
+}
+setTimeout(dismissPreloader, 800);
+})();
+</script>
+
+<!-- NAV -->
+<nav class="admin-nav">
+<div class="nav-left">
+<button type="button" class="nav-menu-btn" id="navMenuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar-frontdesk">
+<svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+</button>
+<span class="nav-mark">Ever<em>well</em></span>
+<span class="nav-brand-sep"></span>
+<span class="nav-label" id="navRoleLabel">Front Desk</span>
+</div>
+<div class="nav-right">
+<div class="nav-avatar" id="navAvatar" title="Front Desk">FD</div>
+<a href="homepage.html" class="nav-logout">Log Out</a>
+</div>
+</nav>
+
+<div class="admin-body">
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+
+<aside class="sidebar" id="sidebar-frontdesk" role="navigation" aria-label="Front desk sections">
+<div class="sidebar-section">
+<div class="sidebar-label">Navigation</div>
+<a href="#" class="sidebar-link active" data-section="dashboard">
+<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+Dashboard
+</a>
+<a href="#" class="sidebar-link" data-section="patients">
+<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+Patients
+<span class="sidebar-badge" id="badgePatients">0</span>
+</a>
+<a href="#" class="sidebar-link" data-section="appointments">
+<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+Appointments
+<span class="sidebar-badge" id="badgeAppts">0</span>
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">Logistics</div>
+<a href="#" class="sidebar-link" data-section="referrals">
+<svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+Referrals
+<span class="sidebar-badge" id="badgeReferrals">0</span>
+</a>
+<a href="#" class="sidebar-link" data-section="appointments" id="navPatientSearch">
+<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+Patient Search
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">System</div>
+<a href="#" class="sidebar-link" data-section="settings">
+<svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+Settings
+</a>
+</div>
+</aside>
+
+<!-- MAIN CONTENT AREA -->
+<main class="admin-main" id="main-content" tabindex="-1">
+
+<!-- ===================== DASHBOARD ===================== -->
+<section class="section active" id="section-dashboard">
+<div class="page-header">
+<h1>Front Desk Dashboard</h1>
+<p>Today's appointments, patient check-in, and queue management.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-row">
+<div class="stat-card">
+<div class="stat-icon">
+<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+</div>
+<div class="stat-value" id="statToday">0</div>
+<div class="stat-label">Today's Appointments</div>
+<div class="stat-change up" id="statTodaySub">—</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">
+<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+</div>
+<div class="stat-value" id="statCheckedIn">0</div>
+<div class="stat-label">Checked In</div>
+<div class="stat-change up" id="statCheckedInSub">—</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">
+<svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+</div>
+<div class="stat-value" id="statPendingCheckin">0</div>
+<div class="stat-label">Pending Check-In</div>
+<div class="stat-change down" id="statPendingCheckinSub">—</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">
+<svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></svg>
+</div>
+<div class="stat-value" id="statPendingReferrals">0</div>
+<div class="stat-label">Pending Referrals</div>
+<div class="stat-change up">Across all patients</div>
+</div>
+</div>
+
+<!-- Queue Status Board -->
+<div class="card">
+<div class="card-header">
+<h3>Queue / Status Board</h3>
+<button type="button" class="card-action" style="background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:0.35rem;" onclick="renderAll()">
+<svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.13-3.36L23 10M1 14l5.36 4.36A9 9 0 0020.49 15"/></svg>
+Refresh
+</button>
+</div>
+<div class="queue-board" id="queueBoard"></div>
+</div>
+</section>
+
+<!-- ===================== PATIENTS ===================== -->
+<section class="section" id="section-patients">
+<div class="page-header">
+<h1>Patients</h1>
+<p>Registered patients and their records on file.</p>
+</div>
+<div class="card">
+<div class="card-header">
+<h3>Patients</h3>
+<div style="display:flex; align-items:center; gap:0.6rem;">
+<input type="text" class="search-input" id="fdPatientSearch" placeholder="Search patients…">
+<button class="action-btn" onclick="openPatientModal()">
+<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Add Patient
+</button>
+</div>
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Name</th><th>Email</th><th>Phone</th><th>Allergies</th></tr>
+</thead>
+<tbody id="fdPatientsBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== APPOINTMENTS ===================== -->
+<section class="section" id="section-appointments">
+<div class="page-header">
+<h1>Appointments</h1>
+<p>View all appointments, filter today’s schedule, and manage patient visits.</p>
+</div>
+
+<!-- Search Bar -->
+<div class="search-bar">
+<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+<input type="text" id="fdSearch" placeholder="Search appointments by patient or service...">
+</div>
+
+<div class="card">
+<div class="card-header">
+<h3>All Appointments</h3>
+<div style="display:flex; align-items:center; gap:0.6rem;">
+<div class="filter-bar" id="fdFilterBar">
+<button class="filter-btn active" data-filter="All">All statuses</button>
+<button class="filter-btn" data-filter="Today">Today</button>
+<button class="filter-btn" data-filter="Waiting">Pending Check-In</button>
+<button class="filter-btn" data-filter="Completed">Completed</button>
+</div>
+<button class="action-btn" onclick="openAppointmentModal()">
+<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> Book
+</button>
+</div>
+</div>
+<table class="admin-table">
+<thead>
+<tr>
+<th>Patient</th>
+<th>Service</th>
+<th>Time</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="fdAppointmentsBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== REFERRALS ===================== -->
+<section class="section" id="section-referrals">
+<div class="page-header">
+<h1>Referral Logistics</h1>
+<p>Pharmacy, lab, and hospital referrals for patients.</p>
+</div>
+<div class="card">
+<div class="card-header">
+<h3>Referral Logistics</h3>
+</div>
+<table class="admin-table">
+<thead>
+<tr>
+<th>Patient</th>
+<th>Type</th>
+<th>Reason</th>
+<th>Hospital</th>
+<th>Urgency</th>
+<th>Date</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="fdReferralsBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== SETTINGS ===================== -->
+<section class="section" id="section-settings">
+<div class="page-header">
+<h1>Settings</h1>
+<p>Your front desk profile preferences.</p>
+</div>
+<div class="card settings-form">
+<div class="card-header">
+<h3>Settings</h3>
+</div>
+<form id="settingsForm">
+<div class="form-group">
+<label class="form-label">Your Display Name</label>
+<input class="form-input" id="settingDisplayName" name="displayName" placeholder="e.g. Front Desk Staff">
+</div>
+<button type="submit" class="modal-submit" style="width:auto;padding:0.75rem 1.6rem;">Save Settings</button>
+</form>
+</div>
+</section>
+
+<!-- GENERIC MODAL -->
+<div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close">
+<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+<h3 class="modal-title" id="modalTitle">Title</h3>
+<form id="modalForm"></form>
+</div>
+</div>
+<datalist id="patientList"></datalist>
+
+</main>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* SIDEBAR — each link shows its own page/section; Patient Search jumps to
+   Appointments and focuses the search box */
+const VALID_SECTIONS = ['dashboard','patients','appointments','referrals','settings'];
+document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    goToSection(link.dataset.section);
+    if (link.id === 'navPatientSearch') {
+      setTimeout(() => document.getElementById('fdSearch').focus(), 350);
+    }
+  });
+});
+function goToSection(section){
+  if(location.hash.slice(1) === section){ switchSection(section); return; }
+  location.hash = section;
+}
+function switchSection(section){
+  document.querySelectorAll('.sidebar-link[data-section]').forEach(l=>{
+    const isActive = l.dataset.section === section;
+    l.classList.toggle('active', isActive);
+    if(isActive) l.setAttribute('aria-current','page'); else l.removeAttribute('aria-current');
+  });
+  document.querySelectorAll('.section').forEach(s=> s.classList.toggle('active', s.id === 'section-'+section));
+  document.getElementById('main-content').focus({preventScroll:true});
+  closeMobileSidebar();
+}
+function sectionFromHash(){
+  const s = location.hash.replace('#','');
+  return VALID_SECTIONS.includes(s) ? s : 'dashboard';
+}
+window.addEventListener('hashchange', ()=> switchSection(sectionFromHash()));
+
+/* MOBILE SIDEBAR DRAWER */
+const sidebarEl = document.getElementById('sidebar-frontdesk');
+const sidebarScrim = document.getElementById('sidebarScrim');
+const navMenuBtn = document.getElementById('navMenuBtn');
+function openMobileSidebar(){
+  sidebarEl.classList.add('open');
+  sidebarScrim.classList.add('open');
+  navMenuBtn.setAttribute('aria-expanded','true');
+}
+function closeMobileSidebar(){
+  sidebarEl.classList.remove('open');
+  sidebarScrim.classList.remove('open');
+  navMenuBtn.setAttribute('aria-expanded','false');
+}
+navMenuBtn.addEventListener('click', ()=>{
+  sidebarEl.classList.contains('open') ? closeMobileSidebar() : openMobileSidebar();
+});
+sidebarScrim.addEventListener('click', closeMobileSidebar);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeMobileSidebar(); });
+
+/* TOAST */
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ========================================================
+   EVERWELL SHARED DATA LAYER (localStorage) — same keys as
+   the other Everwell dashboards, so records made here show
+   up system-wide.
+   ======================================================== */
+const K = {
+	patients: 'everwell_patients',
+	appointments: 'everwell_appointments',
+	records: 'everwell_medical_records',
+	invoices: 'everwell_invoices',
+	referrals: 'everwell_referrals',
+	activity: 'everwell_admin_activity',
+	settings: 'everwell_clinic_settings'
+};
+function lsGet(key, fallback){ try{ const raw = localStorage.getItem(key); return raw!==null ? JSON.parse(raw) : fallback; }catch(e){ return fallback; } }
+function lsSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function escapeHtml(str){ return String(str==null?'':str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function formatClinicDateTime(isoString){
+	if(!isoString) return {date:'—', time:'—'};
+	// The appointments API stores the clinic clock value in the timestamp
+	// fields. Read its calendar components directly instead of converting
+	// through the browser timezone (which would add eight hours again).
+	const raw = String(isoString);
+	const datePart = raw.slice(0,10);
+	const timePart = raw.slice(11,16);
+	if(/^\d{4}-\d{2}-\d{2}$/.test(datePart) && /^\d{2}:\d{2}$/.test(timePart)){
+		const [year, month, day] = datePart.split('-').map(Number);
+		const [hour24, minute] = timePart.split(':').map(Number);
+		const hour = hour24 % 12 || 12;
+		return {date:`${month}/${day}/${year}`, time:`${hour}:${String(minute).padStart(2,'0')} ${hour24 >= 12 ? 'PM' : 'AM'}`};
+	}
+	const dt = new Date(isoString);
+	return {
+		date: dt.toLocaleDateString('en-US', {timeZone:'Asia/Manila'}),
+		time: dt.toLocaleTimeString('en-US', {timeZone:'Asia/Manila', hour:'numeric', minute:'2-digit'})
+	};
+}
+function formatTime(isoString){ return formatClinicDateTime(isoString).time; }
+function clinicDateTime(date, time){
+	// The booking API expects the clinic-local clock value without a
+	// timezone suffix; adding an offset causes it to be converted twice.
+	return `${date}T${time}:00`;
+}
+function logActivity(text){ const list = lsGet(K.activity, []); list.unshift({text, time:new Date().toISOString()}); lsSet(K.activity, list.slice(0,30)); }
+
+function seedIfEmpty(){
+	if(localStorage.getItem(K.patients) !== null) return;
+	const today = todayStr();
+	lsSet(K.patients, [
+		{id:uid(), name:'Maria Santos', email:'maria.santos@email.com', phone:'0917 123 4567', dob:'1990-04-12', lastVisit:today, allergies:''},
+		{id:uid(), name:'Jose Reyes', email:'jose.reyes@email.com', phone:'0918 234 5678', dob:'1985-11-02', lastVisit:today, allergies:''},
+		{id:uid(), name:'Ana Cruz', email:'ana.cruz@email.com', phone:'0919 345 6789', dob:'1994-06-23', lastVisit:today, allergies:'Sulfa Drugs'},
+		{id:uid(), name:'Pedro Lim', email:'pedro.lim@email.com', phone:'0920 456 7890', dob:'1978-01-15', lastVisit:today, allergies:''},
+		{id:uid(), name:'Lorna Diaz', email:'lorna.diaz@email.com', phone:'0921 567 8901', dob:'1988-09-30', lastVisit:today, allergies:'Penicillin'},
+		{id:uid(), name:'Carlos Tan', email:'carlos.tan@email.com', phone:'0922 678 9012', dob:'1996-03-08', lastVisit:today, allergies:'Latex'},
+		{id:uid(), name:'Ben Torres', email:'ben.torres@email.com', phone:'0923 789 0123', dob:'1982-07-19', lastVisit:today, allergies:''},
+		{id:uid(), name:'Nina Gao', email:'nina.gao@email.com', phone:'0924 890 1234', dob:'1999-12-05', lastVisit:today, allergies:''},
+		{id:uid(), name:'Rosa Vega', email:'rosa.vega@email.com', phone:'0925 901 2345', dob:'1975-02-28', lastVisit:today, allergies:''},
+		{id:uid(), name:'Tomas Yu', email:'tomas.yu@email.com', phone:'0926 012 3456', dob:'1991-10-11', lastVisit:today, allergies:''}
+	]);
+	lsSet(K.appointments, [
+		{id:uid(), patient:'Maria Santos', service:'General Checkup', date:today, time:'09:00', status:'Confirmed', stage:'Checked In', type:'Scheduled'},
+		{id:uid(), patient:'Jose Reyes', service:'Cardiology Consult', date:today, time:'09:45', status:'Confirmed', stage:'In Progress', type:'Scheduled'},
+		{id:uid(), patient:'Ana Cruz', service:'Lab Results Review', date:today, time:'10:30', status:'Pending', stage:'Checked In', type:'Scheduled'},
+		{id:uid(), patient:'Pedro Lim', service:'Pharmacy Pickup', date:today, time:'11:15', status:'Confirmed', stage:'Checked In', type:'Scheduled'},
+		{id:uid(), patient:'Lorna Diaz', service:'OB/GYN Consult', date:today, time:'13:00', status:'Pending', stage:'Triage', type:'Scheduled'},
+		{id:uid(), patient:'Carlos Tan', service:'X-Ray & Imaging', date:today, time:'14:30', status:'Cancelled', stage:'Waiting', type:'Walk-in'},
+		{id:uid(), patient:'Ben Torres', service:'Follow-up', date:today, time:'15:00', status:'Pending', stage:'Waiting', type:'Walk-in'},
+		{id:uid(), patient:'Nina Gao', service:'General Consult', date:today, time:'15:30', status:'Pending', stage:'Waiting', type:'Walk-in'},
+		{id:uid(), patient:'Rosa Vega', service:'Vaccination', date:today, time:'08:45', status:'Confirmed', stage:'Completed', type:'Scheduled'},
+		{id:uid(), patient:'Tomas Yu', service:'Follow-up', date:today, time:'08:30', status:'Confirmed', stage:'Completed', type:'Scheduled'}
+	]);
+	lsSet(K.records, [
+		{id:uid(), patient:'Ana Cruz', note:'Lab results reviewed — cholesterol within normal range.', date:today},
+		{id:uid(), patient:'Maria Santos', note:'Annual physical completed, no concerns noted.', date:today}
+	]);
+	lsSet(K.invoices, [
+		{id:uid(), patient:'Jose Reyes', description:'Cardiology Consult', amount:2500, date:today, status:'Paid'},
+		{id:uid(), patient:'Pedro Lim', description:'Pharmacy Pickup — Losartan 50mg', amount:850, date:today, status:'Paid'},
+		{id:uid(), patient:'Lorna Diaz', description:'OB/GYN Consult', amount:3200, date:today, status:'Unpaid'}
+	]);
+	lsSet(K.referrals, [
+		{id:uid(), patient:'Carlos Tan', type:'Hospital Referral', details:"Referred to partner hospital for advanced imaging.", date:today, status:'Pending'},
+		{id:uid(), patient:'Jose Reyes', type:'Hospital Referral', details:"Referred to partner hospital for a cardiac MRI.", date:today, status:'Completed'},
+		{id:uid(), patient:'Lorna Diaz', type:'Lab Referral', details:"Referred to partner lab for an ultrasound.", date:today, status:'Pending'},
+		{id:uid(), patient:'Ana Cruz', type:'Lab Referral', details:"Referred to partner clinic for dermatology.", date:today, status:'Pending'},
+		{id:uid(), patient:'Lorna Diaz', type:'Pharmacy Referral', details:"Prescribed: Amoxicillin 500mg, twice daily for 7 days.", date:today, status:'Pending'},
+		{id:uid(), patient:'Maria Santos', type:'Pharmacy Referral', details:"Prescribed: Losartan 50mg, once daily.", date:today, status:'Completed'}
+	]);
+	lsSet(K.activity, [
+		{text:'<strong>Maria Santos</strong> checked in for her annual physical.', time:new Date(Date.now()-5*60000).toISOString()},
+		{text:'<strong>Dr. Rivera</strong> uploaded lab results for Ana Cruz.', time:new Date(Date.now()-18*60000).toISOString()},
+		{text:'New prescription dispensed — <strong>Losartan 50mg</strong>.', time:new Date(Date.now()-32*60000).toISOString()},
+		{text:'<strong>Ana Cruz</strong> scheduled a follow-up for next week.', time:new Date(Date.now()-60*60000).toISOString()},
+		{text:'System backup completed successfully.', time:new Date(Date.now()-120*60000).toISOString()}
+	]);
+}
+/* ========================================================
+   REAL APPOINTMENTS DATA (Neon backend) — replaces the
+   localStorage-based K.appointments for the Dashboard queue
+   board and Appointments page. Patients, Referrals, and
+   Settings still run on localStorage until those are
+   converted too.
+   ======================================================== */
+let currentAppointments = [];
+
+async function fetchTodaysAppointments(){
+	try{
+		const res = await fetch('/api/appointments');
+		const data = await res.json();
+		currentAppointments = (data.appointments || [])
+			.map(a => ({
+				appointmentId: a.appointment_id,
+				patientId: a.patient_id,
+				patient: `${a.patient_first_name} ${a.patient_last_name}`,
+				service: a.service_name || a.appointment_type || 'Visit',
+				scheduledAt: a.scheduled_at,
+				status: a.status,
+				notes: a.notes || ''
+			}))
+			.sort((a,b) => {
+				const aTime = a.scheduledAt ? new Date(a.scheduledAt).getTime() : Number.MAX_SAFE_INTEGER;
+				const bTime = b.scheduledAt ? new Date(b.scheduledAt).getTime() : Number.MAX_SAFE_INTEGER;
+				return bTime - aTime;
+			});
+	}catch(e){
+		console.error('Failed to load appointments:', e);
+		currentAppointments = [];
+	}
+}
+
+async function checkIn(appointmentId){
+	try{
+		const res = await fetch('/api/update-appointment-status', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({ appointmentId, status: 'checked-in' })
+		});
+		const result = await res.json();
+		if(res.ok){
+			showToast('Patient checked in', 'success');
+			await fetchTodaysAppointments();
+			renderStats(); renderQueueBoard(); renderAppointments(); updateBadges();
+		}else{
+			showToast(result.error || 'Could not check in patient', 'error');
+		}
+	}catch(e){
+		console.error('Check-in failed:', e);
+		showToast('Something went wrong. Please try again.', 'error');
+	}
+}
+
+async function completeAppointment(appointmentId){
+	const appointment = currentAppointments.find(a => String(a.appointmentId) === String(appointmentId));
+	if(!appointment) return;
+	try{
+		const res = await fetch('/api/update-appointment-status', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({appointmentId:Number(appointmentId), status:'completed'})});
+		const result = await res.json().catch(()=>({}));
+		if(!res.ok) throw new Error(result.error || 'Could not complete appointment');
+		const payload = {patientId:Number(appointment.patientId), appointmentId:Number(appointmentId), note:`Completed visit — ${appointment.service}`, date:(appointment.scheduledAt || '').slice(0,10) || todayStr()};
+		let saved = false;
+		try{ const recordRes = await fetch('/api/medical-records', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)}); saved = recordRes.ok; }catch(e){ console.warn('Medical-record API unavailable:', e); }
+		if(!saved){ const records = lsGet(K.records, []); records.unshift({id:uid(), patientId:appointment.patientId, patient:appointment.patient, note:payload.note, date:payload.date, appointmentId:Number(appointmentId)}); lsSet(K.records, records); }
+		localStorage.setItem('everwell_completed_appointment_notification', JSON.stringify({
+			appointmentId: Number(appointmentId),
+			patientId: Number(appointment.patientId),
+			service: appointment.service,
+			completedAt: new Date().toISOString()
+		}));
+		logActivity(`<strong>${escapeHtml(appointment.patient)}</strong> visit completed and added to medical records.`);
+		showToast(saved ? 'Visit completed and added to medical records' : 'Visit completed; record saved locally', 'success');
+		await fetchTodaysAppointments(); renderStats(); renderQueueBoard(); renderAppointments(); updateBadges();
+	}catch(e){ console.error('Complete appointment failed:', e); showToast(e.message || 'Could not complete appointment', 'error'); }
+}
+
+/* ========================================================
+   REAL PATIENTS DATA (Neon backend) — merges contact info
+   from patients.js with allergies from patient-directory.js.
+   Replaces the localStorage-based K.patients for the Patients
+   tab, the Book Appointment dropdown, and the datalist below.
+   No edit/update endpoint exists yet, so this tab is
+   register-only for now.
+   ======================================================== */
+let currentPatients = [];
+
+async function fetchPatients(){
+	try{
+		const [contactRes, allergyRes] = await Promise.all([
+			fetch('/api/patients'),
+			fetch('/api/patient-directory')
+		]);
+		const contacts = (await contactRes.json()).patients || [];
+		const allergyMap = {};
+		((await allergyRes.json()).patients || []).forEach(p => { allergyMap[p.patient_id] = p.allergies; });
+		currentPatients = contacts.map(p => ({
+			patientId: p.patient_id,
+			name: `${p.first_name} ${p.last_name}`,
+			email: p.email,
+			phone: p.contact_number,
+			allergies: allergyMap[p.patient_id] || ''
+		})).sort((a,b)=>a.name.localeCompare(b.name));
+	}catch(e){
+		console.error('Failed to load patients:', e);
+		currentPatients = [];
+	}
+}
+
+function populatePatientDatalist(){
+	document.getElementById('patientList').innerHTML = currentPatients.map(p=>`<option value="${escapeHtml(p.name)}">`).join('');
+}
+
+/* ---------------- MODAL ---------------- */
+const modalOverlay = document.getElementById('modalOverlay');
+const modalTitleEl = document.getElementById('modalTitle');
+const modalForm = document.getElementById('modalForm');
+document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', e=>{ if(e.target===modalOverlay) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && modalOverlay.classList.contains('open')) closeModal(); });
+function openModal(title, fieldsHtml, onSubmit){
+	modalTitleEl.textContent = title;
+	modalForm.innerHTML = fieldsHtml + '<button type="submit" class="modal-submit">Save</button>';
+	modalForm.onsubmit = function(e){ e.preventDefault(); onSubmit(new FormData(modalForm)); };
+	modalOverlay.classList.add('open');
+	modalOverlay.setAttribute('aria-hidden','false');
+	const firstInput = modalForm.querySelector('input, select, textarea');
+	if(firstInput) setTimeout(()=>firstInput.focus(), 60);
+}
+function closeModal(){
+	modalOverlay.classList.remove('open');
+	modalOverlay.setAttribute('aria-hidden','true');
+}
+
+/* ---------------- STAGE / STATUS HELPERS ---------------- */
+const STAGES = ['Waiting','Checked In','Triage','In Progress','Completed'];
+function stagePillClass(stage){
+	return { 'Waiting':'pending', 'Checked In':'checked-in', 'Triage':'triage', 'In Progress':'in-progress', 'Completed':'completed' }[stage] || 'pending';
+}
+
+/* ---------------- FILTER STATE ---------------- */
+let currentFilter = 'All';
+let currentSearch = '';
+let patientSearch = '';
+document.getElementById('fdSearch').addEventListener('input', e=>{ currentSearch = e.target.value; renderAppointments(); });
+document.getElementById('fdPatientSearch').addEventListener('input', e=>{ patientSearch = e.target.value; renderPatients(); });
+document.querySelectorAll('#fdFilterBar .filter-btn').forEach(btn=>{
+	btn.addEventListener('click', ()=>{
+		document.querySelectorAll('#fdFilterBar .filter-btn').forEach(b=>b.classList.remove('active'));
+		btn.classList.add('active');
+		currentFilter = btn.dataset.filter;
+		renderAppointments();
+	});
+});
+
+/* ---------------- RENDER: EVERYTHING ---------------- */
+async function renderAll(){
+	await Promise.all([fetchTodaysAppointments(), fetchPatients(), fetchReferrals()]);
+	renderStats();
+	renderQueueBoard();
+	renderPatients();
+	renderAppointments();
+	renderReferrals();
+	updateBadges();
+	populatePatientDatalist();
+}
+function renderPatients(){
+	const q = patientSearch.trim().toLowerCase();
+	const filtered = q ? currentPatients.filter(p=>p.name.toLowerCase().includes(q) || (p.email||'').toLowerCase().includes(q)) : currentPatients;
+	const body = document.getElementById('fdPatientsBody');
+	body.innerHTML = filtered.length ? filtered.map(p=>`
+		<tr>
+			<td>${escapeHtml(p.name)}</td>
+			<td>${escapeHtml(p.email||'—')}</td>
+			<td>${escapeHtml(p.phone||'—')}</td>
+			<td>${p.allergies ? `<span style="color:var(--danger);font-weight:600;">${escapeHtml(p.allergies)}</span>` : 'None'}</td>
+		</tr>
+	`).join('') : `<tr><td colspan="4" class="empty-state">No patients found.</td></tr>`;
+}
+function openPatientModal(){
+	const fields = `
+		<div class="form-group"><label class="form-label">First Name</label><input class="form-input" name="firstName" required></div>
+		<div class="form-group"><label class="form-label">Last Name</label><input class="form-input" name="lastName" required></div>
+		<div class="form-row-2">
+			<div class="form-group"><label class="form-label">Date of Birth</label><input class="form-input" type="date" name="dateOfBirth" required></div>
+			<div class="form-group"><label class="form-label">Sex</label>
+				<select class="form-select" name="sex">
+					<option value="">Prefer not to say</option>
+					<option value="Male">Male</option>
+					<option value="Female">Female</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-row-2">
+			<div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" name="email"></div>
+			<div class="form-group"><label class="form-label">Phone</label><input class="form-input" name="contactNumber"></div>
+		</div>
+		<div class="form-group"><label class="form-label">Address</label><input class="form-input" name="address"></div>
+	`;
+	openModal('Add Patient', fields, async (fd)=>{
+		const firstName = (fd.get('firstName')||'').trim();
+		const lastName = (fd.get('lastName')||'').trim();
+		const dateOfBirth = fd.get('dateOfBirth');
+		if(!firstName || !lastName || !dateOfBirth) return;
+		try{
+			const res = await fetch('/api/patients', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					firstName, lastName, dateOfBirth,
+					sex: fd.get('sex') || null,
+					contactNumber: fd.get('contactNumber') || null,
+					email: fd.get('email') || null,
+					address: fd.get('address') || null
+				})
+			});
+			const result = await res.json();
+			if(res.ok){
+				closeModal();
+				showToast('Patient registered', 'success');
+				await fetchPatients();
+				renderPatients();
+				populatePatientDatalist();
+				updateBadges();
+			}else{
+				showToast(result.error || 'Could not register patient', 'error');
+			}
+		}catch(e){
+			console.error('Register patient failed:', e);
+			showToast('Something went wrong. Please try again.', 'error');
+		}
+	});
+}
+function updateBadges(){
+	document.getElementById('badgePatients').textContent = currentPatients.length;
+	document.getElementById('badgeAppts').textContent = currentAppointments.length;
+	document.getElementById('badgeReferrals').textContent = currentReferrals.filter(r=>r.status==='pending').length;
+}
+function renderStats(){
+	const todayAppointments = currentAppointments.filter(a=>(a.scheduledAt || '').slice(0,10) === todayStr());
+	const pendingCheckin = todayAppointments.filter(a=>a.status==='scheduled').length;
+	const checkedInOrLater = todayAppointments.filter(a=>a.status!=='scheduled').length;
+
+	document.getElementById('statToday').textContent = todayAppointments.filter(a=>a.status!=='completed').length;
+	document.getElementById('statTodaySub').textContent = `${checkedInOrLater} already checked in`;
+	document.getElementById('statCheckedIn').textContent = checkedInOrLater;
+	document.getElementById('statCheckedInSub').textContent = `${pendingCheckin} still waiting`;
+	document.getElementById('statPendingCheckin').textContent = pendingCheckin;
+	document.getElementById('statPendingCheckinSub').textContent = pendingCheckin ? 'Needs check-in' : 'All caught up';
+	document.getElementById('statPendingReferrals').textContent = currentReferrals.filter(r=>r.status==='pending').length;
+}
+function renderQueueBoard(){
+	const columns = [
+		{label:'Checked In', status:'checked-in'},
+		{label:'In Progress', status:'in-progress'},
+		{label:'Completed', status:'completed'}
+	];
+	const board = document.getElementById('queueBoard');
+	board.innerHTML = columns.map(col=>{
+		const items = currentAppointments.filter(a=>(a.scheduledAt || '').slice(0,10) === todayStr() && a.status===col.status);
+		const cards = items.length ? items.map(a=>`
+			<div class="queue-card">
+				<div class="qc-name">${escapeHtml(a.patient)}</div>
+				<div class="qc-service">${escapeHtml(a.service)}</div>
+				<div class="qc-time">${formatTime(a.scheduledAt)}</div>
+			</div>
+		`).join('') : `<div class="qc-time" style="padding:0.4rem 0;">Nobody here right now.</div>`;
+		return `<div class="queue-column"><h4>${col.label}</h4>${cards}</div>`;
+	}).join('');
+}
+function dbStatusLabel(status){
+	return { 'scheduled':'Pending', 'checked-in':'Checked In', 'in-progress':'In Progress', 'completed':'Completed' }[status] || status;
+}
+function dbStatusPillClass(status){
+	return { 'scheduled':'pending', 'checked-in':'checked-in', 'in-progress':'in-progress', 'completed':'completed' }[status] || 'pending';
+}
+function renderAppointments(){
+	let appts = currentAppointments;
+	if(currentFilter==='Today') appts = appts.filter(a=>(a.scheduledAt || '').slice(0,10) === todayStr());
+	if(currentFilter==='Waiting') appts = appts.filter(a=>a.status==='scheduled');
+	if(currentFilter==='Completed') appts = appts.filter(a=>a.status==='completed');
+	const q = currentSearch.trim().toLowerCase();
+	if(q) appts = appts.filter(a=> a.patient.toLowerCase().includes(q) || a.service.toLowerCase().includes(q));
+
+	const body = document.getElementById('fdAppointmentsBody');
+	body.innerHTML = appts.length ? appts.map(a=>{
+		const actionCell = a.status==='scheduled'
+			? `<button class="action-btn" onclick="checkIn('${a.appointmentId}')"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Check In</button>`
+			: a.status!=='completed' ? `<button class="action-btn outline" onclick="completeAppointment('${a.appointmentId}')"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Complete</button>` : '<span style="color:var(--sage);font-size:.76rem;font-weight:500;">Visit recorded</span>';
+		return `
+			<tr>
+				<td>${escapeHtml(a.patient)}</td>
+				<td>${escapeHtml(a.service)}</td>
+				<td><div>${formatTime(a.scheduledAt)}</div><small style="color:var(--ink-soft);opacity:.7;">${formatClinicDateTime(a.scheduledAt).date}</small></td>
+				<td><span class="status-pill ${dbStatusPillClass(a.status)}">${dbStatusLabel(a.status)}</span></td>
+				<td>${actionCell}</td>
+			</tr>
+		`;
+	}).join('') : `<tr><td colspan="5" class="empty-state">No appointments match this view.</td></tr>`;
+}
+async function openAppointmentModal(){
+	let patients = [], doctors = [], services = [];
+	try{
+		const [pRes, dRes, sRes] = await Promise.all([
+			fetch('/api/patient-directory'),
+			fetch('/api/doctors'),
+			fetch('/api/services')
+		]);
+		patients = (await pRes.json()).patients || [];
+		doctors = (await dRes.json()).doctors || [];
+		services = (await sRes.json()).services || [];
+	}catch(e){
+		console.error('Failed to load booking options:', e);
+		showToast('Could not load patients/doctors/services', 'error');
+		return;
+	}
+
+	const today = todayStr();
+	const fields = `
+		<div class="form-group"><label class="form-label">Patient</label>
+			<select class="form-select" name="patientId" required>
+				<option value="">Select a patient…</option>
+				${patients.map(p=>`<option value="${p.patient_id}">${escapeHtml(p.first_name)} ${escapeHtml(p.last_name)}</option>`).join('')}
+			</select>
+		</div>
+		<div class="form-group"><label class="form-label">Doctor</label>
+			<select class="form-select" name="doctorId" required>
+				<option value="">Select a doctor…</option>
+				${doctors.map(d=>`<option value="${d.user_id}">${escapeHtml(d.full_name)}${d.specialization ? ' — ' + escapeHtml(d.specialization) : ''}</option>`).join('')}
+			</select>
+		</div>
+		<div class="form-group"><label class="form-label">Service (optional)</label>
+			<select class="form-select" name="serviceId">
+				<option value="">No service selected</option>
+				${services.map(s=>`<option value="${s.service_id}">${escapeHtml(s.service_name)} — ₱${Number(s.standard_price).toLocaleString()}</option>`).join('')}
+			</select>
+		</div>
+		<div class="form-group"><label class="form-label">Appointment Type</label>
+			<select class="form-select" name="appointmentType">
+				<option>Consultation</option>
+				<option>Follow-up</option>
+				<option>Walk-in</option>
+				<option>Check-up</option>
+			</select>
+		</div>
+		<div class="form-row-2">
+			<div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" name="date" value="${today}" required></div>
+			<div class="form-group"><label class="form-label">Time</label><input class="form-input" type="time" name="time" required></div>
+		</div>
+		<div class="form-group"><label class="form-label">Payment Method (if a service was selected)</label>
+			<select class="form-select" name="paymentMethod">
+				<option value="">Unpaid / bill later</option>
+				<option value="Cash">Cash</option>
+				<option value="Card">Card</option>
+				<option value="GCash">GCash</option>
+			</select>
+		</div>
+		<div class="form-group"><label class="form-label">Notes (optional)</label><textarea class="form-textarea" name="notes"></textarea></div>
+	`;
+
+	openModal('Book Appointment', fields, async (fd)=>{
+		const patientId = fd.get('patientId');
+		const doctorId = fd.get('doctorId');
+		const date = fd.get('date');
+		const time = fd.get('time');
+		if(!patientId || !doctorId || !date || !time) return;
+
+		try{
+			const res = await fetch('/api/book-appointment', {
+				method: 'POST',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({
+					patientId: Number(patientId),
+					doctorId: Number(doctorId),
+					appointmentType: fd.get('appointmentType'),
+				scheduledAt: clinicDateTime(date, time),
+					serviceId: fd.get('serviceId') ? Number(fd.get('serviceId')) : null,
+					notes: fd.get('notes') || null,
+					paymentMethod: fd.get('paymentMethod') || null
+				})
+			});
+			const result = await res.json();
+			if(res.ok){
+				closeModal();
+				showToast(result.invoice ? `Appointment booked — invoice ${result.invoice.paymentStatus}` : 'Appointment booked', 'success');
+				renderAll();
+			}else{
+				showToast(result.error || 'Could not book appointment', 'error');
+			}
+		}catch(e){
+			console.error('Booking failed:', e);
+			showToast('Something went wrong. Please try again.', 'error');
+		}
+	});
+}
+/* ========================================================
+   REAL REFERRALS DATA (Neon backend) — view + update status
+   only. Creating a referral requires a doctor, an appointment,
+   and a hospital (see create-referral.js) — that's a doctor.html
+   action, not front desk's. This tab surfaces what's already
+   there and lets staff mark pending -> completed.
+   ======================================================== */
+let currentReferrals = [];
+
+async function fetchReferrals(){
+	try{
+		const res = await fetch('/api/referrals');
+		const data = await res.json();
+		currentReferrals = data.referrals || [];
+	}catch(e){
+		console.error('Failed to load referrals:', e);
+		currentReferrals = [];
+	}
+}
+
+function renderReferrals(){
+	const list = currentReferrals.slice().sort((a,b)=> (b.created_at||'').localeCompare(a.created_at||''));
+	const body = document.getElementById('fdReferralsBody');
+	body.innerHTML = list.length ? list.map(r=>`
+		<tr>
+			<td>${escapeHtml(r.patient_first_name)} ${escapeHtml(r.patient_last_name)}</td>
+			<td>${escapeHtml(r.referral_type)}${r.linked_service_name ? ' — ' + escapeHtml(r.linked_service_name) : ''}</td>
+			<td>${escapeHtml(r.reason_for_referral)}</td>
+			<td>${escapeHtml(r.hospital_name)}</td>
+			<td>${escapeHtml(r.urgency_level || 'Routine')}</td>
+			<td>${r.created_at ? new Date(r.created_at).toLocaleDateString() : '—'}</td>
+			<td><select class="status-select ${r.status==='completed'?'completed':'pending'}" onchange="updateReferralStatus('${r.referral_id}', this.value)">
+				<option value="pending" ${r.status==='pending'?'selected':''}>Pending</option>
+				<option value="completed" ${r.status==='completed'?'selected':''}>Completed</option>
+			</select></td>
+		</tr>
+	`).join('') : `<tr><td colspan="7" class="empty-state">No referrals logged yet.</td></tr>`;
+}
+async function updateReferralStatus(referralId, status){
+	try{
+		const res = await fetch('/api/update-referral-status', {
+			method: 'POST',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({ referralId: Number(referralId), status })
+		});
+		const result = await res.json();
+		if(res.ok){
+			showToast('Referral updated', 'success');
+			await fetchReferrals();
+			renderReferrals();
+			updateBadges();
+		}else{
+			showToast(result.error || 'Could not update referral', 'error');
+			renderReferrals();
+		}
+	}catch(e){
+		console.error('Update referral status failed:', e);
+		showToast('Something went wrong. Please try again.', 'error');
+	}
+}
+
+/* ---------------- SETTINGS ---------------- */
+const PROFILE_KEY = 'everwell_profile_frontdesk';
+function loadSettingsForm(){
+	const s = lsGet(PROFILE_KEY, {displayName:'Front Desk Staff'});
+	document.getElementById('settingDisplayName').value = s.displayName;
+}
+document.getElementById('settingsForm').addEventListener('submit', e=>{
+	e.preventDefault();
+	const displayName = document.getElementById('settingDisplayName').value.trim() || 'Front Desk Staff';
+	lsSet(PROFILE_KEY, {displayName});
+	document.getElementById('navAvatar').textContent = displayName.trim().charAt(0).toUpperCase() + (displayName.trim().split(' ')[1]?displayName.trim().split(' ')[1].charAt(0).toUpperCase():'');
+	showToast('Settings saved','success');
+});
+
+/* ---------------- INIT ---------------- */
+seedIfEmpty();
+populatePatientDatalist();
+loadSettingsForm();
+renderAll();
+switchSection(sectionFromHash());
+</script>
+</body>
+</html>

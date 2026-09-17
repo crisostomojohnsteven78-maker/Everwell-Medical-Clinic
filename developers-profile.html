@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Team — Everwell</title>
+<meta name="theme-color" content="#16211A">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg: #F1F3EC;
+  --bg-soft: #E7ECE1;
+  --cream: #FAF8F3;
+  --ink: #1E2A22;
+  --ink-soft: #4A554C;
+  --sage: #4F6B57;
+  --sage-light: #8AA491;
+  --sage-deep: #16211A;
+  --clay: #DCCAB3;
+  --gold: #B99B67;
+  --coral: #C77B58;
+  --line: rgba(30,42,34,0.12);
+  --radius-sm: 8px;
+  --radius-md: 18px;
+  --radius-lg: 22px;
+  --radius-xl: 100px;
+  --shadow-md: 0 8px 24px rgba(22,33,26,0.1);
+  --shadow-lg: 0 20px 50px rgba(22,33,26,0.18);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --glass-bg: rgba(250,248,243,0.55);
+  --glass-border: rgba(255,255,255,0.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;line-height:1.5;overflow-x:hidden;}
+@media (prefers-reduced-motion: reduce){ *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;} }
+*:focus-visible{outline:3px solid var(--sage); outline-offset:3px; border-radius:4px;}
+a{color:inherit;text-decoration:none;}
+img{display:block;max-width:100%;}
+button{font-family:inherit;cursor:pointer;background:none;border:none;color:inherit;}
+.mono{font-family:'Space Mono',monospace;}
+.eyebrow{font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--sage);font-weight:500;}
+.display{font-family:'Fraunces',serif;font-weight:400;letter-spacing:-0.01em;}
+
+.skip-link{position:absolute;top:-100%;left:50%;transform:translateX(-50%);background:var(--sage-deep);color:var(--cream);padding:0.7rem 1.6rem;border-radius:var(--radius-xl);font-size:0.85rem;font-weight:500;z-index:1000;transition:top .2s;}
+.skip-link:focus{top:1.2rem;}
+
+/* ================= CURSOR GLOW (decorative, desktop only) ================= */
+.cursor-ring, .cursor-dot{position:fixed;top:0;left:0;pointer-events:none;z-index:999;border-radius:50%;will-change:transform;transform:translate(-999px,-999px);}
+.cursor-dot{width:6px;height:6px;background:var(--gold);transition:transform .05s linear, opacity .2s;}
+.cursor-ring{width:34px;height:34px;border:1.5px solid rgba(185,155,103,0.55);transition:transform .16s cubic-bezier(.2,.9,.25,1), width .2s, height .2s, opacity .2s, border-color .2s;}
+body.cursor-active .cursor-ring, body.cursor-active .cursor-dot{opacity:1;}
+.cursor-ring, .cursor-dot{opacity:0;}
+body.cursor-hover .cursor-ring{width:56px;height:56px;border-color:rgba(185,155,103,0.9);}
+
+/* ================= SCROLL PROGRESS ================= */
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--gold),var(--sage));z-index:1001;transition:width .08s linear;}
+
+/* ================= NAV ================= */
+nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.4rem 4vw;background:rgba(250,248,243,0.62);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);border-bottom:1px solid var(--glass-border);box-shadow:0 1px 0 rgba(255,255,255,0.4) inset;}
+.nav-mark{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:500;color:var(--ink);}
+.nav-mark em{font-style:italic;font-weight:400;color:var(--sage);}
+.nav-right{display:flex;align-items:center;gap:1.1rem;}
+.nav-home{display:inline-flex;align-items:center;padding:0.5rem 0.95rem;border:1px solid var(--sage-deep);border-radius:var(--radius-xl);font-size:0.76rem;color:var(--sage-deep);transition:background .3s,color .3s,transform .25s;}
+.nav-home:hover{background:var(--sage-deep);color:var(--cream);transform:translateY(-2px);}
+.nav-tag{font-size:0.78rem;color:var(--ink-soft);}
+
+/* ================= HERO ================= */
+.hero{position:relative;background:var(--sage-deep);padding:7rem 6vw 6rem;overflow:hidden;text-align:center;}
+.hero-orbs{position:absolute;inset:0;z-index:1;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;filter:blur(50px);opacity:0.35;transition:transform .6s cubic-bezier(.2,.8,.2,1);will-change:transform;}
+.orb-1{width:340px;height:340px;background:radial-gradient(circle, var(--gold), transparent 70%);top:-10%;left:6%;}
+.orb-2{width:260px;height:260px;background:radial-gradient(circle, var(--sage-light), transparent 70%);bottom:-15%;right:8%;}
+.orb-3{width:180px;height:180px;background:radial-gradient(circle, var(--clay), transparent 70%);top:35%;right:22%;opacity:0.22;}
+#pulseCanvas{position:absolute;inset:0;width:100%;height:100%;opacity:0.65;mix-blend-mode:screen;cursor:default;z-index:1;}
+.hero-inner{position:relative;z-index:2;}
+.hero .eyebrow{color:var(--clay);}
+.hero h1{font-size:clamp(2.4rem,6vw,4.6rem);color:var(--cream);margin-top:1rem;max-width:16ch;margin-left:auto;margin-right:auto;line-height:1.05;}
+.hero h1 em{font-style:italic;color:var(--sage-light);}
+.hero p{color:rgba(250,248,243,0.72);max-width:52ch;margin:1.4rem auto 0;font-size:1.02rem;}
+.hero-meta{display:flex;justify-content:center;gap:2.5rem;margin-top:2.6rem;flex-wrap:wrap;}
+.hm-item{text-align:center;}
+.hm-item .hm-num{font-family:'Fraunces',serif;font-size:2rem;color:var(--cream);font-variant-numeric:tabular-nums;}
+.hm-item .hm-label{font-size:0.68rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage-light);margin-top:0.2rem;}
+.scroll-hint{margin:3rem auto 0;font-size:0.75rem;color:rgba(250,248,243,0.55);display:inline-flex;flex-direction:column;align-items:center;gap:0.5rem;background:none;border:none;text-align:center;transition:transform .35s cubic-bezier(.34,1.56,.64,1), color .25s;}
+.scroll-hint:hover{transform:translateY(3px);color:rgba(250,248,243,0.85);}
+.scroll-hint .arrow{animation:bob 1.6s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+/* ================= INTRO STRIP ================= */
+.intro-strip{padding:5rem 6vw 2rem;max-width:760px;margin:0 auto;text-align:center;}
+.intro-strip p{font-family:'Fraunces',serif;font-size:clamp(1.3rem,2.6vw,1.8rem);color:var(--sage-deep);line-height:1.5;}
+.intro-strip .hint{margin-top:1rem;font-size:0.82rem;color:var(--ink-soft);}
+.intro-strip .hint kbd{font-family:'Space Mono',monospace;background:var(--bg-soft);padding:0.15rem 0.5rem;border-radius:4px;border:1px solid var(--line);}
+
+/* ================= SCROLL REVEALS ================= */
+.scroll-reveal{opacity:0;transform:translateY(32px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1);}
+.scroll-reveal.is-visible{opacity:1;transform:translateY(0);}
+.scroll-reveal-heading{opacity:0;transform:translateY(22px);transition:opacity .7s ease .12s,transform .7s cubic-bezier(.2,.8,.2,1) .12s;}
+.scroll-reveal-heading.is-visible{opacity:1;transform:translateY(0);}
+@media (prefers-reduced-motion: reduce){
+  .scroll-reveal,.scroll-reveal-heading{opacity:1;transform:none;transition:none;}
+}
+
+/* ================= TOOLBAR (filters + shuffle) ================= */
+.grid-toolbar{max-width:1280px;margin:0 auto;padding:0 6vw;display:flex;align-items:center;justify-content:space-between;gap:1.4rem;flex-wrap:wrap;margin-bottom:2rem;}
+.filter-row{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.filter-chip{
+  font-size:0.76rem;letter-spacing:0.03em;padding:0.5rem 1.05rem;border-radius:var(--radius-xl);
+  border:1px solid var(--glass-border);color:var(--ink-soft);background:var(--glass-bg);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:background .3s, color .3s, border-color .3s, transform .35s var(--spring), box-shadow .3s;
+}
+.filter-chip:hover{transform:translateY(-3px) scale(1.03);border-color:var(--sage-light);box-shadow:var(--shadow-md);}
+.filter-chip.active{background:var(--sage-deep);color:var(--cream);border-color:var(--sage-deep);}
+.shuffle-btn{
+  display:inline-flex;align-items:center;gap:0.5rem;font-size:0.78rem;color:var(--sage-deep);
+  padding:0.55rem 1.1rem;border-radius:var(--radius-xl);border:1px dashed var(--sage-light);
+  background:var(--glass-bg);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:background .3s, transform .35s var(--spring), border-color .3s;
+}
+.shuffle-btn:hover{background:var(--bg-soft);border-color:var(--sage);transform:translateY(-3px);}
+.shuffle-btn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .5s cubic-bezier(.2,.9,.25,1);}
+.shuffle-btn:active svg{transform:rotate(180deg);}
+
+/* ================= TEAM GRID ================= */
+.team-wrap{max-width:1280px;margin:0 auto;padding:2.5rem 6vw 8rem;}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2.2rem;}
+@media(max-width:980px){ .team-grid{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:640px){ .team-grid{grid-template-columns:1fr;} }
+
+.card-scene{position:relative;perspective:1600px;height:400px;opacity:0;transform:translateY(28px);transition:opacity .7s ease, transform .7s ease;}
+.card-scene.in{opacity:1;transform:translateY(0);}
+.card-scene.filtered-out{opacity:0 !important;transform:scale(.85) !important;pointer-events:none;height:0;margin:0;overflow:hidden;}
+.card-flip{position:relative;width:100%;height:100%;transform-style:preserve-3d;border-radius:var(--radius-lg);cursor:pointer;transition:transform .75s var(--spring);}
+.card-scene.flipped .card-flip{transform:rotateY(180deg);}
+.card-flip:focus-visible{outline:3px solid var(--sage);outline-offset:4px;}
+.card-face{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--radius-lg);
+  border:1px solid var(--line);overflow:hidden;box-shadow:var(--shadow-md);
+  transition:box-shadow .3s;
+}
+/* ---- FRONT (ID badge) with tilt + spotlight ---- */
+.card-face.front{background:var(--cream);}
+.tilt-layer{
+  position:relative;width:100%;height:100%;display:flex;flex-direction:column;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateZ(0);
+  transition:transform .4s var(--spring);
+  transform-style:preserve-3d;
+}
+.card-face.front::after{
+  content:'';position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.35), transparent 55%);
+  transition:opacity .3s;mix-blend-mode:soft-light;
+}
+.badge-stripe{height:88px;position:relative;flex-shrink:0;}
+.badge-stripe::after{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle at 20% 50%, rgba(255,255,255,0.14) 0, transparent 55%);
+}
+.badge-id{position:absolute;top:0.9rem;right:1.1rem;font-size:0.66rem;letter-spacing:0.06em;color:rgba(255,255,255,0.75);}
+.avatar-frame{
+  width:92px;height:92px;border-radius:50%;overflow:hidden;border:4px solid var(--cream);
+  margin:-46px auto 0;box-shadow:0 4px 14px rgba(22,33,26,0.18);position:relative;z-index:2;background:var(--bg-soft);
+}
+.avatar-frame img{width:100%;height:100%;object-fit:cover;}
+.badge-body{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0.9rem 1.4rem 1.4rem;}
+.badge-body h3{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--sage-deep);margin-top:0.3rem;}
+.badge-role{font-size:0.78rem;color:var(--ink-soft);margin-top:0.2rem;}
+.badge-role-tag{
+  margin-top:0.8rem;font-size:0.66rem;letter-spacing:0.08em;text-transform:uppercase;
+  padding:0.3rem 0.7rem;border-radius:var(--radius-xl);color:var(--sage-deep);
+  background:rgba(138,164,145,0.16);border:1px solid rgba(138,164,145,0.3);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.badge-flip-hint{
+  margin-top:auto;padding-top:1rem;font-size:0.72rem;color:var(--sage);
+  display:flex;align-items:center;gap:0.4rem;
+}
+.badge-flip-hint svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;}
+
+/* ---- BACK (case notes) ---- */
+.card-face.back{
+  background:var(--sage-deep);color:var(--cream);transform:rotateY(180deg);
+  display:flex;flex-direction:column;padding:1.6rem 1.5rem;
+}
+.back-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;}
+.back-head h3{font-family:'Fraunces',serif;font-size:1.05rem;}
+.back-head .back-id{font-size:0.62rem;color:var(--sage-light);}
+.close-hint{width:26px;height:26px;border-radius:50%;border:1px solid rgba(250,248,243,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.close-hint svg{width:12px;height:12px;stroke:var(--cream);fill:none;stroke-width:2;}
+.back-section{margin-bottom:0.9rem;}
+.back-section h4{font-size:0.62rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--sage-light);margin-bottom:0.4rem;}
+.back-section p{font-size:0.82rem;color:rgba(250,248,243,0.82);line-height:1.55;}
+.stack-tags{display:flex;flex-wrap:wrap;gap:0.4rem;}
+.stack-tag{font-size:0.68rem;padding:0.22rem 0.55rem;border-radius:var(--radius-xl);background:rgba(250,248,243,0.1);color:var(--cream);transition:background .2s, transform .2s;}
+.stack-tag:hover{background:rgba(250,248,243,0.22);transform:translateY(-2px);}
+.back-links{margin-top:auto;display:flex;gap:0.6rem;}
+.back-links a{
+  width:34px;height:34px;border-radius:50%;border:1px solid rgba(250,248,243,0.25);
+  display:flex;align-items:center;justify-content:center;transition:border-color .2s, background .2s, transform .2s;
+}
+.back-links a:hover{border-color:var(--cream);background:rgba(250,248,243,0.08);transform:translateY(-2px);}
+.back-links svg{width:15px;height:15px;stroke:var(--cream);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+
+/* ---- confetti burst ---- */
+.confetti-dot{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:20;animation:confettiPop .7s cubic-bezier(.15,.8,.3,1) forwards;}
+@keyframes confettiPop{
+  0%{transform:translate(0,0) scale(1);opacity:1;}
+  100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0;}
+}
+
+/* ================= FOOTER ================= */
+.team-footer{background:var(--cream);border-top:1px solid var(--line);padding:5.5rem 6vw 6rem;text-align:center;position:relative;overflow:hidden;}
+.footer-stamp{
+  display:inline-block;font-size:0.68rem;letter-spacing:0.14em;color:var(--sage);
+  border:1.5px dashed var(--sage-light);border-radius:var(--radius-xl);
+  padding:0.4rem 1.1rem;margin-bottom:1.6rem;transform:rotate(-2deg);
+  transition:transform .3s;
+}
+.footer-stamp:hover{transform:rotate(0deg) scale(1.04);}
+.team-footer h2{font-family:'Fraunces',serif;font-size:clamp(1.6rem,3.4vw,2.4rem);color:var(--sage-deep);max-width:22ch;margin:0 auto;}
+.team-footer p{color:var(--ink-soft);margin-top:0.9rem;font-size:0.92rem;}
+.sign-row{display:flex;justify-content:center;margin-top:2.2rem;}
+.sign-chip{
+  width:42px;height:42px;border-radius:50%;overflow:hidden;border:3px solid var(--cream);
+  margin-left:-12px;box-shadow:0 2px 8px rgba(22,33,26,0.12);position:relative;
+  transition:transform .25s, z-index .25s, margin .25s;cursor:default;
+}
+.sign-chip:first-child{margin-left:0;}
+.sign-chip:hover{transform:translateY(-6px) scale(1.12);z-index:5;}
+.sign-chip img{width:100%;height:100%;object-fit:cover;}
+.sign-chip::after{
+  content:attr(data-name);position:absolute;bottom:120%;left:50%;transform:translateX(-50%);
+  background:var(--sage-deep);color:var(--cream);font-size:0.65rem;padding:0.3rem 0.6rem;
+  border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.sign-chip:hover::after{opacity:1;}
+.sign-caption{font-size:0.74rem;color:var(--ink-soft);margin-top:0.9rem;}
+.team-footer .btn-primary{
+  display:inline-flex;align-items:center;gap:0.6rem;margin-top:2.2rem;
+  background:var(--sage-deep);color:var(--cream);padding:0.9rem 2rem;border-radius:var(--radius-xl);
+  font-size:0.87rem;transition:background .3s, transform .25s ease-out;
+}
+.team-footer .btn-primary:hover{background:var(--sage);}
+
+@media (max-width: 780px){
+  .cursor-ring, .cursor-dot{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<a href="#team" class="skip-link">Skip to team grid</a>
+
+<nav>
+  <span class="nav-mark">Ever<em>well</em></span>
+  <div class="nav-right">
+    <a href="homepage.html" class="nav-home">Homepage</a>
+    <span class="nav-tag mono">/ the-team</span>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-orbs" id="heroOrbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+  <canvas id="pulseCanvas"></canvas>
+  <div class="hero-inner">
+    <span class="eyebrow">Built by</span>
+    <h1 class="display scroll-reveal-heading">Six people, one <em>chart</em>.</h1>
+    <p>The team who designed and built Everwell — from the triage queue to the referral flow you just clicked through.</p>
+    <div class="hero-meta">
+      <div class="hm-item"><div class="hm-num" data-target="6">0</div><div class="hm-label">Developers</div></div>
+      <div class="hm-item"><div class="hm-num" data-target="39">0</div><div class="hm-label">Screens mapped</div></div>
+      <div class="hm-item"><div class="hm-num" data-target="1">0</div><div class="hm-label">Shared chart</div></div>
+    </div>
+    <button class="scroll-hint" id="scrollHintBtn">
+      <span>Meet the team</span>
+      <svg class="arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </button>
+  </div>
+</header>
+
+<section class="intro-strip scroll-reveal">
+  <p class="scroll-reveal-heading">Every developer here has their own "chart" — same way Everwell keeps one for every patient.</p>
+  <div class="hint">Click a card to flip it or filter and reshuffle the deck below.</div>
+</section>
+
+<div class="grid-toolbar scroll-reveal">
+  <div class="filter-row" id="filterRow">
+    <button class="filter-chip active" data-filter="all">All hands</button>
+    <button class="filter-chip" data-filter="lead">Lead</button>
+    <button class="filter-chip" data-filter="dev">Full-Stack</button>
+    <button class="filter-chip" data-filter="design">Design</button>
+    <button class="filter-chip" data-filter="qa">QA</button>
+  </div>
+  <button class="shuffle-btn" id="shuffleBtn">
+    <svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+    Shuffle the deck
+  </button>
+</div>
+
+<main id="team" class="team-wrap scroll-reveal">
+  <div class="team-grid" id="teamGrid"></div>
+</main>
+
+<footer class="team-footer scroll-reveal">
+  <div class="footer-stamp mono">CHART · CLOSED</div>
+  <h2 class="scroll-reveal-heading">Curious how Everwell is put together?</h2>
+  <p>This crew is happy to walk through the system, the schema, or the screens.</p>
+
+  <div class="sign-row" id="signRow" aria-label="Signed off by the team"></div>
+  <div class="sign-caption">Signed off by all six, on <span class="mono" id="footerDate"></span></div>
+
+  <a href="#team" class="btn-primary magnetic" id="footerCta">
+    Get in touch
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</footer>
+
+<script>
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fineHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  // ---------------- TEAM DATA ----------------
+  // Roles, stacks, and bios below are placeholders — swap in real details per person.
+  // Photos: drop the files below into IMG_DIR (see just under this array) and they'll show up automatically.
+  const IMG_DIR = ''; // e.g. change to 'images/' if you put photos in an /images subfolder next to this html file
+  const team = [
+    {
+      id: "DEV-01", name: "John Steven Crisostomo", role: "Project Lead · Full-Stack Developer",
+      color: "16211A", bio: "Oversees the overall build and keeps the schema, screens, and roles in sync with each other.",
+      stack: ["Architecture","Full-Stack","Planning"], cats: ["lead","dev"], img: "https://cdn.phototourl.com/free/2026-08-24-da703467-dc22-4539-b37a-aed9ad53f38d.png"
+    },
+    {
+      id: "DEV-02", name: "Jonie Aguihap", role: "Full-Stack Developer",
+      color: "4F6B57", bio: "Moves between backend logic and frontend screens as needed, keeping appointments, prescriptions, and billing wired up end to end.",
+      stack: ["Frontend","Backend","APIs"], cats: ["dev"], img: "https://cdn.phototourl.com/free/2026-08-24-0b27357b-3641-4cb6-98f5-fa89108ddd9d.png"
+    },
+    {
+      id: "DEV-03", name: "Alirah Atanacio", role: "UI/UX Designer",
+      color: "B99B67", bio: "Shapes how each role — nurse, doctor, pharmacist, patient — experiences the system day to day.",
+      stack: ["Design Systems","Prototyping","Research"], cats: ["design"], img: "https://cdn.phototourl.com/free/2026-08-24-61b640fb-76a7-4f51-a2ef-5bd240148982.png"
+    },
+    {
+      id: "DEV-04", name: "John Jeriel Albaran", role: "UI/UX Designer",
+      color: "8AA491", bio: "Designs the flows and screen layouts that turn the requirements doc into something people can actually navigate.",
+      stack: ["Wireframing","Prototyping","User Flows"], cats: ["design"], img: "https://cdn.phototourl.com/free/2026-08-24-ce3e9c94-a142-45ae-9df1-3fff2f1f8e5b.png"
+    },
+    {
+      id: "DEV-05", name: "Abigail Dela Cruz", role: "Full-Stack Developer",
+      color: "4A554C", bio: "Works across the schema and the screens built on top of it, keeping data and UI honest with each other.",
+      stack: ["Frontend","Backend","Database"], cats: ["dev"], img: "https://cdn.phototourl.com/free/2026-08-24-5be61a1d-3351-4cc2-958f-47fba1ab5bd7.png"
+    },
+    {
+      id: "DEV-06", name: "Nicole Remegio", role: "QA & Documentation",
+      color: "DCCAB3", bio: "Tests every flow end to end and keeps the page inventory and requirements docs honest.",
+      stack: ["Testing","Documentation","QA"], cats: ["qa"], img: "https://cdn.phototourl.com/free/2026-08-24-c8efd51a-fed3-431f-84cd-f0da5c1c16ed.png"
+    }
+  ];
+
+  const grid = document.getElementById('teamGrid');
+
+  function initialsAvatarUrl(p, size){
+    const initials = p.name.split(' ').map(w => w[0]).slice(0,2).join('');
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=${p.color}&color=FAF8F3&size=${size}&font-size=0.38&bold=true`;
+  }
+
+  function buildCard(p){
+    const photoUrl = IMG_DIR + p.img;
+    const fallbackUrl = initialsAvatarUrl(p, 256);
+
+    const scene = document.createElement('div');
+    scene.className = 'card-scene';
+    scene.dataset.cats = p.cats.join(' ');
+    scene.innerHTML = `
+      <div class="card-flip" role="button" tabindex="0" aria-pressed="false" aria-label="Profile card for ${p.name}. Press enter to flip">
+        <div class="card-face front">
+          <div class="tilt-layer">
+            <div class="badge-stripe" style="background:#${p.color};">
+              <span class="badge-id mono">${p.id}</span>
+            </div>
+            <div class="avatar-frame"><img src="${photoUrl}" onerror="this.onerror=null;this.src='${fallbackUrl}';" alt="Photo of ${p.name}"></div>
+            <div class="badge-body">
+              <h3>${p.name}</h3>
+              <div class="badge-role">${p.role.split(' · ')[0]}</div>
+              <span class="badge-role-tag">${p.role.split(' · ').slice(-1)[0]}</span>
+              <span class="badge-flip-hint mono"><svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>Tap to flip</span>
+            </div>
+          </div>
+        </div>
+        <div class="card-face back">
+          <div class="back-head">
+            <div>
+              <h3>${p.name}</h3>
+              <div class="back-id mono">${p.id} · CASE NOTES</div>
+            </div>
+            <div class="close-hint"><svg viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg></div>
+          </div>
+          <div class="back-section">
+            <h4>Role</h4>
+            <p>${p.role}</p>
+          </div>
+          <div class="back-section">
+            <h4>Notes</h4>
+            <p>${p.bio}</p>
+          </div>
+          <div class="back-section">
+            <h4>Focus</h4>
+            <div class="stack-tags">${p.stack.map(s => `<span class="stack-tag">${s}</span>`).join('')}</div>
+          </div>
+          <div class="back-links">
+            <a href="#" aria-label="GitHub"><svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          </div>
+        </div>
+      </div>`;
+
+    const frontFace = scene.querySelector('.card-face.front');
+
+    // 3D tilt + spotlight, desktop pointer only
+    if(fineHover && !reduceMotion){
+      scene.addEventListener('mousemove', (e) => {
+        if(scene.classList.contains('flipped')) return;
+        const rect = scene.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;
+        const py = (e.clientY - rect.top) / rect.height;
+        const ry = (px - 0.5) * 16;
+        const rx = (0.5 - py) * 16;
+        scene.style.setProperty('--rx', rx.toFixed(2)+'deg');
+        scene.style.setProperty('--ry', ry.toFixed(2)+'deg');
+        frontFace.style.setProperty('--mx', (px*100).toFixed(1)+'%');
+        frontFace.style.setProperty('--my', (py*100).toFixed(1)+'%');
+      });
+      scene.addEventListener('mouseleave', () => {
+        scene.style.setProperty('--rx','0deg');
+        scene.style.setProperty('--ry','0deg');
+      });
+    }
+
+    // ---- FLIP (click or keyboard) ----
+    const flipEl = scene.querySelector('.card-flip');
+    function toggleFlip(clientX, clientY){
+      const opening = !scene.classList.contains('flipped');
+      scene.classList.toggle('flipped', opening);
+      flipEl.setAttribute('aria-pressed', String(opening));
+      scene.style.setProperty('--rx','0deg');
+      scene.style.setProperty('--ry','0deg');
+      if(opening && typeof clientX === 'number'){
+        const rect = scene.getBoundingClientRect();
+        burstConfetti(scene, clientX - rect.left, clientY - rect.top, '#'+p.color);
+      }
+    }
+    scene.addEventListener('click', (e) => {
+      if(e.target.closest('a, button')) return;
+      toggleFlip(e.clientX, e.clientY);
+    });
+    flipEl.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        toggleFlip();
+      }
+    });
+
+    return scene;
+  }
+
+  team.forEach(p => grid.appendChild(buildCard(p)));
+
+  // ---------------- CONFETTI BURST ----------------
+  function burstConfetti(container, x, y, color){
+    if(reduceMotion) return;
+    const colors = [color, '#FAF8F3', '#B99B67'];
+    for(let i=0;i<10;i++){
+      const dot = document.createElement('span');
+      dot.className = 'confetti-dot';
+      const angle = (Math.PI*2*i)/10 + Math.random()*0.4;
+      const dist = 46 + Math.random()*34;
+      dot.style.setProperty('--dx', (Math.cos(angle)*dist).toFixed(1)+'px');
+      dot.style.setProperty('--dy', (Math.sin(angle)*dist).toFixed(1)+'px');
+      dot.style.left = x+'px';
+      dot.style.top = y+'px';
+      dot.style.background = colors[i % colors.length];
+      container.appendChild(dot);
+      dot.addEventListener('animationend', () => dot.remove());
+    }
+  }
+
+  // ---------------- FILTERS ----------------
+  const filterRow = document.getElementById('filterRow');
+  filterRow.addEventListener('click', (e) => {
+    const chip = e.target.closest('.filter-chip');
+    if(!chip) return;
+    filterRow.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const filter = chip.dataset.filter;
+    document.querySelectorAll('.card-scene').forEach(scene => {
+      const cats = (scene.dataset.cats || '').split(' ');
+      const show = filter === 'all' || cats.includes(filter);
+      scene.classList.toggle('filtered-out', !show);
+    });
+  });
+
+  // ---------------- SHUFFLE (FLIP animation) ----------------
+  document.getElementById('shuffleBtn').addEventListener('click', () => {
+    const items = Array.from(grid.children);
+    const firstRects = new Map(items.map(el => [el, el.getBoundingClientRect()]));
+    for(let i = items.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    items.forEach(el => grid.appendChild(el));
+    items.forEach(el => {
+      const first = firstRects.get(el);
+      const last = el.getBoundingClientRect();
+      const dx = first.left - last.left, dy = first.top - last.top;
+      if(dx || dy){
+        el.style.transition = 'none';
+        el.style.transform = `translate(${dx}px, ${dy}px)`;
+        requestAnimationFrame(() => {
+          el.style.transition = reduceMotion ? 'none' : 'transform .6s cubic-bezier(.2,.9,.25,1)';
+          el.style.transform = '';
+        });
+      }
+    });
+  });
+
+  // ---------------- FOOTER: signature row + date ----------------
+  const signRow = document.getElementById('signRow');
+  team.forEach(p => {
+    const photoUrl = IMG_DIR + p.img;
+    const fallbackUrl = initialsAvatarUrl(p, 128);
+    const chip = document.createElement('div');
+    chip.className = 'sign-chip';
+    chip.setAttribute('data-name', p.name);
+    chip.innerHTML = `<img src="${photoUrl}" onerror="this.onerror=null;this.src='${fallbackUrl}';" alt="${p.name}">`;
+    signRow.appendChild(chip);
+  });
+  const footerDate = document.getElementById('footerDate');
+  if(footerDate){
+    footerDate.textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  // ---------------- FOOTER: magnetic CTA ----------------
+  const magneticBtn = document.getElementById('footerCta');
+  if(magneticBtn && fineHover && !reduceMotion){
+    magneticBtn.addEventListener('mousemove', (e) => {
+      const r = magneticBtn.getBoundingClientRect();
+      const x = e.clientX - r.left - r.width/2;
+      const y = e.clientY - r.top - r.height/2;
+      magneticBtn.style.transform = `translate(${x*0.28}px, ${y*0.35}px)`;
+    });
+    magneticBtn.addEventListener('mouseleave', () => {
+      magneticBtn.style.transform = 'translate(0,0)';
+    });
+  }
+
+  // ---------------- HERO ORB PARALLAX (subtle, max ~12% offset) ----------------
+  const heroOrbs = document.getElementById('heroOrbs');
+  if(heroOrbs && fineHover && !reduceMotion){
+    const orbEls = heroOrbs.querySelectorAll('.orb');
+    document.querySelector('.hero').addEventListener('mousemove', (e) => {
+      const r = e.currentTarget.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      orbEls.forEach((orb, i) => {
+        const strength = 22 + i * 10;
+        orb.style.transform = `translate(${px*strength}px, ${py*strength}px)`;
+      });
+    });
+  }
+
+  // ---------------- SCROLL HINT ----------------
+  document.getElementById('scrollHintBtn').addEventListener('click', () => {
+    document.getElementById('team').scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth'});
+  });
+
+  // Reveal sections and headings as they enter the viewport
+  const revealItems = document.querySelectorAll('.scroll-reveal, .scroll-reveal-heading');
+  const revealIO = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold: 0.14, rootMargin: '0px 0px -40px 0px'});
+  revealItems.forEach(item => revealIO.observe(item));
+
+  // Reveal cards on scroll
+  const scenes = document.querySelectorAll('.card-scene');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry, idx) => {
+      if(entry.isIntersecting){
+        setTimeout(() => entry.target.classList.add('in'), reduceMotion ? 0 : idx * 90);
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold: 0.15});
+  scenes.forEach(s => io.observe(s));
+
+  // ---------------- ANIMATED HERO COUNTERS ----------------
+  const counters = document.querySelectorAll('.hm-num');
+  const counterIO = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseInt(el.dataset.target, 10);
+      if(reduceMotion){ el.textContent = target; counterIO.unobserve(el); return; }
+      const duration = 900;
+      const start = performance.now();
+      function tick(now){
+        const p = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(eased * target);
+        if(p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      counterIO.unobserve(el);
+    });
+  }, {threshold: 0.6});
+  counters.forEach(c => counterIO.observe(c));
+
+  // ---------------- SCROLL PROGRESS BAR ----------------
+  const progressBar = document.getElementById('scrollProgress');
+  function updateProgress(){
+    const h = document.documentElement;
+    const scrollable = h.scrollHeight - h.clientHeight;
+    const pct = scrollable > 0 ? (h.scrollTop / scrollable) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  }
+  window.addEventListener('scroll', updateProgress, {passive: true});
+  updateProgress();
+
+  // ---------------- CUSTOM CURSOR GLOW ----------------
+  if(fineHover && !reduceMotion){
+    const dot = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+    let ringX = 0, ringY = 0, mx = 0, my = 0;
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      document.body.classList.add('cursor-active');
+      dot.style.transform = `translate(${mx - 3}px, ${my - 3}px)`;
+      const target = e.target.closest('a, button, .card-flip, .filter-chip, .sign-chip');
+      document.body.classList.toggle('cursor-hover', !!target);
+    });
+    window.addEventListener('mouseleave', () => document.body.classList.remove('cursor-active'));
+    function animateRing(){
+      ringX += (mx - ringX) * 0.18;
+      ringY += (my - ringY) * 0.18;
+      ring.style.transform = `translate(${ringX - 17}px, ${ringY - 17}px)`;
+      requestAnimationFrame(animateRing);
+    }
+    requestAnimationFrame(animateRing);
+  } else {
+    document.getElementById('cursorDot').style.display = 'none';
+    document.getElementById('cursorRing').style.display = 'none';
+  }
+
+  // ---------------- HERO CANVAS: heartbeat pulses + interactive node network ----------------
+  const canvas = document.getElementById('pulseCanvas');
+  if(canvas){
+    const ctx = canvas.getContext('2d');
+    let w, h, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function size(){
+      w = canvas.parentElement.clientWidth; h = canvas.parentElement.clientHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      canvas.style.width = w+'px'; canvas.style.height = h+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      initNodes();
+    }
+
+    const traces = [0.3,0.45,0.6,0.75].map((yf,i) => ({baseY: 0, yf, amp: 10+i*3, speed: 0.6+i*0.15, phase: i*1.4}));
+
+    function pulseAt(x, phase, speed, t){
+      const cyc = ((x*0.012 + t*0.001*speed + phase) % (Math.PI*2) + Math.PI*2) % (Math.PI*2);
+      if(cyc > 0.15 && cyc < 0.45){
+        const local = (cyc-0.15)/0.3;
+        return Math.sin(local*Math.PI) * (local < 0.5 ? -1 : 1) * (local<0.2||local>0.8?0.4:1);
+      }
+      return Math.sin(cyc*2)*0.05;
+    }
+
+    // interactive node network — echoes the "one shared chart" idea
+    let nodes = [];
+    const NODE_COUNT = 24;
+    const mouse = {x: -9999, y: -9999};
+    function initNodes(){
+      nodes = Array.from({length: NODE_COUNT}, () => ({
+        x: Math.random()*w, y: Math.random()*h,
+        vx: (Math.random()-0.5)*0.22, vy: (Math.random()-0.5)*0.22
+      }));
+    }
+    canvas.addEventListener('mousemove', (e) => {
+      const r = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
+    });
+    canvas.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+
+    size(); window.addEventListener('resize', size);
+
+    let t=0, running=true;
+    function draw(){
+      if(!running) return;
+      requestAnimationFrame(draw);
+      t += reduceMotion ? 0 : 1;
+      ctx.clearRect(0,0,w,h);
+
+      // heartbeat lines
+      traces.forEach((tr) => {
+        tr.baseY = h*tr.yf;
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(220,202,179,0.13)`;
+        ctx.lineWidth = 1.4;
+        const step=6;
+        for(let x=0;x<=w;x+=step){
+          const y = tr.baseY + pulseAt(x, tr.phase, tr.speed, t)*tr.amp*4;
+          if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+      });
+
+      // node network
+      if(!reduceMotion){
+        nodes.forEach(n => {
+          n.x += n.vx; n.y += n.vy;
+          if(n.x < 0 || n.x > w) n.vx *= -1;
+          if(n.y < 0 || n.y > h) n.vy *= -1;
+          const dx = n.x - mouse.x, dy = n.y - mouse.y;
+          const dist = Math.hypot(dx, dy);
+          if(dist < 90 && dist > 0){
+            n.x += (dx/dist) * 0.7;
+            n.y += (dy/dist) * 0.7;
+          }
+        });
+      }
+      for(let i=0;i<nodes.length;i++){
+        for(let j=i+1;j<nodes.length;j++){
+          const dx = nodes[i].x - nodes[j].x, dy = nodes[i].y - nodes[j].y;
+          const dist = Math.hypot(dx,dy);
+          if(dist < 130){
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(138,164,145,${0.22*(1-dist/130)})`;
+            ctx.lineWidth = 1;
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+        const dxm = nodes[i].x - mouse.x, dym = nodes[i].y - mouse.y;
+        const distm = Math.hypot(dxm,dym);
+        if(distm < 150){
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(185,155,103,${0.3*(1-distm/150)})`;
+          ctx.lineWidth = 1;
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(250,248,243,0.55)';
+        ctx.arc(nodes[i].x, nodes[i].y, 1.6, 0, Math.PI*2);
+        ctx.fill();
+      }
+    }
+    requestAnimationFrame(draw);
+    new IntersectionObserver((e)=>{ running = e[0].isIntersecting; if(running) requestAnimationFrame(draw); }, {threshold:0}).observe(canvas);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Medical Records — Everwell</title>
+<meta name="theme-color" content="#16211A">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg: #F1F3EC;
+  --bg-soft: #E7ECE1;
+  --cream: #FAF8F3;
+  --ink: #1E2A22;
+  --ink-soft: #4A554C;
+  --sage: #4F6B57;
+  --sage-light: #8AA491;
+  --sage-deep: #16211A;
+  --clay: #DCCAB3;
+  --gold: #B99B67;
+  --line: rgba(30,42,34,0.12);
+  --radius-sm: 8px;
+  --radius-md: 18px;
+  --radius-lg: 22px;
+  --radius-xl: 100px;
+  --transition-fast: 0.2s ease;
+  --transition-med: 0.35s ease;
+  --shadow-sm: 0 2px 8px rgba(22,33,26,0.06);
+  --shadow-md: 0 8px 24px rgba(22,33,26,0.1);
+  --shadow-lg: 0 16px 48px rgba(22,33,26,0.14);
+  --allergy: #8B3A2E;
+  --allergy-bg: #F6E9E4;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Instrument Sans',sans-serif;
+  font-weight:400;
+  line-height:1.5;
+}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+}
+*:focus-visible{outline:3px solid var(--sage); outline-offset:3px; border-radius:4px;}
+a{color:inherit;text-decoration:none;}
+img{display:block;max-width:100%;}
+button{font-family:inherit;cursor:pointer;}
+
+.skip-link{
+  position:absolute;top:-100%;left:50%;transform:translateX(-50%);
+  background:var(--sage-deep);color:var(--cream);
+  padding:0.7rem 1.6rem;border-radius:var(--radius-xl);
+  font-size:0.85rem;font-weight:500;z-index:1000;transition:top var(--transition-fast);
+}
+.skip-link:focus{top:1.2rem;}
+
+.eyebrow{
+  font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--sage);font-weight:500;
+}
+.display{font-family:'Fraunces',serif;font-weight:400;letter-spacing:-0.01em;}
+
+/* ================= APP TOP BAR ================= */
+.app-nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,248,243,0.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 4vw;
+}
+.nav-mark{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:500;letter-spacing:-0.015em;color:var(--ink);}
+.nav-mark em{font-style:italic;font-weight:400;color:var(--sage);}
+.app-links{display:flex;gap:2.2rem;align-items:center;margin-left:3.5rem;}
+.app-links a{
+  font-size:0.87rem;color:var(--ink-soft);padding:0.4rem 0;
+  border-bottom:2px solid transparent;transition:color .25s, border-color .25s;
+}
+.app-links a:hover{color:var(--sage-deep);}
+.app-links a.active{color:var(--sage-deep);font-weight:500;border-color:var(--sage);}
+.nav-left{display:flex;align-items:center;flex:1;}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--line);
+  background:var(--cream);display:flex;align-items:center;justify-content:center;
+  color:var(--ink-soft);position:relative;transition:border-color .25s, color .25s;
+}
+.icon-btn:hover{border-color:var(--sage);color:var(--sage-deep);}
+.icon-btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.icon-btn .dot{
+  position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;
+  background:var(--gold);border:1.5px solid var(--cream);
+}
+.notif-panel{
+  position:absolute;top:48px;right:0;width:340px;max-height:420px;overflow-y:auto;
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-lg);
+  box-shadow:0 12px 32px rgba(0,0,0,0.12);z-index:80;
+}
+.notif-panel-header{
+  padding:0.9rem 1.1rem;border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.notif-panel-header h4{font-family:'Fraunces',serif;font-weight:500;font-size:0.98rem;color:var(--ink);}
+.notif-item{
+  display:flex;gap:0.7rem;padding:0.8rem 1.1rem;border-bottom:1px solid var(--line);
+  text-decoration:none;color:inherit;transition:background .2s;
+}
+.notif-item:last-child{border-bottom:none;}
+.notif-item:hover{background:rgba(0,0,0,0.03);}
+.notif-item.unseen{background:rgba(197,161,90,0.08);}
+.notif-icon{
+  width:32px;height:32px;border-radius:50%;flex:0 0 32px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--sage-tint,#eef2ec);color:var(--sage-deep);
+}
+.notif-icon svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.notif-title{font-size:0.87rem;color:var(--ink);font-weight:500;line-height:1.35;}
+.notif-meta{font-size:0.76rem;color:var(--ink-soft);margin-top:0.15rem;}
+.notif-empty{padding:1.6rem 1.1rem;text-align:center;color:var(--ink-soft);font-size:0.85rem;}
+
+/* PAYMENT MODAL */
+.pay-modal-overlay{
+  display:none;position:fixed;inset:0;background:rgba(20,28,22,0.5);z-index:200;
+  align-items:center;justify-content:center;padding:1rem;
+}
+.pay-modal-overlay.show{display:flex;}
+.pay-modal-card{
+  position:relative;background:var(--cream);border-radius:var(--radius-md);
+  padding:1.8rem;max-width:440px;width:100%;box-shadow:var(--shadow-lg);
+  max-height:90vh;overflow-y:auto;
+}
+.pay-modal-close{
+  position:absolute;top:1.1rem;right:1.1rem;width:30px;height:30px;border-radius:50%;
+  border:1px solid var(--line);background:transparent;color:var(--ink-soft);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:var(--transition-fast);
+}
+.pay-modal-close:hover{border-color:var(--sage);color:var(--sage-deep);}
+.pay-modal-title{font-family:'Fraunces',serif;font-weight:500;font-size:1.2rem;color:var(--ink);margin-bottom:1.2rem;}
+.pay-modal-error{
+  display:none;background:rgba(185,80,80,0.1);color:#a03d3d;border-radius:8px;
+  padding:0.6rem 0.8rem;font-size:0.85rem;margin-bottom:1rem;
+}
+.pay-modal-label{display:block;font-size:0.74rem;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.4rem;}
+.pay-modal-select,.pay-modal-input{
+  width:100%;height:auto;padding:0.65rem 0.8rem;margin-bottom:1rem;
+  border:1px solid var(--line);border-radius:var(--radius-sm);background:#fff;
+  font-family:inherit;font-size:0.92rem;color:var(--ink);
+}
+.pay-modal-select:focus,.pay-modal-input:focus{outline:none;border-color:var(--sage);}
+.pay-modal-hint{font-size:0.78rem;color:var(--ink-soft);margin:-0.5rem 0 1.1rem;}
+.pay-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;}
+.pay-method-card{
+  display:flex;flex-direction:column;align-items:center;gap:0.4rem;
+  padding:0.8rem 0.5rem;border:1.5px solid var(--line);border-radius:var(--radius-sm);
+  background:#fff;cursor:pointer;transition:var(--transition-fast);
+  font-family:inherit;font-size:0.78rem;color:var(--ink);text-align:center;
+}
+.pay-method-card:hover{border-color:var(--sage-light);}
+.pay-method-card.selected{border-color:var(--sage-deep);background:rgba(79,107,87,0.06);}
+.pay-method-icon{
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+.pay-method-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.pay-method-icon.cash{background:linear-gradient(135deg,#F1E4D2,#DCCAB3);color:#7C623C;}
+.pay-method-icon.gcash{background:linear-gradient(135deg,#E4F5FF,#BDE5FF);color:#0077C8;}
+.pay-method-icon.maya{background:linear-gradient(135deg,#DDFBF5,#A8EFE1);color:#008F7C;}
+.pay-method-icon.card{background:linear-gradient(135deg,#E5EEE7,#C7DCCB);color:var(--sage-deep);}
+.pay-method-icon.bank{background:linear-gradient(135deg,#F8EFD9,#EAD29E);color:#9A763A;}
+@media (max-width:420px){ .pay-method-grid{grid-template-columns:repeat(2,1fr);} }
+.user-chip{display:flex;align-items:center;gap:0.65rem;padding:0.35rem 0.9rem 0.35rem 0.35rem;
+  border:1px solid var(--line);border-radius:var(--radius-xl);background:var(--cream);}
+.user-chip .avatar{
+  width:30px;height:30px;border-radius:50%;background:var(--sage-deep);color:var(--cream);
+  display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:0.85rem;
+}
+.user-chip .u-meta{display:flex;flex-direction:column;line-height:1.15;}
+.user-chip .u-name{font-size:0.82rem;font-weight:500;color:var(--ink);}
+.user-chip .u-role{font-size:0.68rem;color:var(--ink-soft);}
+@media(max-width:900px){ .app-links{display:none;} }
+
+/* ================= BREADCRUMB ================= */
+.crumb{padding:1.1rem 4vw 0;font-size:0.8rem;color:var(--ink-soft);display:flex;gap:0.5rem;align-items:center;max-width:1240px;margin:0 auto;}
+.crumb a:hover{color:var(--sage-deep);}
+.crumb .sep{opacity:0.5;}
+.crumb .current{color:var(--ink);font-weight:500;}
+
+/* ================= PAGE HEADER ================= */
+.page-head{padding:1.4rem 4vw 2.2rem;max-width:1240px;margin:0 auto;
+  display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;}
+.page-head h1{font-size:clamp(1.9rem,3.4vw,2.6rem);color:var(--sage-deep);margin-top:0.5rem;}
+.page-head p{color:var(--ink-soft);max-width:46ch;margin-top:0.6rem;font-size:0.95rem;}
+.head-actions{display:flex;gap:0.8rem;}
+.btn{
+  display:inline-flex;align-items:center;gap:0.55rem;
+  padding:0.75rem 1.4rem;border-radius:var(--radius-xl);
+  font-size:0.85rem;letter-spacing:0.01em;border:1px solid transparent;transition:all .25s;
+}
+.btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.btn-primary{background:var(--sage-deep);color:var(--cream);}
+.btn-primary:hover{background:var(--sage);}
+.btn-ghost{background:var(--cream);color:var(--ink);border-color:var(--line);}
+.btn-ghost:hover{border-color:var(--sage);color:var(--sage-deep);}
+
+/* ================= SUMMARY STRIP ================= */
+.summary-strip{max-width:1240px;margin:0 auto;padding:0 4vw 2.4rem;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.stat-card{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.3rem 1.5rem;}
+.stat-card .s-label{font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-soft);}
+.stat-card .s-value{font-family:'Fraunces',serif;font-size:1.9rem;color:var(--sage-deep);margin-top:0.4rem;}
+.stat-card .s-sub{font-size:0.76rem;color:var(--ink-soft);margin-top:0.2rem;}
+.stat-card.warn .s-value{color:var(--allergy);}
+@media(max-width:900px){ .summary-strip{grid-template-columns:repeat(2,1fr);} }
+@media(max-width:560px){ .summary-strip{grid-template-columns:1fr;} }
+
+/* ================= MAIN LAYOUT ================= */
+.records-shell{max-width:1240px;margin:0 auto;padding:0 4vw 6rem;
+  display:grid;grid-template-columns:1fr 320px;gap:2.5rem;align-items:start;}
+@media(max-width:980px){ .records-shell{grid-template-columns:1fr;} }
+
+/* ---- Toolbar ---- */
+.toolbar{display:flex;gap:0.8rem;flex-wrap:wrap;align-items:center;margin-bottom:1.6rem;}
+.search-field{
+  flex:1 1 220px;display:flex;align-items:center;gap:0.6rem;
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-xl);
+  padding:0.7rem 1.1rem;
+}
+.search-field svg{width:16px;height:16px;stroke:var(--ink-soft);fill:none;stroke-width:1.8;flex-shrink:0;}
+.search-field input{border:none;background:transparent;outline:none;font-size:0.87rem;width:100%;color:var(--ink);}
+.search-field input::placeholder{color:var(--ink-soft);opacity:0.7;}
+.filter-select{
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-xl);
+  padding:0.7rem 1.2rem;font-size:0.83rem;color:var(--ink);appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A554C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 0.9rem center;background-size:14px;
+  padding-right:2.2rem;
+}
+
+/* ---- Timeline ---- */
+.timeline-group{margin-bottom:2.2rem;}
+.timeline-group h2{
+  font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-soft);
+  margin-bottom:0.9rem;padding-left:0.2rem;
+}
+.record-card{
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);
+  margin-bottom:0.9rem;overflow:hidden;transition:border-color .25s, box-shadow .25s;
+}
+.record-card:hover{border-color:var(--sage-light);box-shadow:var(--shadow-sm);}
+.record-summary{
+  display:flex;align-items:center;gap:1.1rem;padding:1.2rem 1.4rem;cursor:pointer;
+  list-style:none;
+}
+.record-summary::-webkit-details-marker{display:none;}
+.rec-date{
+  flex:0 0 62px;text-align:center;font-family:'Fraunces',serif;
+}
+.rec-date .d-num{font-size:1.5rem;color:var(--sage-deep);line-height:1;}
+.rec-date .d-mon{font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-soft);}
+.rec-icon{
+  width:38px;height:38px;border-radius:50%;background:var(--bg-soft);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.rec-icon svg{width:18px;height:18px;stroke:var(--sage);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.rec-body{flex:1;min-width:0;}
+.rec-title{font-family:'Fraunces',serif;font-size:1.05rem;color:var(--ink);}
+.rec-meta{font-size:0.8rem;color:var(--ink-soft);margin-top:0.2rem;}
+.rec-tag{
+  font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;
+  padding:0.25rem 0.6rem;border-radius:var(--radius-xl);background:var(--bg-soft);color:var(--sage-deep);
+  flex-shrink:0;white-space:nowrap;
+}
+.rec-tag.flag{background:var(--allergy-bg);color:var(--allergy);}
+.rec-chevron{
+  width:28px;height:28px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  transition:transform .3s;color:var(--ink-soft);
+}
+.rec-chevron svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+details[open] .rec-chevron{transform:rotate(180deg);}
+details[open] .record-summary{border-bottom:1px solid var(--line);}
+
+.rec-detail{padding:1.5rem 1.4rem 1.7rem;background:var(--bg-soft);}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;margin-bottom:1.4rem;}
+@media(max-width:600px){ .detail-grid{grid-template-columns:1fr;} }
+.detail-block h4{
+  font-size:0.7rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--sage);margin-bottom:0.5rem;
+}
+.detail-block p{font-size:0.87rem;color:var(--ink);line-height:1.6;}
+.vitals-row{display:flex;gap:1.4rem;flex-wrap:wrap;}
+.vital-chip{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:0.5rem 0.8rem;font-size:0.78rem;min-width:78px;}
+.vital-chip .v-label{color:var(--ink-soft);font-size:0.66rem;text-transform:uppercase;letter-spacing:0.05em;}
+.vital-chip .v-value{font-family:'Fraunces',serif;font-size:1rem;color:var(--sage-deep);margin-top:0.1rem;}
+.attach-list{display:flex;flex-direction:column;gap:0.5rem;}
+.attach-item{
+  display:flex;align-items:center;gap:0.6rem;font-size:0.83rem;color:var(--sage-deep);
+  padding:0.55rem 0.8rem;background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-sm);
+  transition:border-color .2s;
+}
+.attach-item:hover{border-color:var(--sage);}
+.attach-item svg{width:15px;height:15px;stroke:var(--sage);fill:none;stroke-width:1.8;flex-shrink:0;}
+.detail-footer{display:flex;gap:0.7rem;flex-wrap:wrap;}
+.link-btn{
+  font-size:0.82rem;color:var(--sage-deep);border-bottom:1px solid var(--sage-deep);
+  padding-bottom:2px;display:inline-flex;align-items:center;gap:0.4rem;
+}
+.link-btn:hover{color:var(--sage);border-color:var(--sage);}
+
+/* ---- Empty state ---- */
+.empty-state{
+  text-align:center;padding:4rem 2rem;background:var(--cream);border:1px dashed var(--line);
+  border-radius:var(--radius-md);display:none;
+}
+.empty-state.show{display:block;}
+.empty-state svg{width:40px;height:40px;stroke:var(--sage-light);fill:none;stroke-width:1.4;margin:0 auto 1rem;}
+.empty-state h3{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--sage-deep);margin-bottom:0.4rem;}
+.empty-state p{font-size:0.87rem;color:var(--ink-soft);}
+
+/* ================= SIDEBAR ================= */
+.side-card{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.4rem;margin-bottom:1.4rem;}
+.side-card h3{
+  font-size:0.72rem;letter-spacing:0.09em;text-transform:uppercase;color:var(--ink-soft);
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;
+}
+.allergy-row{
+  display:flex;align-items:center;gap:0.7rem;padding:0.6rem 0;border-top:1px solid var(--line);
+}
+.allergy-row:first-of-type{border-top:none;}
+.allergy-dot{width:8px;height:8px;border-radius:50%;background:var(--allergy);flex-shrink:0;}
+.allergy-name{font-size:0.87rem;font-weight:500;flex:1;}
+.allergy-sev{font-size:0.68rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--allergy);
+  background:var(--allergy-bg);padding:0.2rem 0.55rem;border-radius:var(--radius-xl);}
+.no-allergy{font-size:0.85rem;color:var(--ink-soft);}
+
+.info-note{
+  display:flex;gap:0.7rem;font-size:0.8rem;color:var(--ink-soft);line-height:1.55;
+  background:var(--bg-soft);border-radius:var(--radius-sm);padding:0.9rem 1rem;
+}
+.info-note svg{width:16px;height:16px;stroke:var(--sage);fill:none;stroke-width:1.7;flex-shrink:0;margin-top:0.1rem;}
+
+.contact-row{display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;font-size:0.85rem;}
+.contact-row span:first-child{color:var(--ink-soft);}
+.contact-row span:last-child{font-weight:500;}
+
+/* ================= REFERRALS PAGE ================= */
+.page-view[hidden]{display:none !important;}
+.referrals-shell{max-width:1240px;margin:0 auto;padding:0 4vw 6rem;}
+.referral-overview{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2.2rem;}
+.referral-stat{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.2rem 1.35rem;}
+.referral-stat .s-label{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}
+.referral-stat .s-value{font-family:'Fraunces',serif;font-size:1.8rem;color:var(--sage-deep);margin-top:.35rem;}
+.referral-stat .s-sub{font-size:.76rem;color:var(--ink-soft);margin-top:.18rem;}
+.referral-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:2.5rem;align-items:start;}
+.referral-list{display:flex;flex-direction:column;gap:.9rem;}
+.referral-card{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.25rem 1.35rem;transition:border-color .25s,box-shadow .25s;}
+.referral-card summary::-webkit-details-marker{display:none;}
+.referral-card summary{list-style:none;}
+.referral-card:hover{border-color:var(--sage-light);box-shadow:var(--shadow-sm);}
+.referral-card-top{display:flex;align-items:flex-start;gap:1rem;}
+.referral-icon{width:42px;height:42px;border-radius:50%;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.referral-icon svg{width:19px;height:19px;stroke:var(--sage);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.referral-main{flex:1;min-width:0;}
+.referral-title{font-family:'Fraunces',serif;font-size:1.08rem;color:var(--ink);}
+.referral-meta{font-size:.8rem;color:var(--ink-soft);margin-top:.2rem;}
+.status-pill{font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;padding:.28rem .65rem;border-radius:var(--radius-xl);white-space:nowrap;}
+.status-pill.pending{background:#F7EEDC;color:#8A642C;}
+.status-pill.scheduled{background:#E4F0E6;color:#386044;}
+.status-pill.completed{background:var(--bg-soft);color:var(--sage-deep);}
+.status-pill.expired{background:#F1E6E2;color:#8B3A2E;}
+.referral-details{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;border-top:1px solid var(--line);margin-top:1.1rem;padding-top:1rem;}
+.referral-detail-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);}
+.referral-detail-value{font-size:.84rem;color:var(--ink);margin-top:.2rem;}
+.referral-actions{display:flex;gap:.9rem;flex-wrap:wrap;margin-top:1.1rem;}
+.referral-side-card{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.4rem;margin-bottom:1.4rem;}
+.referral-side-card h3{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:1rem;}
+.step-list{display:flex;flex-direction:column;gap:1rem;}
+.step{display:grid;grid-template-columns:28px 1fr;gap:.7rem;align-items:start;}
+.step-number{width:28px;height:28px;border-radius:50%;background:var(--bg-soft);color:var(--sage-deep);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:.9rem;}
+.step strong{display:block;font-size:.84rem;font-weight:500;color:var(--ink);}
+.step span{display:block;font-size:.76rem;color:var(--ink-soft);margin-top:.15rem;line-height:1.45;}
+.referral-empty{padding:3.5rem 2rem;text-align:center;background:var(--cream);border:1px dashed var(--line);border-radius:var(--radius-md);}
+.referral-empty svg{width:38px;height:38px;stroke:var(--sage-light);fill:none;stroke-width:1.4;margin:0 auto 1rem;}
+.referral-empty h3{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--sage-deep);margin-bottom:.35rem;}
+.referral-empty p{font-size:.85rem;color:var(--ink-soft);}
+@media(max-width:980px){.referral-layout{grid-template-columns:1fr;}.referral-side{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}.referral-side-card{margin-bottom:0;}}
+@media(max-width:700px){.referral-overview{grid-template-columns:1fr;}.referral-details{grid-template-columns:1fr 1fr;}.referral-card-top{align-items:flex-start;}.status-pill{margin-left:auto;}.referral-side{display:block;}.referral-side-card{margin-bottom:1rem;}}
+@media(max-width:480px){.referral-card-top{display:grid;grid-template-columns:42px 1fr;}.referral-card-top .status-pill{grid-column:2;justify-self:start;margin-left:0;margin-top:-.45rem;}.referral-details{grid-template-columns:1fr;}}
+@media print{.app-nav,.head-actions,.toolbar,.referral-actions,.referral-side,.skip-link{display:none !important;}.page-view{display:block !important;}.records-shell,.referrals-shell{padding-bottom:0;}}
+
+/* ================= ADDITIONAL APP PAGES ================= */
+.dashboard-shell{max-width:1240px;margin:0 auto;padding:0 4vw 6rem;}
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.8fr);gap:1.2rem;align-items:start;}
+.dashboard-card{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.35rem;margin-bottom:1.2rem;}
+.dashboard-card h2{font-family:'Fraunces',serif;font-size:1.18rem;font-weight:400;color:var(--sage-deep);margin-bottom:1rem;}
+.dashboard-card h3{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:.9rem;}
+.dashboard-card p{font-size:.86rem;color:var(--ink-soft);line-height:1.55;}
+.dashboard-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.2rem;}
+.dashboard-stat{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:1.2rem 1.35rem;}
+.dashboard-stat .s-label{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);}.dashboard-stat .s-value{font-family:'Fraunces',serif;font-size:1.75rem;color:var(--sage-deep);margin-top:.3rem}.dashboard-stat .s-sub{font-size:.75rem;color:var(--ink-soft);margin-top:.15rem}
+.dash-list{display:flex;flex-direction:column;gap:.7rem}.dash-row{display:flex;align-items:center;gap:.85rem;padding:.8rem 0;border-top:1px solid var(--line)}.dash-row:first-child{border-top:0;padding-top:0}.dash-row:last-child{padding-bottom:0}.dash-icon{width:35px;height:35px;border-radius:50%;background:var(--bg-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0}.dash-icon svg{width:17px;height:17px;stroke:var(--sage);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.dash-main{flex:1;min-width:0}.dash-title{font-family:'Fraunces',serif;font-size:.98rem;color:var(--ink)}.dash-meta{font-size:.76rem;color:var(--ink-soft);margin-top:.12rem}.dash-side{text-align:right;font-size:.75rem;color:var(--ink-soft)}
+.page-tabs{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.35rem}.page-tab{border:1px solid var(--line);background:var(--cream);color:var(--ink-soft);padding:.55rem .9rem;border-radius:var(--radius-xl);font-size:.78rem;cursor:pointer}.page-tab.active,.page-tab:hover{border-color:var(--sage);background:var(--bg-soft);color:var(--sage-deep)}
+.table-like{width:100%}.table-row{display:grid;grid-template-columns:1.2fr 1fr .8fr auto;gap:.8rem;align-items:center;border-top:1px solid var(--line);padding:.9rem 0;font-size:.82rem}.table-row.header{border-top:0;padding-top:0;font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft)}.table-row strong{font-weight:500;color:var(--ink)}
+.appointment-card{display:flex;gap:1rem;align-items:center;padding:1rem 0;border-top:1px solid var(--line)}.appointment-card:first-child{border-top:0;padding-top:0}.date-block{width:58px;text-align:center;background:var(--bg-soft);border-radius:var(--radius-sm);padding:.45rem .3rem;flex-shrink:0}.date-block .date-num{font-family:'Fraunces',serif;font-size:1.35rem;line-height:1;color:var(--sage-deep)}.date-block .date-mon{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--sage)}
+.med-card{display:grid;grid-template-columns:44px 1fr auto;gap:.9rem;align-items:center;padding:.95rem 0;border-top:1px solid var(--line)}.med-card:first-child{border-top:0;padding-top:0}.med-icon{width:44px;height:44px;border-radius:50%;background:var(--bg-soft);display:flex;align-items:center;justify-content:center}.med-icon svg{width:20px;height:20px;stroke:var(--sage);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.med-name{font-family:'Fraunces',serif;font-size:1rem;color:var(--ink)}.med-meta{font-size:.76rem;color:var(--ink-soft);margin-top:.14rem}.med-status{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;padding:.25rem .55rem;border-radius:var(--radius-xl);background:#E4F0E6;color:#386044;white-space:nowrap}
+.invoice-total{display:flex;justify-content:space-between;align-items:end;padding:1rem 0;border-top:1px solid var(--line);margin-top:1rem}.invoice-total span:first-child{font-size:.8rem;color:var(--ink-soft)}.invoice-total strong{font-family:'Fraunces',serif;font-size:1.7rem;color:var(--sage-deep)}.paid{color:#386044;background:#E4F0E6}.due{color:#8A642C;background:#F7EEDC}.billing-status{font-size:.68rem;text-transform:uppercase;letter-spacing:.05em;padding:.25rem .55rem;border-radius:var(--radius-xl)}
+@media(max-width:900px){.dashboard-grid{grid-template-columns:1fr}.dashboard-stats{grid-template-columns:1fr 1fr}}@media(max-width:600px){.dashboard-stats{grid-template-columns:1fr}.table-row{grid-template-columns:1fr 1fr}.table-row.header{display:none}.table-row>*:last-child{justify-self:start}}
+
+/* ================= REFERRAL STATUS WORKFLOW ================= */
+.referral-status-wrap{margin-top:2.3rem;padding-top:2rem;border-top:1px solid var(--line);}
+.referral-status-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:2rem;align-items:start;}
+.referral-location-panel{background:var(--sage-deep);border-radius:var(--radius-lg);padding:1.7rem;color:var(--cream);position:relative;overflow:hidden;margin-bottom:1.6rem;}
+.referral-location-top{display:flex;justify-content:space-between;align-items:flex-start;gap:1.3rem;flex-wrap:wrap;position:relative;z-index:1;}.referral-location-copy h2{font-family:'Fraunces',serif;font-size:1.4rem;margin-top:.4rem;max-width:28ch}.referral-location-copy p{font-size:.83rem;color:rgba(250,248,243,.72);margin-top:.45rem;max-width:44ch}.referral-location-copy .eyebrow{color:var(--clay)}
+.referral-loc-status{font-size:.78rem;color:rgba(250,248,243,.85);display:flex;align-items:center;gap:.45rem;margin-top:.8rem}.referral-loc-status .status-dot{width:7px;height:7px;border-radius:50%;background:var(--sage-light)}.referral-loc-status.ready .status-dot{background:#8FCB9E;box-shadow:0 0 0 4px rgba(143,203,158,.18)}
+.referral-location-panel .btn-primary{background:var(--cream);color:var(--sage-deep)}.referral-location-panel .btn-ghost{color:var(--cream);border-color:rgba(250,248,243,.3)}.referral-location-panel .btn-ghost:hover{border-color:var(--cream)}
+.referral-manual-loc{display:none;gap:.55rem;margin-top:1rem;position:relative;z-index:1}.referral-manual-loc.show{display:flex}.referral-manual-loc input{flex:1;background:rgba(250,248,243,.1);border:1px solid rgba(250,248,243,.25);border-radius:var(--radius-xl);padding:.62rem 1rem;color:var(--cream);font-size:.82rem;outline:none}.referral-manual-loc input::placeholder{color:rgba(250,248,243,.5)}
+.referral-map-visual{height:150px;border-radius:var(--radius-md);position:relative;overflow:hidden;background:#101a13;margin-top:1.4rem}.referral-map-visual svg{width:100%;height:100%;display:block}.referral-map-pin{position:absolute;transform:translate(-50%,-100%);opacity:0;transition:opacity .4s,transform .4s;display:flex;flex-direction:column;align-items:center}.referral-map-pin.show{opacity:1;transform:translate(-50%,-100%)}.referral-map-pin .pin-dot{width:9px;height:9px;border-radius:50%;background:var(--gold);border:2px solid var(--sage-deep);box-shadow:0 0 0 4px rgba(185,155,103,.22)}.referral-map-pin.you .pin-dot{background:#8FCB9E;box-shadow:0 0 0 4px rgba(143,203,158,.22)}.referral-map-pin .pin-label{font-size:.58rem;color:var(--cream);background:rgba(22,33,26,.86);padding:.12rem .4rem;border-radius:var(--radius-xl);margin-top:.25rem;white-space:nowrap}
+.referral-results-toolbar{display:flex;justify-content:space-between;align-items:center;gap:.7rem;flex-wrap:wrap;margin-bottom:1rem}.referral-results-toolbar h2{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--sage-deep)}
+.hospital-card{display:grid;grid-template-columns:145px 1fr auto;gap:1rem;background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);padding:.9rem;margin-bottom:.85rem;align-items:center;transition:border-color .25s,box-shadow .25s}.hospital-card:hover{border-color:var(--sage-light);box-shadow:var(--shadow-sm)}.hospital-card.recommended{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}.hospital-photo{height:100px;border-radius:var(--radius-sm);overflow:hidden;position:relative}.hospital-photo img{width:100%;height:100%;object-fit:cover;filter:saturate(.9) brightness(.97)}.hospital-flag{position:absolute;top:.4rem;left:.4rem;background:var(--gold);color:var(--sage-deep);font-size:.58rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:.18rem .4rem;border-radius:var(--radius-xl)}.hospital-body h3{font-family:'Fraunces',serif;font-size:1rem;color:var(--ink)}.hospital-meta{font-size:.75rem;color:var(--ink-soft);margin-top:.18rem}.hospital-tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-top:.45rem}.hospital-tag{font-size:.62rem;padding:.18rem .45rem;border-radius:var(--radius-xl);background:var(--bg-soft);color:var(--sage-deep)}.hospital-tag.match{background:#E4ECE5;color:var(--sage);font-weight:600}.bed-status{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;margin-top:.5rem}.bed-status .bed-dot{width:6px;height:6px;border-radius:50%}.bed-status.available{color:var(--sage)}.bed-status.available .bed-dot{background:var(--sage)}.bed-status.limited{color:#96792C}.bed-status.limited .bed-dot{background:#96792C}.hospital-side{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:.5rem}.hospital-distance{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--sage-deep)}.hospital-distance span{display:block;font-family:'Instrument Sans',sans-serif;font-size:.62rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em}.btn-sm{padding:.55rem .9rem;font-size:.74rem}.btn-outline{background:transparent;color:var(--sage-deep);border-color:var(--ink)}.btn-outline:hover{background:var(--sage-deep);color:var(--cream)}
+.referral-confirm-banner{display:none;align-items:center;gap:.8rem;background:#E4ECE5;border:1px solid rgba(79,107,87,.3);border-radius:var(--radius-md);padding:1rem 1.2rem;margin-bottom:1.1rem}.referral-confirm-banner.show{display:flex}.referral-confirm-banner svg{width:23px;height:23px;stroke:var(--sage);fill:none;stroke-width:1.8;flex-shrink:0}.referral-confirm-banner strong{display:block;color:var(--sage-deep);font-size:.86rem}.referral-confirm-banner span{font-size:.76rem;color:var(--ink-soft)}
+.referral-status-side .dashboard-card{margin-bottom:1rem}.referral-status-side .ref-row{display:flex;justify-content:space-between;padding:.5rem 0;border-top:1px solid var(--line);font-size:.8rem;gap:.5rem}.referral-status-side .ref-row:first-of-type{border-top:0}.referral-status-side .ref-row span:first-child{color:var(--ink-soft)}.referral-status-side .ref-row span:last-child{font-weight:500;text-align:right}.urgency-badge{font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;padding:.2rem .5rem;border-radius:var(--radius-xl);background:#F7E7DE;color:#B4552F;font-weight:600}.shared-list{display:flex;flex-direction:column;gap:.5rem}.shared-item{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--ink)}.shared-item svg{width:14px;height:14px;stroke:var(--sage);fill:none;stroke-width:1.8;flex-shrink:0}.reason-text{font-size:.8rem;color:var(--ink);line-height:1.55;padding-top:.5rem;border-top:1px solid var(--line);margin-top:.25rem}
+@media(max-width:900px){.referral-status-grid{grid-template-columns:1fr}.referral-status-side{display:grid;grid-template-columns:1fr 1fr;gap:1rem}.referral-status-side .dashboard-card{margin-bottom:0}}@media(max-width:700px){.hospital-card{grid-template-columns:1fr}.hospital-side{align-items:flex-start;flex-direction:row;justify-content:space-between;width:100%}.referral-status-side{display:block}.referral-status-side .dashboard-card{margin-bottom:1rem}}@media(max-width:480px){.referral-manual-loc{flex-direction:column}.referral-location-panel{padding:1.25rem}.referral-status-side .dashboard-card{padding:1rem}}
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to records</a>
+
+<!-- ============ APP TOP BAR ============ -->
+<nav class="app-nav" aria-label="Primary">
+  <div class="nav-left">
+    <a href="patient-dashboard.html" class="nav-mark">Ever<em>well</em></a>
+    <div class="app-links">
+      <a href="#records" class="active" aria-current="page" data-page="records">My Records</a>
+      <a href="#referrals" data-page="referrals">Referrals</a>
+      <a href="#" data-page="prescriptions">Prescriptions</a>
+      <a href="#" data-page="billing">Billing</a>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="patient-dashboard.html" class="btn btn-ghost nav-back" aria-label="Back to Dashboard">
+      Back to Dashboard
+    </a>
+    <div class="notif-wrap" style="position:relative;">
+      <button class="icon-btn" id="notifBtn" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+        <span class="dot" id="notifDot" hidden></span>
+        <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <div class="notif-panel" id="notifPanel" hidden>
+        <div class="notif-panel-header"><h4>Notifications</h4></div>
+        <div id="notifList"></div>
+      </div>
+    </div>
+    <div class="user-chip">
+      <span class="avatar">MS</span>
+      <span class="u-meta">
+        <span class="u-name">Maria Santos</span>
+        <span class="u-role">Patient</span>
+      </span>
+    </div>
+  </div>
+</nav>
+
+<div class="crumb" id="breadcrumb">
+  <a href="#records" data-page="records">My Health</a><span class="sep">/</span><span class="current" id="breadcrumbCurrent">My Medical Records</span>
+</div>
+
+<!-- ============ PRESCRIPTIONS PAGE ============ -->
+<section class="page-view" id="prescriptionsPage" hidden><header class="page-head"><div><span class="eyebrow">My treatment</span><h1 class="display">Prescriptions</h1><p>Review your current medications, refill status, and instructions from your care team.</p></div></header><main class="dashboard-shell"><div class="dashboard-grid"><div><div class="dashboard-card"><h2>Current medications</h2><div id="currentMedsList"><p style="color:var(--ink-soft);font-size:0.9rem;">Loading your medications…</p></div></div><div class="dashboard-card"><h2>Medication history</h2><div class="table-like" id="medHistoryTable"></div></div></div><aside><div class="dashboard-card"><h3>Medication safety</h3><div id="medSafetyNote"></div></div></aside></div></main></section>
+
+<!-- ============ BILLING PAGE ============ -->
+<section class="page-view" id="billingPage" hidden><header class="page-head"><div><span class="eyebrow">Account</span><h1 class="display">Billing</h1><p>Review your statements, payment history, and outstanding balances from Everwell.</p></div></header><main class="dashboard-shell"><section class="dashboard-stats"><div class="dashboard-stat"><div class="s-label">Current balance</div><div class="s-value" id="statBillingBalance">—</div><div class="s-sub" id="statBillingBalanceSub"></div></div><div class="dashboard-stat"><div class="s-label">Total paid</div><div class="s-value" id="statBillingPaid">—</div><div class="s-sub">All-time</div></div><div class="dashboard-stat"><div class="s-label">Last payment</div><div class="s-value" id="statBillingLastPayment">—</div><div class="s-sub" id="statBillingLastPaymentSub"></div></div></section><div class="dashboard-grid"><div class="dashboard-card"><h2>Statements</h2><div class="table-like" id="billingStatementsTable"></div><div class="invoice-total"><span>Outstanding balance</span><strong id="billingOutstandingTotal">—</strong></div><button class="btn btn-primary" id="makePaymentBtn">Make a payment</button></div><aside><div class="dashboard-card"><h3>Payment method</h3><div id="billingPaymentMethod"></div></div><div class="dashboard-card"><h3>Billing support</h3><p>Questions about a statement? Call (02) 8123 4567 or ask the front desk at your next visit.</p></div></aside></div></main></section>
+
+<div id="paymentModalOverlay" class="pay-modal-overlay">
+  <div class="pay-modal-card">
+    <button type="button" class="pay-modal-close" id="paymentCloseBtn" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <h3 class="pay-modal-title">Make a payment</h3>
+    <div id="paymentFormError" class="pay-modal-error"></div>
+
+    <label class="pay-modal-label">Statement</label>
+    <select id="paymentInvoiceSelect" class="pay-modal-select"></select>
+
+    <label class="pay-modal-label">Amount (₱)</label>
+    <input type="number" id="paymentAmountInput" class="pay-modal-input" min="0" step="0.01">
+    <div id="paymentAmountHint" class="pay-modal-hint"></div>
+
+    <label class="pay-modal-label">Payment method</label>
+    <div class="pay-method-grid" id="paymentMethodGrid">
+      <button type="button" class="pay-method-card" data-method="Cash">
+        <span class="pay-method-icon cash"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/></svg></span>
+        <span>Cash</span>
+      </button>
+      <button type="button" class="pay-method-card" data-method="GCash">
+        <span class="pay-method-icon gcash"><svg viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2"/><path d="m10 12 1.5 1.5L15 10"/></svg></span>
+        <span>GCash</span>
+      </button>
+      <button type="button" class="pay-method-card" data-method="Maya">
+        <span class="pay-method-icon maya"><svg viewBox="0 0 24 24"><path d="M4 7.5 12 4l8 3.5v9L12 20l-8-3.5z"/><path d="m8 10 4 2 4-2"/></svg></span>
+        <span>Maya</span>
+      </button>
+      <button type="button" class="pay-method-card" data-method="Card">
+        <span class="pay-method-icon card"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></svg></span>
+        <span>Card</span>
+      </button>
+      <button type="button" class="pay-method-card" data-method="Bank Transfer">
+        <span class="pay-method-icon bank"><svg viewBox="0 0 24 24"><path d="m3 9 9-5 9 5"/><path d="M5 10v7M19 10v7M3 19h18"/></svg></span>
+        <span>Bank Transfer</span>
+      </button>
+    </div>
+
+    <div class="btn-row" style="margin-top:1.4rem;">
+      <button class="btn btn-secondary" id="paymentCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="paymentSubmitBtn">Submit Payment</button>
+    </div>
+  </div>
+</div>
+
+<div id="recordDetailModalOverlay" class="pay-modal-overlay">
+  <div class="pay-modal-card">
+    <button type="button" class="pay-modal-close" id="recordDetailCloseBtn" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M18 6 6 18M6 6l12 12" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <h3 class="pay-modal-title" id="recordDetailTitle">Visit note</h3>
+    <div id="recordDetailBody"></div>
+  </div>
+</div>
+
+
+<!-- ============ PAGE HEADER ============ -->
+<section class="page-view" id="recordsPage">
+<header class="page-head">
+  <div>
+    <span class="eyebrow">My Health</span>
+    <h1 class="display">Your medical records</h1>
+    <p>Every visit, result, and note your care team has recorded — in one place, in plain language, ready to share whenever you need to.</p>
+  </div>
+</header>
+
+<!-- ============ SUMMARY STRIP ============ -->
+<section class="summary-strip" aria-label="Records summary">
+  <div class="stat-card">
+    <div class="s-label">Total Visits</div>
+    <div class="s-value" id="statTotalVisits">—</div>
+    <div class="s-sub">All appointments on record</div>
+  </div>
+  <div class="stat-card">
+    <div class="s-label">Completed Appointments</div>
+    <div class="s-value" id="statCompletedAppointments">—</div>
+    <div class="s-sub">Visits completed by your care team</div>
+  </div>
+</section>
+
+<main id="main" class="records-shell">
+  <!-- ============ RECORDS COLUMN ============ -->
+  <div>
+    <div class="toolbar">
+      <div class="search-field">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="recordSearch" placeholder="Search by visit, doctor, or diagnosis" aria-label="Search records">
+      </div>
+      <select class="filter-select" id="typeFilter" aria-label="Filter by record type">
+        <option value="all">All record types</option>
+        <option value="Basic Checkups">Basic Checkups</option>
+        <option value="Specialty Outpatient Consultations">Specialty Consultations</option>
+        <option value="Basic Laboratory Tests">Lab Tests</option>
+        <option value="Imaging Diagnostics">Imaging</option>
+        <option value="Minor Clinic Procedures">Minor Procedures</option>
+        <option value="Pharmacy Services">Pharmacy Services</option>
+        <option value="External Hospital Referrals (Admitting)">Hospital Referrals</option>
+      </select>
+      <select class="filter-select" id="rangeFilter" aria-label="Filter by date range">
+        <option value="all">All time</option>
+        <option value="year">Past year</option>
+        <option value="6m">Past 6 months</option>
+      </select>
+    </div>
+
+    <div id="recordList"></div>
+
+    <div class="empty-state" id="emptyState">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <h3>No matching records</h3>
+      <p>Try a different search term or clear your filters.</p>
+    </div>
+  </div>
+
+  <!-- ============ SIDEBAR ============ -->
+    <aside>
+    <div class="side-card">
+      <h3>Upcoming Appointments</h3>
+      <div id="upcomingApptList" style="display:flex;flex-direction:column;gap:0.7rem;"></div>
+    </div>
+
+    <div class="side-card">
+      <h3>Allergies on file</h3>
+      <div id="allergyList" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
+    </div>
+
+        <div class="side-card">
+      <h3>Care team</h3>
+      <div class="contact-row"><span>Most recent doctor</span><span id="primaryDoctorName">—</span></div>
+      <div class="contact-row"><span>Clinic</span><span>Everwell — QC</span></div>
+    </div>
+
+    <div class="info-note">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <span>These are your records exactly as your care team entered them. Notice something that looks wrong? Contact the front desk — records can only be corrected by clinic staff.</span>
+    </div>
+  </aside>
+</main>
+</section>
+
+<section class="page-view" id="referralsPage" hidden>
+  <header class="page-head">
+    <div>
+      <span class="eyebrow">Care coordination</span>
+      <h1 class="display">Your referrals</h1>
+      <p>Keep track of specialist and hospital referrals from your care team.</p>
+    </div>
+  </header>
+
+  <main class="referrals-shell" id="referralsMain">
+    <section class="referral-overview" aria-label="Referral summary">
+      <div class="referral-stat"><div class="s-label">Active referrals</div><div class="s-value" id="statActiveReferrals">—</div><div class="s-sub" id="statActiveReferralsSub"></div></div>
+      <div class="referral-stat"><div class="s-label">Pending</div><div class="s-value" id="statAwaitingReferrals">—</div><div class="s-sub">Not yet sent to the hospital</div></div>
+      <div class="referral-stat"><div class="s-label">Completed</div><div class="s-value" id="statCompletedReferrals">—</div><div class="s-sub" id="statCompletedReferralsSub"></div></div>
+    </section>
+
+    <div class="referral-layout">
+      <section>
+        <div class="toolbar">
+          <div class="search-field">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="referralSearch" placeholder="Search referrals or specialists" aria-label="Search referrals or specialists">
+          </div>
+          <select class="filter-select" id="referralFilter" aria-label="Filter referrals by status">
+            <option value="all">All statuses</option>
+            <option value="pending">Awaiting action</option>
+            <option value="sent">Sent</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="referral-list" id="referralList"></div>
+        <div class="referral-empty" id="referralEmpty" hidden><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><h3>No referrals yet</h3><p>Referrals from your care team will appear here.</p></div>
+      </section>
+
+      <aside class="referral-side">
+        <div class="referral-side-card"><h3>How referrals work</h3><div class="step-list"><div class="step"><div class="step-number">1</div><div><strong>Your doctor sends a referral</strong><span>The referral, and the hospital your doctor assigned, appears here once your care team submits it.</span></div></div><div class="step"><div class="step-number">2</div><div><strong>Your care team sends it</strong><span>Once sent, the hospital receives your referral and relevant details.</span></div></div><div class="step"><div class="step-number">3</div><div><strong>Attend your appointment</strong><span>Bring your referral details and any requested records.</span></div></div></div></div>
+        <div class="referral-side-card"><h3>Need help?</h3><div class="info-note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>Call the Everwell front desk at <strong>(02) 8123 4567</strong> if you need help with a referral.</span></div></div>
+      </aside>
+    </div>
+  </main>
+</section>
+
+<script>
+(function(){
+  const search = document.getElementById('recordSearch');
+  const typeFilter = document.getElementById('typeFilter');
+  const rangeFilter = document.getElementById('rangeFilter');
+  const emptyState = document.getElementById('emptyState');
+
+  function currentYearCutoff(range){
+    // Days-based cutoff from *today*, not calendar-year comparisons —
+    // "past 6 months" on Dec 1 should include a visit from June, even
+    // though that's a different calendar year.
+    const now = new Date();
+    if(range === 'year') return new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+    if(range === '6m') return new Date(now.getTime() - 182 * 24 * 60 * 60 * 1000);
+    return null;
+  }
+
+  function applyFilters(){
+    // Queried fresh each call — records render in asynchronously after
+    // the initial page load, so a snapshot taken once at script-start
+    // would always be empty.
+    const cards = Array.from(document.querySelectorAll('.record-card'));
+    const groups = Array.from(document.querySelectorAll('.timeline-group'));
+    const q = search.value.trim().toLowerCase();
+    const type = typeFilter.value;
+    const rangeCutoff = currentYearCutoff(rangeFilter.value);
+    const params = new URLSearchParams(window.location.search);
+    const onlyVerified = params.get('filter') === 'verified';
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const matchesType = type === 'all' || card.dataset.type === type;
+      const matchesSearch = !q || card.dataset.search.includes(q);
+      const matchesVerified = !onlyVerified || card.dataset.verified === 'true';
+      const matchesRange = !rangeCutoff || (card.dataset.date && new Date(card.dataset.date) >= rangeCutoff);
+      const show = matchesType && matchesSearch && matchesVerified && matchesRange;
+      card.style.display = show ? '' : 'none';
+      if(show) visibleCount++;
+    });
+
+    groups.forEach(group => {
+      const anyVisible = Array.from(group.querySelectorAll('.record-card')).some(c => c.style.display !== 'none');
+      group.style.display = anyVisible ? '' : 'none';
+    });
+
+    emptyState.classList.toggle('show', visibleCount === 0);
+  }
+
+  search.addEventListener('input', applyFilters);
+  typeFilter.addEventListener('change', applyFilters);
+  rangeFilter.addEventListener('change', applyFilters);
+
+  const pageLinks = Array.from(document.querySelectorAll('[data-page]'));
+  const pageViews = {
+    records: document.getElementById('recordsPage'),
+    referrals: document.getElementById('referralsPage'),
+    prescriptions: document.getElementById('prescriptionsPage'),
+    billing: document.getElementById('billingPage')
+  };
+  const pageNames = {
+    records:'My Medical Records', referrals:'Referrals', prescriptions:'Prescriptions', billing:'Billing'
+  };
+  const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
+  const referralSearch = document.getElementById('referralSearch');
+  const referralFilter = document.getElementById('referralFilter');
+  const referralCards = Array.from(document.querySelectorAll('.referral-card'));
+  const referralEmpty = document.getElementById('referralEmpty');
+
+    // Reads the same 'everwell_session' key set by login.html.
+  function getCurrentUser(){
+    try{
+      const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+      if(!raw) return null;
+      const session = JSON.parse(raw);
+      return { name: session.patient.fullName };
+    }catch(e){ return null; }
+  }
+
+  function applyUserToNav(){
+    const user = getCurrentUser();
+    if(!user) return;
+    const fullName = String(user.name || user.fullName || user.displayName || '').trim();
+    const firstName = fullName.split(/\s+/)[0] || (user.email ? user.email.split('@')[0] : '');
+    const displayName = firstName.split(/[-_\s]+/).filter(Boolean).map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase()).join(' ');
+    const nameEl = document.querySelector('.user-chip .u-name');
+    const avatar = document.querySelector('.user-chip .avatar');
+    if(nameEl) nameEl.textContent = displayName;
+    if(avatar && displayName) avatar.textContent = displayName.slice(0,2).toUpperCase();
+  }
+
+  // ===== REAL RECORDS TAB =====
+// Replaces the hardcoded fake <details> cards with real SOAP notes,
+// grouped by year, for the logged-in patient. Drops the fake type
+// tags (Consultation/Lab/Imaging/Procedure) and fake attached files —
+// neither exists in the real schema, so we don't invent them.
+
+let currentMedicalRecords = [];
+let currentAppointmentsForStats = [];
+
+async function fetchAppointmentsForStats(){
+  const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+  if(!raw) return;
+  const session = JSON.parse(raw);
+  try{
+    const res = await fetch(`/api/appointments?patientId=${session.patient.id}`);
+    const data = await res.json();
+    currentAppointmentsForStats = data.appointments || [];
+  }catch(err){
+    console.error('Failed to load appointments for stats:', err);
+    currentAppointmentsForStats = [];
+  }
+}
+
+async function fetchMedicalRecords(){
+  const user = getCurrentUser();
+  if(!user) return;
+  const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+  const session = JSON.parse(raw);
+
+  try{
+    const res = await fetch(`/api/medical-records?patientId=${session.patient.id}`);
+    const data = await res.json();
+    currentMedicalRecords = data.records || [];
+  }catch(err){
+    console.error('Failed to load medical records:', err);
+    currentMedicalRecords = [];
+  }
+}
+
+let currentAllergies = [];
+
+let currentLabResults = [];
+
+async function fetchLabResults(){
+  const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+  if(!raw) return;
+  const session = JSON.parse(raw);
+  try{
+    const res = await fetch(`/api/lab-results?patientId=${session.patient.id}`);
+    if(res.ok){
+      const data = await res.json();
+      currentLabResults = data.results || [];
+    } else {
+      currentLabResults = [];
+    }
+  }catch(err){
+    console.error('Failed to load lab results:', err);
+    currentLabResults = [];
+  }
+}
+
+function findLabResult(appt){
+  return currentLabResults.find(r => r.appointment_id === appt.appointment_id);
+}
+
+async function fetchAllergies(){
+  const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+  if(!raw) return;
+  const session = JSON.parse(raw);
+  try{
+    const res = await fetch(`/api/patient-medical-info?patientId=${session.patient.id}`);
+    if(res.ok){
+      const data = await res.json();
+      currentAllergies = data.allergies || [];
+    } else {
+      currentAllergies = [];
+    }
+  }catch(err){
+    console.error('Failed to load allergies:', err);
+    currentAllergies = [];
+  }
+}
+
+function renderAllergiesSidebar(){
+  const container = document.getElementById('allergyList');
+  if(!container) return;
+  if(currentAllergies.length === 0){
+    container.innerHTML = `<div style="color:var(--ink-soft);font-size:0.85rem;">No allergies on file.</div>`;
+    return;
+  }
+  container.innerHTML = currentAllergies.map(a => `
+    <div class="allergy-row">
+      <span class="allergy-dot"></span>
+      <span class="allergy-name">${escapeHtmlRecords(a.allergen_description)}</span>
+      <span class="allergy-sev">${escapeHtmlRecords(a.severity)}</span>
+    </div>
+  `).join('');
+}
+
+function escapeHtmlRecords(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+function clinicDateParts(isoString){
+  const raw = String(isoString || '');
+  const match = raw.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if(match){
+    const hour24 = Number(match[4]);
+    return {year:match[1], month:String(Number(match[2])), day:String(Number(match[3])), hour:String(hour24 % 12 || 12), minute:match[5], dayPeriod:hour24 >= 12 ? 'PM' : 'AM'};
+  }
+  const dt = new Date(isoString);
+  const parts = new Intl.DateTimeFormat('en-US', {timeZone:'Asia/Manila', year:'numeric', month:'numeric', day:'numeric', hour:'numeric', minute:'2-digit', hour12:true}).formatToParts(dt);
+  return Object.fromEntries(parts.filter(p => p.type !== 'literal').map(p => [p.type, p.value]));
+}
+
+function renderMostRecentDoctor(){
+  const el = document.getElementById('primaryDoctorName');
+  if(currentAppointmentsForStats.length === 0){
+    el.textContent = 'No visits yet';
+    return;
+  }
+  const sorted = [...currentAppointmentsForStats].sort((a,b) => new Date(b.scheduled_at) - new Date(a.scheduled_at));
+  el.textContent = sorted[0].doctor_name || 'Doctor TBA';
+}
+
+function renderUpcomingAppointments(){
+  const list = document.getElementById('upcomingApptList');
+  const upcoming = currentAppointmentsForStats
+    .filter(a => a.status === 'scheduled' || a.status === 'checked-in')
+    .sort((a,b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+
+  if(upcoming.length === 0){
+    list.innerHTML = '<p style="font-size:0.85rem;color:var(--ink-soft,#666);">No upcoming appointments.</p>';
+    return;
+  }
+
+  list.innerHTML = upcoming.map(a => {
+    const dt = clinicDateParts(a.scheduled_at);
+    return `
+      <div class="contact-row" style="flex-direction:column;align-items:flex-start;gap:0.2rem;">
+        <span style="font-weight:600;">${a.service_name || 'Consultation'}</span>
+        <span style="font-size:0.82rem;">${a.doctor_name || 'Doctor TBA'}</span>
+        <span style="font-size:0.8rem;color:var(--ink-soft,#666);">${dt.month}/${dt.day}/${dt.year} at ${dt.hour}:${dt.minute} ${dt.dayPeriod}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// ----- Placeholder detail generator -----
+// Appointments don't carry SOAP-note detail (reason/summary/vitals) unless
+// a matching medical record exists for that visit. For every appointment
+// that has no matching record, we fill the dropdown with plausible but
+// randomized content instead of leaving it blank. The seed is derived from
+// the appointment itself so a given card looks the same on every re-render
+// rather than reshuffling each time the page repaints.
+function seededRandom(seedStr){
+  let h = 0;
+  for(let i = 0; i < seedStr.length; i++){ h = (Math.imul(31, h) + seedStr.charCodeAt(i)) | 0; }
+  return function(){
+    h = Math.imul(h ^ (h >>> 15), 2246822507);
+    h = Math.imul(h ^ (h >>> 13), 3266489909);
+    h ^= h >>> 16;
+    return (h >>> 0) / 4294967296;
+  };
+}
+function pickRandom(arr, rand){ return arr[Math.floor(rand() * arr.length)]; }
+
+const FALLBACK_REASONS = [
+  'Follow-up on ongoing symptoms discussed at the previous visit.',
+  'Routine check-up requested by the patient.',
+  'New symptoms reported over the past several days.',
+  'Scheduled review of current treatment plan.',
+  'Mild discomfort prompting a precautionary visit.',
+  'Requested consultation ahead of an upcoming procedure.'
+];
+const FALLBACK_SUMMARIES = [
+  'Findings within normal range. Advised to continue current care plan and monitor for changes.',
+  'No acute concerns noted. Follow-up recommended if symptoms persist beyond two weeks.',
+  'Stable presentation. Minor adjustments made to management plan.',
+  'Consistent with prior assessment. Patient advised on self-care measures.',
+  'Mild findings on exam. Conservative management recommended for now.'
+];
+
+function findMatchingRecord(appt){
+  // medical_records already carries the real appointment_id it belongs
+  // to — no need to guess by doctor+date, which broke as soon as a
+  // record's created_at (row insert time) didn't fall on the same
+  // calendar day as the actual visit.
+  return currentMedicalRecords.find(r => r.appointment_id === appt.appointment_id);
+}
+
+function generatePlaceholderDetails(appt){
+  const rand = seededRandom(`${appt.id || ''}|${appt.scheduled_at}|${appt.doctor_name || ''}`);
+  return {
+    reason: pickRandom(FALLBACK_REASONS, rand),
+    summary: pickRandom(FALLBACK_SUMMARIES, rand),
+    bp: `${104 + Math.floor(rand() * 26)}/${66 + Math.floor(rand() * 14)}`,
+    hr: 62 + Math.floor(rand() * 26),
+    temp: (36.3 + rand() * 0.9).toFixed(1),
+    weight: Math.round(52 + rand() * 30)
+  };
+}
+
+const APPT_STATUS_PILL = {
+  scheduled: 'scheduled',
+  'checked-in': 'pending',
+  completed: 'completed',
+  cancelled: 'expired',
+  'no-show': 'expired'
+};
+
+function renderMedicalRecords(){
+  const container = document.getElementById('recordList');
+  const emptyState = document.getElementById('emptyState');
+
+  const completedAppointments = currentAppointmentsForStats.filter(appt => appt.status === 'completed');
+  document.getElementById('statTotalVisits').textContent = currentAppointmentsForStats.length;
+  document.getElementById('statCompletedAppointments').textContent = completedAppointments.length;
+
+  if(currentAppointmentsForStats.length === 0){
+    container.innerHTML = '';
+    emptyState.hidden = false;
+    return;
+  }
+  emptyState.hidden = true;
+
+  // Group every booked appointment by year, matching the original layout
+  const byYear = {};
+  currentAppointmentsForStats.forEach(appt => {
+    const year = clinicDateParts(appt.scheduled_at).year;
+    if(!byYear[year]) byYear[year] = [];
+    byYear[year].push(appt);
+  });
+
+  const years = Object.keys(byYear).sort((a,b) => b - a);
+
+  container.innerHTML = years.map(year => {
+    const cards = byYear[year]
+      .slice()
+      .sort((a,b) => new Date(b.scheduled_at) - new Date(a.scheduled_at))
+      .map(appt => {
+      const clinicDate = clinicDateParts(appt.scheduled_at);
+      const dayNum = clinicDate.day;
+      const monthAbbr = new Date(`${clinicDate.year}-${clinicDate.month}-${clinicDate.day}T12:00:00`).toLocaleString('en-US', { month: 'short' });
+      const title = appt.service_name || 'Consultation Visit';
+      const doctorName = appt.doctor_name || 'Doctor TBA';
+      const matched = findMatchingRecord(appt);
+      const labResult = !matched ? findLabResult(appt) : null;
+      const placeholder = (!matched && !labResult) ? generatePlaceholderDetails(appt) : null;
+
+      const reasonText = matched
+        ? (escapeHtmlRecords(matched.subjective) || 'Not recorded.')
+        : (placeholder ? escapeHtmlRecords(placeholder.reason) : '');
+      const summaryText = matched
+        ? (escapeHtmlRecords(matched.assessment || matched.plan) || 'Not recorded.')
+        : (placeholder ? escapeHtmlRecords(placeholder.summary) : '');
+
+      const hasRealVitals = matched && (matched.blood_pressure || matched.pulse_rate_bpm || matched.temperature_celsius || matched.weight_kg);
+      const vitalsRow = matched
+        ? (hasRealVitals ? `
+        <div class="detail-block" style="margin-bottom:1.4rem;">
+          <h4>Vitals recorded</h4>
+          <div class="vitals-row">
+            ${matched.blood_pressure ? `<div class="vital-chip"><div class="v-label">BP</div><div class="v-value">${escapeHtmlRecords(matched.blood_pressure)}</div></div>` : ''}
+            ${matched.pulse_rate_bpm ? `<div class="vital-chip"><div class="v-label">HR</div><div class="v-value">${matched.pulse_rate_bpm} bpm</div></div>` : ''}
+            ${matched.temperature_celsius ? `<div class="vital-chip"><div class="v-label">Temp</div><div class="v-value">${matched.temperature_celsius}°C</div></div>` : ''}
+            ${matched.weight_kg ? `<div class="vital-chip"><div class="v-label">Weight</div><div class="v-value">${matched.weight_kg} kg</div></div>` : ''}
+          </div>
+        </div>` : '')
+        : (placeholder ? `
+        <div class="detail-block" style="margin-bottom:1.4rem;">
+          <h4>Vitals recorded</h4>
+          <div class="vitals-row">
+            <div class="vital-chip"><div class="v-label">BP</div><div class="v-value">${placeholder.bp}</div></div>
+            <div class="vital-chip"><div class="v-label">HR</div><div class="v-value">${placeholder.hr} bpm</div></div>
+            <div class="vital-chip"><div class="v-label">Temp</div><div class="v-value">${placeholder.temp}°C</div></div>
+            <div class="vital-chip"><div class="v-label">Weight</div><div class="v-value">${placeholder.weight} kg</div></div>
+          </div>
+        </div>` : '');
+
+      // Real lab/imaging result (appointment_services), shown whenever
+      // there's no SOAP-note match — this is the actual test result,
+      // not a guess, so it takes priority over both the placeholder
+      // filler and the generic "hasn't happened yet" message.
+      const labResultBlock = labResult ? (
+        labResult.status === 'completed' ? `
+        <div class="detail-block" style="margin-bottom:1.4rem;">
+          <h4>Result summary</h4>
+          <p>${escapeHtmlRecords(labResult.result_summary) || 'Marked complete — no written summary was entered.'}</p>
+          <div style="margin-top:0.8rem;">
+            <a href="/api/result-report?appointmentServiceId=${labResult.appointment_service_id}" target="_blank" rel="noopener" style="font-size:0.85rem;font-weight:600;color:var(--sage);">View Result Report (PDF) &rarr;</a>
+          </div>
+        </div>` : `
+        <div class="detail-block" style="margin-bottom:1.4rem;">
+          <p>This test has been ordered. Results haven't been entered yet.</p>
+        </div>`
+      ) : '';
+
+      const pillClass = APPT_STATUS_PILL[appt.status] || 'scheduled';
+      const statusPill = `<span class="status-pill ${pillClass}" style="margin-left:0.6rem;">${escapeHtmlRecords(appt.status || 'scheduled')}</span>`;
+
+      return `
+        <details class="record-card" data-search="${escapeHtmlRecords((title + ' ' + doctorName).toLowerCase())}" data-verified="${matched || (labResult && labResult.status === 'completed') ? 'true' : 'false'}" data-date="${appt.scheduled_at}" data-type="${escapeHtmlRecords(appt.category_name || '')}">
+          <summary class="record-summary">
+            <div class="rec-date"><div class="d-num">${dayNum}</div><div class="d-mon">${monthAbbr}</div></div>
+            <div class="rec-icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.5 8 2 4 6 3.4c2.3-.3 4 .9 6 3 2-2.1 3.7-3.3 6-3 4 .6 5.5 4.6 4 8.3-2.5 4.7-10 9.3-10 9.3z"/></svg></div>
+            <div class="rec-body">
+              <div class="rec-title">${escapeHtmlRecords(title)}</div>
+              <div class="rec-meta">${escapeHtmlRecords(doctorName)}</div>
+            </div>
+            ${statusPill}
+            <span class="rec-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </summary>
+          <div class="rec-detail">
+            ${labResult ? labResultBlock : `
+            <div class="detail-grid">
+              <div class="detail-block">
+                <h4>Reason for visit</h4>
+                <p>${reasonText}</p>
+              </div>
+              <div class="detail-block">
+                <h4>Doctor's summary</h4>
+                <p>${summaryText}</p>
+              </div>
+            </div>
+            ${vitalsRow}
+            `}
+            ${appt.notes ? `
+            <div class="detail-block" style="margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--line);">
+              <h4>Your notes at booking</h4>
+              <p>${escapeHtmlRecords(appt.notes)}</p>
+            </div>` : ''}
+          </div>
+        </details>
+      `;
+    }).join('');
+
+    return `<div class="timeline-group" data-year="${year}"><h2>${year}</h2>${cards}</div>`;
+  }).join('');
+}
+
+async function loadAndRenderMedicalRecords(){
+  await Promise.all([fetchMedicalRecords(), fetchAppointmentsForStats(), fetchAllergies(), fetchLabResults()]);
+  renderMedicalRecords();
+  renderUpcomingAppointments();
+  renderMostRecentDoctor();
+  renderAllergiesSidebar();
+  applyFilters();
+}
+
+  // ===== NOTIFICATIONS =====
+  // Built from real data already loaded for this page (appointments,
+  // referrals, prescriptions, invoices, payments) — no separate
+  // notifications table exists in the schema, so there's nothing to
+  // fetch beyond what these tabs already pull. "Seen" state is tracked
+  // client-side (per patient, in localStorage) since it's just
+  // "what have I looked at on this device", not shared clinical data.
+
+  function notifSeenKey(){
+    const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+    if(!raw) return null;
+    const session = JSON.parse(raw);
+    return `everwell_notif_seen_${session.patient.id}`;
+  }
+
+  function getNotifSeenAt(){
+    const key = notifSeenKey();
+    if(!key) return 0;
+    return Number(localStorage.getItem(key) || 0);
+  }
+
+  function setNotifSeenNow(){
+    const key = notifSeenKey();
+    if(!key) return;
+    localStorage.setItem(key, String(Date.now()));
+  }
+
+  const NOTIF_ICONS = {
+    record: '<path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2z"/>',
+    appointment: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/>',
+    referral: '<path d="M12 21s-7.5-4.6-10-9.3C.5 8 2 4 6 3.4c2.3-.3 4 .9 6 3 2-2.1 3.7-3.3 6-3 4 .6 5.5 4.6 4 8.3-2.5 4.7-10 9.3-10 9.3z"/>',
+    prescription: '<path d="M9 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-4"/><path d="M18.4 2.6a2 2 0 1 1 2.8 2.8L11 15.7l-4 1 1-4L18.4 2.6z"/>',
+    billing: '<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>',
+  };
+
+  function completedAppointmentNotificationDate(appt){
+    const key = 'everwell_completed_appointment_seen_at';
+    let seen = {};
+    try{ seen = JSON.parse(localStorage.getItem(key) || '{}'); }catch(e){ seen = {}; }
+    const id = String(appt.appointment_id);
+    if(!seen[id]){
+      seen[id] = new Date().toISOString();
+      localStorage.setItem(key, JSON.stringify(seen));
+    }
+    return seen[id];
+  }
+
+  function timeAgo(dateStr){
+    if(!dateStr) return '';
+    const d = new Date(dateStr);
+    const diffMs = Date.now() - d.getTime();
+    const mins = Math.floor(diffMs / 60000);
+    if(mins < 1) return 'just now';
+    if(mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if(hrs < 24) return `${hrs}h ago`;
+    const days = Math.floor(hrs / 24);
+    if(days < 7) return `${days}d ago`;
+    return d.toLocaleDateString();
+  }
+
+  function buildNotifications(){
+    const items = [];
+
+    try{
+      const rawCompletion = localStorage.getItem('everwell_completed_appointment_notification');
+      const completion = rawCompletion ? JSON.parse(rawCompletion) : null;
+      const patient = getCurrentUser();
+      const patientId = patient && (patient.id || patient.patientId);
+      if(completion && completion.completedAt && (!completion.patientId || String(completion.patientId) === String(patientId))){
+        items.push({
+          type: 'appointment',
+          page: 'records',
+          title: `Appointment completed: ${completion.service || 'Visit'}`,
+          date: completion.completedAt,
+        });
+      }
+    }catch(e){ console.warn('Could not read completed appointment notification:', e); }
+
+    currentAppointmentsForStats.filter(a => a.status === 'completed').forEach(a => {
+      // Use the completion/update timestamp so an old scheduled date does
+      // not look like a newly completed notification.
+      const completedDate = completedAppointmentNotificationDate(a);
+      if(!completedDate) return;
+      items.push({
+        type: 'appointment',
+        page: 'records',
+        title: `Appointment completed: ${a.service_name || a.appointment_type || 'Visit'}`,
+        date: completedDate,
+      });
+    });
+
+    currentMedicalRecords.forEach(r => {
+      if(!r.created_at) return;
+      const summary = r.diagnosis_description || r.assessment || 'Visit note';
+      items.push({
+        type: 'record',
+        page: 'records',
+        title: `New note from ${r.doctor_name || 'your care team'}: ${summary}`,
+        date: r.created_at,
+        recordId: r.record_id,
+      });
+    });
+
+    currentReferrals.forEach(r => {
+      if(!r.created_at) return;
+      items.push({
+        type: 'referral',
+        page: 'referrals',
+        title: `Referral: ${r.referral_type || r.linked_service_name || 'Referral'}`,
+        date: r.created_at,
+      });
+    });
+
+    (currentPrescriptionsMR || []).filter(p => p.prescription_item_id).forEach(p => {
+      if(!p.prescribed_at) return;
+      items.push({
+        type: 'prescription',
+        page: 'prescriptions',
+        title: `${p.brand_name || p.generic_name || 'Medication'} prescribed`,
+        date: p.prescribed_at,
+      });
+    });
+
+    (currentInvoices || []).forEach(inv => {
+      if(!inv.invoice_date) return;
+      items.push({
+        type: 'billing',
+        page: 'billing',
+        title: `New statement: ${inv.description || 'Service'}`,
+        date: inv.invoice_date,
+      });
+    });
+
+    (currentPayments || []).forEach(p => {
+      if(!p.paid_at) return;
+      items.push({
+        type: 'billing',
+        page: 'billing',
+        title: `Payment received — ${formatPeso(p.amount_paid)}`,
+        date: p.paid_at,
+      });
+    });
+
+    items.sort((a,b) => new Date(b.date) - new Date(a.date));
+    return items.slice(0, 20);
+  }
+
+  function renderNotifications(){
+    const list = document.getElementById('notifList');
+    const dot = document.getElementById('notifDot');
+    if(!list) return;
+
+    const seenAt = getNotifSeenAt();
+    const items = buildNotifications();
+    const unseenCount = items.filter(it => new Date(it.date).getTime() > seenAt).length;
+
+    dot.hidden = unseenCount === 0;
+
+    if(items.length === 0){
+      list.innerHTML = '<div class="notif-empty">Nothing new yet.</div>';
+      return;
+    }
+
+    list.innerHTML = items.map(it => {
+      const unseen = new Date(it.date).getTime() > seenAt;
+      return `
+        <a href="#${it.page}" class="notif-item${unseen ? ' unseen' : ''}" data-page="${it.page}" data-type="${it.type}"${it.recordId ? ` data-record-id="${it.recordId}"` : ''}>
+          <span class="notif-icon"><svg viewBox="0 0 24 24">${NOTIF_ICONS[it.type] || ''}</svg></span>
+          <span>
+            <div class="notif-title">${escapeHtmlRecords(it.title)}</div>
+            <div class="notif-meta">${timeAgo(it.date)}</div>
+          </span>
+        </a>
+      `;
+    }).join('');
+  }
+
+  // Front-desk status changes happen outside this page. Refresh the
+  // appointment data so a newly completed visit can trigger the unread dot
+  // without requiring a full page reload.
+  async function refreshAppointmentNotifications(){
+    await fetchAppointmentsForStats();
+    renderNotifications();
+    if(!document.getElementById('recordsPage').hidden) renderMedicalRecords();
+  }
+  window.addEventListener('storage', (event) => {
+    if(event.key === 'everwell_completed_appointment_notification') renderNotifications();
+  });
+
+  function openRecordDetailModal(record){
+    const overlay = document.getElementById('recordDetailModalOverlay');
+    const title = document.getElementById('recordDetailTitle');
+    const body = document.getElementById('recordDetailBody');
+    if(!overlay || !title || !body) return;
+
+    const dateStr = record.created_at ? new Date(record.created_at).toLocaleString() : '—';
+    title.textContent = `${record.doctor_name || 'Your care team'} — ${dateStr}`;
+
+    const hasVitals = record.blood_pressure || record.pulse_rate_bpm || record.temperature_celsius || record.weight_kg;
+    const vitalsBlock = hasVitals ? `
+      <div class="detail-block" style="margin-bottom:1.2rem;">
+        <h4>Vitals recorded</h4>
+        <div class="vitals-row">
+          ${record.blood_pressure ? `<div class="vital-chip"><div class="v-label">BP</div><div class="v-value">${escapeHtmlRecords(record.blood_pressure)}</div></div>` : ''}
+          ${record.pulse_rate_bpm ? `<div class="vital-chip"><div class="v-label">HR</div><div class="v-value">${record.pulse_rate_bpm} bpm</div></div>` : ''}
+          ${record.temperature_celsius ? `<div class="vital-chip"><div class="v-label">Temp</div><div class="v-value">${record.temperature_celsius}°C</div></div>` : ''}
+          ${record.weight_kg ? `<div class="vital-chip"><div class="v-label">Weight</div><div class="v-value">${record.weight_kg} kg</div></div>` : ''}
+        </div>
+      </div>` : '';
+
+    body.innerHTML = `
+      ${vitalsBlock}
+      <div class="detail-block" style="margin-bottom:1.2rem;">
+        <h4>Reason for visit</h4>
+        <p>${escapeHtmlRecords(record.subjective) || 'Not recorded.'}</p>
+      </div>
+      <div class="detail-block" style="margin-bottom:1.2rem;">
+        <h4>Doctor's assessment</h4>
+        <p>${escapeHtmlRecords(record.assessment) || 'Not recorded.'}</p>
+      </div>
+      <div class="detail-block" style="margin-bottom:1.2rem;">
+        <h4>Plan</h4>
+        <p>${escapeHtmlRecords(record.plan) || 'Not recorded.'}</p>
+      </div>
+      ${record.diagnosis_description ? `
+      <div class="detail-block">
+        <h4>Diagnosis</h4>
+        <p>${escapeHtmlRecords(record.diagnosis_description)}</p>
+      </div>` : ''}
+    `;
+    overlay.classList.add('show');
+  }
+  function closeRecordDetailModal(){
+    const overlay = document.getElementById('recordDetailModalOverlay');
+    if(overlay) overlay.classList.remove('show');
+  }
+
+  function initNotifications(){
+    const btn = document.getElementById('notifBtn');
+    const panel = document.getElementById('notifPanel');
+    if(!btn || !panel) return;
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const opening = panel.hidden;
+      panel.hidden = !opening;
+      btn.setAttribute('aria-expanded', String(opening));
+      if(opening){
+        renderNotifications();
+        setNotifSeenNow();
+        document.getElementById('notifDot').hidden = true;
+      }
+    });
+
+    panel.addEventListener('click', (e) => {
+      const item = e.target.closest('.notif-item');
+      if(item){
+        panel.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+        if(item.dataset.type === 'record' && item.dataset.recordId){
+          e.preventDefault();
+          const record = currentMedicalRecords.find(r => String(r.record_id) === item.dataset.recordId);
+          if(record) openRecordDetailModal(record);
+        }else{
+          showPage(item.dataset.page);
+        }
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if(!panel.hidden && !panel.contains(e.target) && e.target !== btn && !btn.contains(e.target)){
+        panel.hidden = true;
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    renderNotifications();
+  }
+
+  function showPage(page){
+    if(!pageViews[page]) page = 'records';
+    Object.entries(pageViews).forEach(([key, view]) => { view.hidden = key !== page; });
+    pageLinks.forEach(link => {
+      const active = link.dataset.page === page && link.closest('.app-links');
+      link.classList.toggle('active', Boolean(active));
+      if(active) link.setAttribute('aria-current', 'page');
+      else if(link.closest('.app-links')) link.removeAttribute('aria-current');
+    });
+    breadcrumbCurrent.textContent = pageNames[page];
+    // keep top-right user chip in sync when switching views
+    applyUserToNav();
+    document.querySelector('.skip-link').setAttribute('href', page === 'referrals' ? '#referralsMain' : page === 'records' ? '#main' : `#${page}Page`);
+  }
+
+  // ===== REAL REFERRALS TAB =====
+  // Replaces the static referral cards + fake geolocation/map/hospital
+  // matching with real data from referrals.js and hospitals.js. There's
+  // no lat/lng in the hospitals table, so there was never a real way
+  // to do map-based hospital matching. hospital_id also turned out to
+  // be NOT NULL on referrals — a referral always has its hospital
+  // assigned by staff at creation, so this is read-only for the
+  // patient: view the referral and its assigned hospital, nothing to
+  // pick or submit.
+
+  let currentReferrals = [];
+
+  async function fetchReferrals(){
+    const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+    if(!raw) return;
+    const session = JSON.parse(raw);
+    try{
+      const res = await fetch(`/api/referrals?patientId=${session.patient.id}`);
+      if(res.ok){
+        const data = await res.json();
+        currentReferrals = data.referrals || [];
+      } else {
+        currentReferrals = [];
+      }
+    }catch(err){
+      console.error('Failed to load referrals:', err);
+      currentReferrals = [];
+    }
+  }
+
+  const REFERRAL_STATUS_PILL = { pending: 'pending', sent: 'scheduled', completed: 'completed', cancelled: 'expired' };
+  const REFERRAL_STATUS_LABEL = { pending: 'Pending', sent: 'Sent', completed: 'Completed', cancelled: 'Cancelled' };
+
+  function renderSnapshotList(snapshot){
+    if(!snapshot || typeof snapshot !== 'object') return '';
+    const entries = Object.entries(snapshot).filter(([,v]) => v !== null && v !== undefined && v !== '');
+    if(entries.length === 0) return '';
+    return `
+      <div class="dashboard-card" style="margin-top:1rem;">
+        <h3>Clinical snapshot on this referral</h3>
+        <div class="shared-list">
+          ${entries.map(([key, value]) => `
+            <div class="shared-item"><strong style="text-transform:capitalize;">${escapeHtmlRecords(key.replace(/_/g,' '))}:</strong>&nbsp;${escapeHtmlRecords(Array.isArray(value) ? value.join(', ') : String(value))}</div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderReferrals(){
+    const list = document.getElementById('referralList');
+    const empty = document.getElementById('referralEmpty');
+
+    const active = currentReferrals.filter(r => r.status === 'pending' || r.status === 'sent').length;
+    const sent = currentReferrals.filter(r => r.status === 'sent').length;
+    const awaiting = currentReferrals.filter(r => r.status === 'pending').length;
+    const completed = currentReferrals.filter(r => r.status === 'completed');
+    document.getElementById('statActiveReferrals').textContent = active;
+    document.getElementById('statActiveReferralsSub').textContent = sent > 0 ? `${sent} sent to a hospital` : '';
+    document.getElementById('statAwaitingReferrals').textContent = awaiting;
+    document.getElementById('statCompletedReferrals').textContent = completed.length;
+    document.getElementById('statCompletedReferralsSub').textContent = completed.length > 0
+      ? `Most recent: ${new Date(completed[0].created_at).toLocaleDateString()}`
+      : 'None yet';
+
+    if(currentReferrals.length === 0){
+      list.innerHTML = '';
+      empty.hidden = false;
+      return;
+    }
+    empty.hidden = true;
+
+    list.innerHTML = currentReferrals.map(r => {
+      const title = r.referral_type || r.linked_service_name || 'Referral';
+      const pillClass = REFERRAL_STATUS_PILL[r.status] || 'pending';
+      const pillLabel = REFERRAL_STATUS_LABEL[r.status] || r.status;
+      const referredDate = new Date(r.created_at).toLocaleDateString();
+      const searchBlob = `${title} ${r.referring_doctor_name} ${r.reason_for_referral || ''}`.toLowerCase();
+
+      return `
+        <details class="referral-card" data-status="${escapeHtmlRecords(r.status)}" data-search="${escapeHtmlRecords(searchBlob)}">
+          <summary style="cursor:pointer;list-style:none;">
+            <div class="referral-card-top">
+              <div class="referral-icon"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.3C.5 8 2 4 6 3.4c2.3-.3 4 .9 6 3 2-2.1 3.7-3.3 6-3 4 .6 5.5 4.6 4 8.3-2.5 4.7-10 9.3-10 9.3z"/></svg></div>
+              <div class="referral-main"><div class="referral-title">${escapeHtmlRecords(title)}</div><div class="referral-meta">Referred by ${escapeHtmlRecords(r.referring_doctor_name)}${r.urgency_level ? ' · ' + escapeHtmlRecords(r.urgency_level) : ''}</div></div>
+              <span class="status-pill ${pillClass}">${escapeHtmlRecords(pillLabel)}</span>
+            </div>
+          </summary>
+          <div class="referral-details">
+            <div><div class="referral-detail-label">Referral date</div><div class="referral-detail-value">${referredDate}</div></div>
+            <div><div class="referral-detail-label">Hospital</div><div class="referral-detail-value">${r.hospital_name ? escapeHtmlRecords(r.hospital_name) : 'Not yet assigned'}</div></div>
+            <div><div class="referral-detail-label">Sent on</div><div class="referral-detail-value">${r.sent_at ? new Date(r.sent_at).toLocaleDateString() : '—'}</div></div>
+          </div>
+          ${r.reason_for_referral ? `<p class="reason-text">${escapeHtmlRecords(r.reason_for_referral)}</p>` : ''}
+          ${renderSnapshotList(r.clinical_snapshot)}
+        </details>
+      `;
+    }).join('');
+  }
+
+  async function loadAndRenderReferrals(){
+    await fetchReferrals();
+    renderReferrals();
+    applyReferralFilters();
+  }
+
+  function applyReferralFilters(){
+    const q = referralSearch.value.trim().toLowerCase();
+    const status = referralFilter.value;
+    const cards = Array.from(document.querySelectorAll('.referral-card'));
+    let visible = 0;
+    cards.forEach(card => {
+      const matchesSearch = !q || card.dataset.search.includes(q);
+      const matchesStatus = status === 'all' || card.dataset.status === status;
+      const show = matchesSearch && matchesStatus;
+      card.style.display = show ? '' : 'none';
+      if(show) visible++;
+    });
+    if(cards.length > 0) referralEmpty.hidden = visible !== 0;
+  }
+
+  pageLinks.forEach(link => link.addEventListener('click', event => {
+    const page = link.dataset.page;
+    if(pageViews[page]){
+      event.preventDefault();
+      showPage(page);
+      history.replaceState(null, '', `#${page}`);
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    }
+  }));
+
+  document.querySelectorAll('.nav-action').forEach(action => action.addEventListener('click', event => {
+    event.preventDefault();
+    const messages = {book:'Appointment booking will open here.', details:'Appointment details will open here.', refill:'Refill request will open here.', payment:'Secure payment settings will open here.'};
+    window.alert(messages[action.dataset.action] || 'This action is coming soon.');
+  }));
+
+  referralSearch.addEventListener('input', applyReferralFilters);
+  referralFilter.addEventListener('change', applyReferralFilters);
+
+  // ===== REAL PRESCRIPTIONS TAB =====
+  // Same /api/prescriptions endpoint already backing the dashboard's
+  // "Active Prescriptions" card. Split here by dispensing_status:
+  // still-pending items are "current", dispensed/cancelled are
+  // "history". The safety note reuses currentAllergies (already
+  // fetched for the Records tab's allergy sidebar) instead of a
+  // hardcoded allergy — no separate fetch needed.
+
+  let currentPrescriptionsMR = [];
+
+  async function fetchPrescriptionsMR(){
+    const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+    if(!raw) return;
+    const session = JSON.parse(raw);
+    try{
+      const res = await fetch(`/api/prescriptions?patientId=${session.patient.id}`);
+      if(res.ok){
+        const data = await res.json();
+        currentPrescriptionsMR = data.prescriptions || [];
+      } else {
+        currentPrescriptionsMR = [];
+      }
+    }catch(err){
+      console.error('Failed to load prescriptions:', err);
+      currentPrescriptionsMR = [];
+    }
+  }
+
+  function renderPrescriptionsTab(){
+    const currentList = document.getElementById('currentMedsList');
+    const historyTable = document.getElementById('medHistoryTable');
+    const safetyNote = document.getElementById('medSafetyNote');
+    if(!currentList) return;
+
+    const items = currentPrescriptionsMR.filter(p => p.prescription_item_id);
+    const current = items.filter(p => p.dispensing_status !== 'dispensed' && p.dispensing_status !== 'cancelled');
+    const history = items.filter(p => p.dispensing_status === 'dispensed' || p.dispensing_status === 'cancelled');
+
+    if(current.length === 0){
+      currentList.innerHTML = `<p style="color:var(--ink-soft);font-size:0.9rem;">No active medications right now.</p>`;
+    } else {
+      currentList.innerHTML = current.map(p => {
+        const drugName = p.brand_name || p.generic_name || 'Medication';
+        const meta = [p.frequency, p.dosage, p.prescribed_at ? 'Prescribed ' + new Date(p.prescribed_at).toLocaleDateString() : null].filter(Boolean).join(' · ');
+        return `
+          <div class="med-card">
+            <div class="med-icon"><svg viewBox="0 0 24 24"><path d="M10.5 20.5l9-9a4.24 4.24 0 0 0-6-6l-9 9a4.24 4.24 0 0 0 6 6z"/><path d="M8 8l8 8"/></svg></div>
+            <div><div class="med-name">${escapeHtmlRecords(drugName)}</div><div class="med-meta">${escapeHtmlRecords(meta)}</div></div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:0.4rem;">
+              <span class="med-status">${p.validation_status === 'validated' ? 'Active' : 'Pending review'}</span>
+              <button class="btn btn-sm btn-outline refill-btn" data-item-id="${p.prescription_item_id}">Request refill</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.refill-btn').forEach(btn => btn.addEventListener('click', async () => {
+        const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+        if(!raw) return;
+        const session = JSON.parse(raw);
+        btn.disabled = true;
+        btn.textContent = 'Requesting…';
+        try{
+          const res = await fetch('/api/refill', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prescriptionItemId: btn.dataset.itemId, patientId: session.patient.id })
+          });
+          if(res.ok){
+            await loadAndRenderPrescriptionsTab();
+          } else {
+            const data = await res.json().catch(() => ({}));
+            window.alert(data.error || 'Refill request could not be submitted.');
+            btn.disabled = false;
+            btn.textContent = 'Request refill';
+          }
+        }catch(err){
+          console.error('Refill request failed:', err);
+          window.alert('Something went wrong. Please try again.');
+          btn.disabled = false;
+          btn.textContent = 'Request refill';
+        }
+      }));
+    }
+
+    if(history.length === 0){
+      historyTable.innerHTML = `<div class="table-row"><span style="color:var(--ink-soft);">No completed or cancelled medications yet.</span></div>`;
+    } else {
+      const STATUS_LABEL = { dispensed: 'Completed', cancelled: 'Cancelled' };
+      historyTable.innerHTML = `
+        <div class="table-row header"><span>Medication</span><span>Instructions</span><span>Duration</span><span>Status</span></div>
+        ${history.map(p => {
+          const drugName = p.brand_name || p.generic_name || 'Medication';
+          return `
+          <div class="table-row">
+            <strong>${escapeHtmlRecords(drugName)}</strong>
+            <span>${escapeHtmlRecords(p.dosage || '')}${p.frequency ? ' · ' + escapeHtmlRecords(p.frequency) : ''}</span>
+            <span>${p.duration_days ? p.duration_days + ' days' : '—'}</span>
+            <span class="status-pill expired">${STATUS_LABEL[p.dispensing_status] || escapeHtmlRecords(p.dispensing_status)}</span>
+          </div>`;
+        }).join('')}
+      `;
+    }
+
+    if(currentAllergies.length === 0){
+      safetyNote.innerHTML = `<div class="info-note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>No allergies on file. Always check with your care team before starting a new medication.</span></div>`;
+    } else {
+      const allergyText = currentAllergies.map(a => `${a.allergen_description} (${a.severity})`).join(', ');
+      safetyNote.innerHTML = `<div class="info-note"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>You have ${escapeHtmlRecords(allergyText)} on file. Always check with your care team before starting a new medication.</span></div>`;
+    }
+  }
+
+  async function loadAndRenderPrescriptionsTab(){
+    await fetchPrescriptionsMR();
+    renderPrescriptionsTab();
+  }
+
+  // ===== REAL BILLING TAB =====
+  // invoices/invoice_items/payments are all real tables. There's no
+  // insurance-tracking column anywhere in this schema, so the old
+  // "Insurance covered" stat had nothing real behind it — replaced
+  // with "Total paid" instead. Same for "payment method": there's no
+  // stored card on file, just a payment_method string per payment, so
+  // this shows the method from the most recent payment, not a fake
+  // saved card.
+
+  let currentInvoices = [];
+  let currentPayments = [];
+
+  function formatPeso(amount){
+    const n = Number(amount) || 0;
+    return '₱' + n.toLocaleString('en-PH', { maximumFractionDigits: 2 });
+  }
+
+  async function fetchBilling(){
+    const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+    if(!raw) return;
+    const session = JSON.parse(raw);
+    try{
+      const res = await fetch(`/api/billing?patientId=${session.patient.id}`);
+      if(res.ok){
+        const data = await res.json();
+        currentInvoices = data.invoices || [];
+        currentPayments = data.payments || [];
+      } else {
+        currentInvoices = [];
+        currentPayments = [];
+      }
+    }catch(err){
+      console.error('Failed to load billing:', err);
+      currentInvoices = [];
+      currentPayments = [];
+    }
+  }
+
+  const BILLING_STATUS_CLASS = { paid: 'paid', due: 'due', partial: 'due' };
+  const BILLING_STATUS_LABEL = { paid: 'Paid', due: 'Due', partial: 'Partial' };
+
+  function renderBillingTab(){
+    const table = document.getElementById('billingStatementsTable');
+    const outstandingEl = document.getElementById('billingOutstandingTotal');
+    const balanceStat = document.getElementById('statBillingBalance');
+    const balanceSub = document.getElementById('statBillingBalanceSub');
+    const paidStat = document.getElementById('statBillingPaid');
+    const lastPayStat = document.getElementById('statBillingLastPayment');
+    const lastPaySub = document.getElementById('statBillingLastPaymentSub');
+    const methodEl = document.getElementById('billingPaymentMethod');
+    if(!table) return;
+
+    const unpaidInvoices = currentInvoices.filter(i => i.payment_status !== 'paid');
+    const outstanding = unpaidInvoices.reduce((sum, inv) => sum + Math.max(Number(inv.total_amount) - Number(inv.amount_paid), 0), 0);
+    const totalPaid = currentPayments.reduce((sum, p) => sum + Number(p.amount_paid), 0);
+
+    balanceStat.textContent = formatPeso(outstanding);
+    balanceSub.textContent = unpaidInvoices.length > 0 ? `Across ${unpaidInvoices.length} statement(s)` : 'Nothing due';
+    outstandingEl.textContent = formatPeso(outstanding);
+    paidStat.textContent = formatPeso(totalPaid);
+
+    if(currentPayments.length > 0){
+      const last = currentPayments[0];
+      lastPayStat.textContent = formatPeso(last.amount_paid);
+      lastPaySub.textContent = `Paid ${new Date(last.paid_at).toLocaleDateString()}`;
+      methodEl.innerHTML = `<p><strong>${escapeHtmlRecords(last.payment_method)}</strong><br>Last used ${new Date(last.paid_at).toLocaleDateString()}</p>`;
+    } else {
+      lastPayStat.textContent = '—';
+      lastPaySub.textContent = 'No payments yet';
+      methodEl.innerHTML = `<p style="color:var(--ink-soft);font-size:0.9rem;">No payment method on file yet.</p>`;
+    }
+
+    if(currentInvoices.length === 0){
+      table.innerHTML = `<div class="table-row"><span style="color:var(--ink-soft);">No statements yet.</span></div>`;
+      return;
+    }
+
+    table.innerHTML = `
+      <div class="table-row header"><span>Statement</span><span>Service date</span><span>Amount</span><span>Status</span></div>
+      ${currentInvoices.map(inv => `
+        <div class="table-row">
+          <strong>${escapeHtmlRecords(inv.description || 'Service')}</strong>
+          <span>${new Date(inv.invoice_date).toLocaleDateString()}</span>
+          <span>${formatPeso(inv.total_amount)}</span>
+          <span class="billing-status ${BILLING_STATUS_CLASS[inv.payment_status] || 'due'}">${BILLING_STATUS_LABEL[inv.payment_status] || escapeHtmlRecords(inv.payment_status)}</span>
+        </div>
+      `).join('')}
+    `;
+  }
+
+  async function loadAndRenderBillingTab(){
+    await fetchBilling();
+    renderBillingTab();
+  }
+
+  // ===== REAL PAYMENT SUBMISSION =====
+  const paymentModalOverlay = document.getElementById('paymentModalOverlay');
+  const paymentInvoiceSelect = document.getElementById('paymentInvoiceSelect');
+  const paymentAmountInput = document.getElementById('paymentAmountInput');
+  const paymentMethodGrid = document.getElementById('paymentMethodGrid');
+  const paymentFormError = document.getElementById('paymentFormError');
+  const paymentAmountHint = document.getElementById('paymentAmountHint');
+  const paymentSubmitBtn = document.getElementById('paymentSubmitBtn');
+  let selectedPaymentMethod = null;
+
+  function remainingBalance(inv){
+    return Math.max(Number(inv.total_amount) - Number(inv.amount_paid), 0);
+  }
+
+  function updatePaymentAmountHint(){
+    const remaining = Number(paymentAmountInput.max) || 0;
+    const entered = Number(paymentAmountInput.value) || 0;
+    if(remaining <= 0){
+      paymentAmountHint.textContent = '';
+      return;
+    }
+    if(entered <= 0){
+      paymentAmountHint.textContent = `Remaining balance: ${formatPeso(remaining)}`;
+    } else if(entered >= remaining){
+      paymentAmountHint.textContent = `Pays this statement in full (${formatPeso(remaining)}).`;
+    } else {
+      paymentAmountHint.textContent = `Partial payment — ${formatPeso(remaining - entered)} will remain and show as Partial.`;
+    }
+  }
+
+  function selectPaymentMethod(method){
+    selectedPaymentMethod = method;
+    paymentMethodGrid.querySelectorAll('.pay-method-card').forEach(card => {
+      card.classList.toggle('selected', card.dataset.method === method);
+    });
+  }
+
+  paymentMethodGrid.addEventListener('click', (e) => {
+    const card = e.target.closest('.pay-method-card');
+    if(card) selectPaymentMethod(card.dataset.method);
+  });
+
+  function openPaymentModal(){
+    const unpaid = currentInvoices.filter(i => i.payment_status !== 'paid');
+    paymentFormError.style.display = 'none';
+    selectPaymentMethod('Cash');
+    if(unpaid.length === 0){
+      paymentInvoiceSelect.innerHTML = `<option value="">No outstanding statements</option>`;
+      paymentAmountInput.value = '';
+      paymentAmountInput.max = '';
+      paymentAmountInput.disabled = true;
+      paymentSubmitBtn.disabled = true;
+      paymentAmountHint.textContent = '';
+    } else {
+      paymentAmountInput.disabled = false;
+      paymentSubmitBtn.disabled = false;
+      paymentInvoiceSelect.innerHTML = unpaid.map(inv =>
+        `<option value="${inv.invoice_id}" data-remaining="${remainingBalance(inv)}">${escapeHtmlRecords(inv.description || 'Statement')} — ${formatPeso(remainingBalance(inv))} due</option>`
+      ).join('');
+      const firstRemaining = remainingBalance(unpaid[0]);
+      paymentAmountInput.value = firstRemaining.toFixed(2);
+      paymentAmountInput.max = firstRemaining;
+      updatePaymentAmountHint();
+    }
+    paymentModalOverlay.classList.add('show');
+  }
+
+  function closePaymentModal(){
+    paymentModalOverlay.classList.remove('show');
+  }
+
+  document.getElementById('makePaymentBtn').addEventListener('click', openPaymentModal);
+  document.getElementById('paymentCancelBtn').addEventListener('click', closePaymentModal);
+  document.getElementById('paymentCloseBtn').addEventListener('click', closePaymentModal);
+  document.getElementById('recordDetailCloseBtn').addEventListener('click', closeRecordDetailModal);
+  document.getElementById('recordDetailModalOverlay').addEventListener('click', (e) => {
+    if(e.target.id === 'recordDetailModalOverlay') closeRecordDetailModal();
+  });
+  paymentModalOverlay.addEventListener('click', (e) => {
+    if(e.target === paymentModalOverlay) closePaymentModal();
+  });
+
+  paymentInvoiceSelect.addEventListener('change', () => {
+    const selected = paymentInvoiceSelect.selectedOptions[0];
+    if(selected){
+      const remaining = Number(selected.dataset.remaining);
+      paymentAmountInput.value = remaining.toFixed(2);
+      paymentAmountInput.max = remaining;
+      updatePaymentAmountHint();
+    }
+  });
+
+  paymentAmountInput.addEventListener('input', () => {
+    const max = Number(paymentAmountInput.max) || 0;
+    if(max > 0 && Number(paymentAmountInput.value) > max){
+      paymentAmountInput.value = max.toFixed(2);
+    }
+    updatePaymentAmountHint();
+  });
+
+  paymentSubmitBtn.addEventListener('click', async () => {
+    const raw = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+    if(!raw) return;
+    const session = JSON.parse(raw);
+    const invoiceId = paymentInvoiceSelect.value;
+    const amount = Number(paymentAmountInput.value);
+    const method = selectedPaymentMethod;
+
+    if(!invoiceId){ return; }
+    if(!method){
+      paymentFormError.textContent = 'Select a payment method.';
+      paymentFormError.style.display = 'block';
+      return;
+    }
+    if(!(amount > 0)){
+      paymentFormError.textContent = 'Enter an amount greater than 0.';
+      paymentFormError.style.display = 'block';
+      return;
+    }
+
+    paymentSubmitBtn.disabled = true;
+    paymentSubmitBtn.textContent = 'Processing…';
+    try{
+      const res = await fetch('/api/payments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          invoiceId,
+          patientId: session.patient.id,
+          amountPaid: amount,
+          paymentMethod: method
+        })
+      });
+      const data = await res.json();
+      if(res.ok){
+        closePaymentModal();
+        await loadAndRenderBillingTab();
+      } else {
+        paymentFormError.textContent = data.error || 'Payment could not be processed.';
+        paymentFormError.style.display = 'block';
+      }
+    }catch(err){
+      console.error('Payment failed:', err);
+      paymentFormError.textContent = 'Something went wrong. Please try again.';
+      paymentFormError.style.display = 'block';
+    }finally{
+      paymentSubmitBtn.disabled = false;
+      paymentSubmitBtn.textContent = 'Submit Payment';
+    }
+  });
+
+      if(!getCurrentUser()){
+    window.location.href = 'login.html';
+  } else {
+    const initialPage = (window.location.hash || '').replace('#','');
+    showPage(pageViews[initialPage] ? initialPage : 'records');
+    applyUserToNav();
+    initNotifications();
+    setInterval(refreshAppointmentNotifications, 30000);
+    Promise.allSettled([
+      loadAndRenderMedicalRecords().then(() => loadAndRenderPrescriptionsTab()),
+      loadAndRenderReferrals(),
+      loadAndRenderBillingTab()
+    ]).then(results => {
+      results.forEach(r => { if(r.status === 'rejected') console.error('Page section failed to load:', r.reason); });
+      renderNotifications();
+    });
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everwell Medical Clinic — Book Appointment</title>
+<meta name="description" content="Book your medical consultations, pharmacy services, and lab diagnostics at Everwell Medical Clinic.">
+<meta name="theme-color" content="#16211A">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#F1F3EC;--bg-soft:#E7ECE1;--cream:#FAF8F3;--ink:#1E2A22;--ink-soft:#4A554C;
+  --sage:#4F6B57;--sage-light:#8AA491;--sage-deep:#16211A;--clay:#DCCAB3;--gold:#B99B67;
+  --line:rgba(30,42,34,0.12);--radius-sm:8px;--radius-md:18px;--radius-lg:22px;--radius-xl:100px;
+  --shadow-sm:0 2px 8px rgba(22,33,26,0.06);--shadow-md:0 8px 24px rgba(22,33,26,0.1);
+  --focus-ring:0 0 0 3px rgba(79,107,87,0.45);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-weight:400;
+  min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;cursor:default;
+}
+a{color:inherit;text-decoration:none;}
+
+nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.2rem 4vw;
+  background:rgba(250,248,243,0.92);
+  backdrop-filter:blur(10px);
+  box-shadow:0 1px 0 var(--line);
+}
+.nav-mark{
+  font-family:'Fraunces',serif;font-size:1.5rem;font-weight:500;
+  letter-spacing:-0.015em;display:inline-flex;align-items:baseline;color:var(--ink);
+}
+.nav-mark em{font-style:italic;font-weight:400;color:var(--sage);}
+.nav-back{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  font-size:0.88rem;font-weight:500;color:var(--ink-soft);
+  transition:color .3s, gap .3s;
+}
+.nav-back:hover{color:var(--sage-deep);gap:0.7rem;}
+.nav-back svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s;}
+.nav-back:hover svg{transform:translateX(-3px);}
+
+.booking-layout{
+  flex:1;padding:2rem 4vw 3rem;max-width:960px;width:100%;margin:0 auto;
+}
+.booking-header{
+  margin-bottom:1.8rem;
+  opacity:0;transform:translateY(18px);
+  animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards;animation-delay:.15s;
+}
+.booking-header h1{
+  font-family:'Fraunces',serif;font-weight:400;font-size:1.8rem;
+  letter-spacing:-0.01em;color:var(--sage-deep);
+}
+.booking-header p{font-size:0.88rem;color:var(--ink-soft);margin-top:0.3rem;}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+.steps{
+  display:flex;align-items:center;gap:0;
+  margin-bottom:2.2rem;
+  opacity:0;transform:translateY(18px);
+  animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards;animation-delay:.25s;
+  flex-wrap:wrap;
+}
+.step{
+  display:flex;align-items:center;gap:0.5rem;
+  font-size:0.8rem;font-weight:500;color:var(--ink-soft);
+}
+.step.active{color:var(--sage-deep);font-weight:600;}
+.step.done{color:var(--sage);}
+.step-num{
+  width:30px;height:30px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem;font-weight:600;
+  background:var(--bg-soft);color:var(--ink-soft);
+  transition:all .3s ease;
+}
+.step.active .step-num{background:var(--sage);color:var(--cream);}
+.step.done .step-num{background:var(--sage-deep);color:var(--cream);}
+.step-line{width:28px;height:1px;background:var(--line);margin:0 0.4rem;}
+.step-line.done{background:var(--sage);}
+
+.booking-panel{display:none;}
+.booking-panel.active{display:block;}
+
+.cat-tabs{
+  display:flex;gap:0.5rem;overflow-x:auto;padding-bottom:0.5rem;margin-bottom:1.5rem;
+  border-bottom:1px solid var(--line);
+}
+.cat-tab{
+  padding:0.55rem 1.1rem;border-radius:var(--radius-xl);
+  font-size:0.82rem;font-weight:500;color:var(--ink-soft);
+  background:var(--cream);border:1px solid var(--line);
+  cursor:pointer;white-space:nowrap;transition:all .2s ease;
+}
+.cat-tab.active{background:var(--sage-deep);color:var(--cream);border-color:var(--sage-deep);}
+
+.subcat-title{
+  font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--sage-deep);
+  margin:1.5rem 0 0.8rem;display:flex;align-items:center;gap:0.5rem;
+}
+.subcat-title::after{content:'';flex:1;height:1px;background:var(--line);margin-left:0.5rem;}
+
+.service-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:0.9rem;
+  margin-bottom:1.5rem;
+}
+.service-card{
+  padding:1.1rem 1.2rem;border-radius:var(--radius-md);
+  background:var(--cream);border:2px solid var(--line);
+  cursor:pointer;transition:all .25s ease;position:relative;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.service-card:hover{border-color:var(--sage-light);transform:translateY(-2px);box-shadow:var(--shadow-sm);}
+.service-card.selected{border-color:var(--sage);background:rgba(79,107,87,0.04);}
+.service-card.selected::after{
+  content:'';position:absolute;top:0.8rem;right:0.8rem;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--sage);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FAF8F3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+  background-size:14px;background-position:center;background-repeat:no-repeat;
+}
+.service-name{font-weight:600;font-size:0.92rem;color:var(--ink);margin-bottom:0.2rem;padding-right:1.5rem;}
+.service-desc{font-size:0.78rem;color:var(--ink-soft);line-height:1.4;margin-bottom:0.8rem;}
+.service-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:0.6rem;border-top:1px solid var(--line);
+  font-size:0.75rem;font-weight:600;color:var(--sage);
+}
+
+.doctor-list{display:flex;flex-direction:column;gap:0.8rem;margin-bottom:1.5rem;}
+.doctor-card{
+  display:flex;align-items:center;gap:1rem;
+  padding:1.1rem 1.2rem;border-radius:var(--radius-md);
+  background:var(--cream);border:2px solid var(--line);
+  cursor:pointer;transition:all .25s ease;position:relative;
+}
+.doctor-card:hover{border-color:var(--sage-light);transform:translateY(-1px);}
+.doctor-card.selected{border-color:var(--sage);background:rgba(79,107,87,0.04);}
+.doctor-card.selected::after{
+  content:'';position:absolute;top:1rem;right:1rem;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--sage);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FAF8F3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+  background-size:14px;background-position:center;background-repeat:no-repeat;
+}
+.doctor-avatar{
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:1rem;font-weight:500;
+  color:var(--cream);flex-shrink:0;
+}
+.doctor-avatar.sage{background:var(--sage);}
+.doctor-avatar.clay{background:#A08C6A;}
+.doctor-avatar.gold{background:var(--gold);}
+.doctor-avatar.ink{background:var(--ink-soft);}
+.doctor-info{flex:1;}
+.doctor-name{font-weight:600;font-size:0.95rem;color:var(--ink);}
+.doctor-spec{font-size:0.8rem;color:var(--ink-soft);margin-top:0.1rem;}
+.doctor-avail{font-size:0.75rem;color:var(--sage);font-weight:500;margin-top:0.2rem;}
+
+.calendar-wrap{
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.4rem;margin-bottom:1.5rem;
+}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;}
+.cal-header h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--sage-deep);}
+.cal-nav{display:flex;gap:0.4rem;}
+.cal-nav button{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--bg);border:1px solid var(--line);
+  cursor:pointer;color:var(--ink-soft);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s ease;
+}
+.cal-nav button:hover{background:var(--bg-soft);color:var(--sage);}
+.cal-nav svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-day-label{text-align:center;font-size:0.7rem;font-weight:600;color:var(--ink-soft);padding:0.4rem 0;text-transform:uppercase;letter-spacing:0.04em;}
+.cal-day{text-align:center;padding:0.6rem 0;font-size:0.85rem;border-radius:8px;cursor:pointer;color:var(--ink);transition:all .2s ease;}
+.cal-day:hover{background:var(--bg-soft);}
+.cal-day.selected{background:var(--sage);color:var(--cream);font-weight:600;}
+.cal-day.today{border:1px solid var(--sage-light);}
+.cal-day.disabled{color:rgba(30,42,34,0.2);pointer-events:none;}
+.cal-day.empty{pointer-events:none;}
+
+.time-section{margin-bottom:1.5rem;}
+.time-section h3{font-family:'Fraunces',serif;font-size:1rem;font-weight:400;color:var(--sage-deep);margin-bottom:0.8rem;}
+.time-period{margin-bottom:1rem;}
+.time-period-label{font-size:0.78rem;font-weight:600;color:var(--ink-soft);margin-bottom:0.5rem;}
+.time-slots{display:flex;flex-wrap:wrap;gap:0.5rem;}
+.time-slot{
+  padding:0.55rem 1rem;border-radius:var(--radius-sm);
+  background:var(--cream);border:1.5px solid var(--line);
+  font-size:0.82rem;font-weight:500;color:var(--ink-soft);
+  cursor:pointer;transition:all .25s ease;
+}
+.time-slot:hover{border-color:var(--sage-light);color:var(--sage);}
+.time-slot.selected{background:var(--sage);border-color:var(--sage);color:var(--cream);}
+
+.notes-area{
+  width:100%;min-height:90px;padding:0.9rem 1rem;
+  font-family:'Instrument Sans',sans-serif;font-size:0.88rem;
+  color:var(--ink);background:var(--cream);
+  border:1px solid var(--line);border-radius:var(--radius-sm);
+  resize:vertical;outline:none;
+  transition:border-color .3s, box-shadow .3s;
+}
+.notes-area:focus{border-color:var(--sage);box-shadow:var(--focus-ring);}
+
+.booking-summary{
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.5rem;margin-bottom:1.5rem;
+}
+.summary-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;color:var(--sage-deep);margin-bottom:1rem;}
+.summary-row{display:flex;align-items:flex-start;gap:0.8rem;padding:0.7rem 0;border-bottom:1px solid var(--line);}
+.summary-row:last-child{border-bottom:none;}
+.summary-label{font-size:0.8rem;color:var(--ink-soft);width:130px;flex-shrink:0;}
+.summary-value{font-size:0.88rem;font-weight:600;color:var(--ink);}
+
+/* PAYMENT METHODS */
+.payment-methods{display:flex;flex-direction:column;gap:0.8rem;margin-bottom:1.5rem;}
+.pay-card{
+  display:flex;align-items:center;gap:1rem;
+  padding:1.1rem 1.2rem;border-radius:var(--radius-md);
+  background:linear-gradient(135deg,var(--cream),rgba(250,248,243,0.78));
+  border:2px solid var(--line);box-shadow:0 3px 12px rgba(22,33,26,0.035);
+  cursor:pointer;transition:all .25s ease;position:relative;overflow:hidden;
+}
+.pay-card::before{content:'';position:absolute;inset:0;background:linear-gradient(110deg,rgba(255,255,255,0.5),transparent 42%);pointer-events:none;}
+.pay-card:hover{border-color:var(--sage-light);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.pay-card.selected{border-color:var(--sage);background:linear-gradient(135deg,rgba(79,107,87,0.09),var(--cream));box-shadow:0 6px 18px rgba(79,107,87,0.12);}
+.pay-card.selected::after{
+  content:'';position:absolute;top:1rem;right:1rem;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--sage);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FAF8F3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+  background-size:14px;background-position:center;background-repeat:no-repeat;z-index:2;
+}
+.pay-icon{
+  width:52px;height:52px;border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;position:relative;z-index:1;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.65),0 4px 10px rgba(22,33,26,0.08);
+  transition:transform .25s ease;
+}
+.pay-card:hover .pay-icon{transform:scale(1.06) rotate(-2deg);}
+.pay-icon svg{width:27px;height:27px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.pay-icon.cash{background:linear-gradient(135deg,#F1E4D2,#DCCAB3);color:#7C623C;}
+.pay-icon.gcash{background:linear-gradient(135deg,#E4F5FF,#BDE5FF);color:#0077C8;}
+.pay-icon.maya{background:linear-gradient(135deg,#DDFBF5,#A8EFE1);color:#008F7C;}
+.pay-icon.card{background:linear-gradient(135deg,#E5EEE7,#C7DCCB);color:var(--sage-deep);}
+.pay-icon.bank{background:linear-gradient(135deg,#F8EFD9,#EAD29E);color:#9A763A;}
+.pay-icon.later{background:linear-gradient(135deg,#EFEDE7,#D8D3C6);color:#6B6558;}
+.pay-details{flex:1;position:relative;z-index:1;}
+.pay-name{font-weight:600;font-size:0.92rem;color:var(--ink);}
+.pay-desc{font-size:0.78rem;color:var(--ink-soft);margin-top:0.1rem;line-height:1.45;}
+
+/* RECEIPT OVERLAY */
+.receipt-overlay{
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(22,33,26,0.6);backdrop-filter:blur(6px);
+  z-index:300;align-items:center;justify-content:center;
+}
+.receipt-overlay.show{display:flex;}
+.receipt-card{
+  background:var(--cream);border-radius:var(--radius-lg);
+  width:90%;max-width:440px;padding:2rem 1.8rem;
+  box-shadow:var(--shadow-lg);
+  opacity:0;transform:scale(0.9);
+  transition:all .4s cubic-bezier(.16,1,.3,1);
+}
+.receipt-overlay.show .receipt-card{opacity:1;transform:scale(1);}
+
+.receipt-success{text-align:center;margin-bottom:1.5rem;}
+.receipt-success-icon{
+  width:64px;height:64px;border-radius:50%;
+  background:var(--sage);color:var(--cream);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 1rem;
+}
+.receipt-success-icon svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:2.5;}
+.receipt-success h2{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:400;color:var(--sage-deep);}
+.receipt-success p{font-size:0.85rem;color:var(--ink-soft);margin-top:0.3rem;}
+
+.receipt-box{
+  border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:1.2rem;margin-bottom:1.5rem;
+}
+.receipt-row{display:flex;justify-content:space-between;padding:0.45rem 0;font-size:0.82rem;}
+.receipt-row .r-label{color:var(--ink-soft);}
+.receipt-row .r-value{font-weight:500;color:var(--ink);text-align:right;}
+.receipt-divider{border-top:1px dashed var(--line);margin:0.5rem 0;}
+.receipt-total{display:flex;justify-content:space-between;padding:0.6rem 0;font-size:1rem;font-weight:600;color:var(--sage-deep);}
+
+.receipt-notification{
+  text-align:center;margin-bottom:1rem;
+}
+.receipt-notification span{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  background:rgba(79,107,87,0.1);padding:0.5rem 1rem;border-radius:100px;
+  font-size:0.8rem;color:var(--sage);font-weight:500;
+}
+
+.receipt-btn{
+  width:100%;padding:0.9rem;border-radius:var(--radius-xl);
+  background:var(--sage-deep);color:var(--cream);
+  font-family:'Instrument Sans',sans-serif;font-size:0.9rem;font-weight:500;
+  border:none;cursor:pointer;transition:all .3s ease;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+.receipt-btn:hover{background:var(--sage);}
+
+.btn-row{display:flex;gap:0.8rem;margin-top:1.5rem;}
+.btn{
+  flex:1;padding:0.85rem 1.5rem;
+  font-family:'Instrument Sans',sans-serif;font-size:0.88rem;font-weight:500;
+  border-radius:var(--radius-xl);cursor:pointer;
+  transition:all .3s ease;border:none;
+  display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;
+}
+.btn-primary{background:var(--sage-deep);color:var(--cream);}
+.btn-primary:hover:not(:disabled){background:var(--sage);box-shadow:var(--shadow-sm);}
+.btn-primary:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-secondary{background:var(--cream);color:var(--ink-soft);border:1px solid var(--line);}
+.btn-secondary:hover{background:var(--bg-soft);color:var(--sage);}
+
+.toast{
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);
+  display:flex;align-items:center;gap:0.6rem;
+  background:var(--sage-deep);color:var(--cream);
+  padding:0.9rem 1.6rem;border-radius:var(--radius-xl);
+  font-size:0.85rem;font-weight:500;box-shadow:var(--shadow-md);
+  opacity:0;pointer-events:none;
+  transition:transform 0.45s cubic-bezier(.34,1.56,.64,1), opacity 0.4s ease;
+  z-index:200;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+
+@media(max-width:600px){
+  .booking-layout{padding:1.5rem 3vw 3rem;}
+  .service-grid{grid-template-columns:1fr;}
+  .cal-grid{gap:2px;}
+  .step-line{width:16px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="patient-dashboard.html" class="nav-back">
+    <svg viewBox="0 0 24 24"><path d="M19 12H5m0 0l6-6m-6 6l6 6"/></svg>
+    Back to Dashboard
+  </a>
+  <a href="patient-dashboard.html" class="nav-mark">Ever<em>well</em></a>
+</nav>
+
+<main class="booking-layout">
+  <div class="booking-header">
+    <h1>Book an Appointment</h1>
+    <p>Select your service, share your medical info, choose a practitioner, schedule, and pay — complete your transaction in minutes.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step active" data-step="1"><span class="step-num">1</span> Service</div>
+    <div class="step-line"></div>
+    <div class="step" data-step="2"><span class="step-num">2</span> Medical Info</div>
+    <div class="step-line"></div>
+    <div class="step" data-step="3"><span class="step-num">3</span> Practitioner</div>
+    <div class="step-line"></div>
+    <div class="step" data-step="4"><span class="step-num">4</span> Schedule</div>
+    <div class="step-line"></div>
+    <div class="step" data-step="5"><span class="step-num">5</span> Payment</div>
+    <div class="step-line"></div>
+    <div class="step" data-step="6"><span class="step-num">6</span> Receipt</div>
+  </div>
+
+  <!-- STEP 1: SERVICE -->
+  <div class="booking-panel active" id="step1">
+    <div class="cat-tabs">
+      <button class="cat-tab active" onclick="filterCategory('all', this)">All Services</button>
+      <button class="cat-tab" onclick="filterCategory('cat1', this)">General Medical</button>
+      <button class="cat-tab" onclick="filterCategory('cat2', this)">Pharmacy</button>
+      <button class="cat-tab" onclick="filterCategory('cat3', this)">Diagnostics</button>
+    </div>
+    <div id="servicesContainer"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="nextFromStep1" disabled>
+        Continue to Medical Info
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14m-7-7 7 7-7 7" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 2: MEDICAL INFO -->
+  <div class="booking-panel" id="step2">
+    <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:1.15rem;color:var(--sage-deep);margin-bottom:0.4rem;">Your Medical Info</h3>
+    <p style="color:var(--ink-soft);font-size:0.9rem;margin-bottom:1.5rem;">This helps your care team prepare for your visit. All fields are optional and update your patient profile.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+      <div>
+        <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;">Blood Type</label>
+        <select id="bloodTypeInput" class="notes-area" style="height:auto;padding:0.7rem;">
+          <option value="">Unknown</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+      </div>
+      <div>
+        <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;">Height (cm)</label>
+        <input type="number" id="heightInput" class="notes-area" style="height:auto;padding:0.7rem;" placeholder="e.g. 165" min="0" step="0.1">
+      </div>
+      <div>
+        <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;">Weight (kg)</label>
+        <input type="number" id="weightInput" class="notes-area" style="height:auto;padding:0.7rem;" placeholder="e.g. 61" min="0" step="0.1">
+      </div>
+    </div>
+
+    <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;">Known Allergies</label>
+    <div id="allergyList" style="display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1rem;"></div>
+    <div style="display:grid;grid-template-columns:2fr 1fr auto;gap:0.6rem;align-items:end;margin-bottom:1.5rem;">
+      <div>
+        <input type="text" id="allergyNameInput" class="notes-area" style="height:auto;padding:0.7rem;" placeholder="e.g. Penicillin, Shellfish">
+      </div>
+      <div>
+        <select id="allergySeverityInput" class="notes-area" style="height:auto;padding:0.7rem;">
+          <option value="Mild">Mild</option>
+          <option value="Moderate">Moderate</option>
+          <option value="Severe">Severe</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-secondary" id="addAllergyBtn">Add</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+      <button class="btn btn-primary" id="nextFromStep2">
+        Continue to Practitioner
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14m-7-7 7 7-7 7" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 3: PRACTITIONER -->
+  <div class="booking-panel" id="step3">
+    <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:1.15rem;color:var(--sage-deep);margin-bottom:1rem;">Choose Your Healthcare Provider</h3>
+    <div class="doctor-list"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+      <button class="btn btn-primary" id="nextFromStep3" disabled>
+        Continue to Schedule
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14m-7-7 7 7-7 7" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 4: SCHEDULE -->
+  <div class="booking-panel" id="step4">
+    <div class="calendar-wrap">
+      <div class="cal-header">
+        <h3 id="calMonth">Loading…</h3>
+        <div class="cal-nav">
+          <button id="calPrev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button id="calNext"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+        </div>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div class="time-section">
+      <h3>Select Available Time Slot</h3>
+      <div class="time-period">
+        <div class="time-period-label">Morning Slots</div>
+        <div class="time-slots" id="morningSlots"></div>
+      </div>
+      <div class="time-period">
+        <div class="time-period-label">Afternoon Slots</div>
+        <div class="time-slots" id="afternoonSlots"></div>
+      </div>
+    </div>
+    <div style="margin-bottom:1.5rem;">
+      <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;">Additional Clinical Notes (Optional)</label>
+      <textarea class="notes-area" id="notesInput" placeholder="Briefly describe your symptoms, current medications, or specific requests..."></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+      <button class="btn btn-primary" id="nextFromStep4" disabled>
+        Continue to Payment
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14m-7-7 7 7-7 7" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- STEP 5: PAYMENT -->
+  <div class="booking-panel" id="step5">
+    <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:1.15rem;color:var(--sage-deep);margin-bottom:0.5rem;">Appointment Summary</h3>
+    <div class="booking-summary">
+      <div class="summary-title">Everwell Appointment Summary</div>
+      <div class="summary-row"><span class="summary-label">Service</span><span class="summary-value" id="sumService">—</span></div>
+      <div class="summary-row"><span class="summary-label">Practitioner</span><span class="summary-value" id="sumDoctor">—</span></div>
+      <div class="summary-row"><span class="summary-label">Date</span><span class="summary-value" id="sumDate">—</span></div>
+      <div class="summary-row"><span class="summary-label">Time</span><span class="summary-value" id="sumTime">—</span></div>
+      <div class="summary-row"><span class="summary-label">Service Fee</span><span class="summary-value" id="sumFee" style="color:var(--sage-deep);font-size:1rem;">—</span></div>
+    </div>
+
+    <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:1.15rem;color:var(--sage-deep);margin:1.5rem 0 1rem;">Select Payment Method</h3>
+    <div class="payment-methods">
+      <div class="pay-card" data-pay="cash">
+        <div class="pay-icon cash" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 9h.01M18 15h.01"/></svg></div>
+        <div class="pay-details">
+          <div class="pay-name">Cash Payment</div>
+          <div class="pay-desc">Pay in cash at the clinic counter on your appointment day</div>
+        </div>
+      </div>
+      <div class="pay-card" data-pay="gcash">
+        <div class="pay-icon gcash" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2"/><path d="M9.5 5.5h5M11 18.5h2"/><path d="m10 12 1.5 1.5L15 10"/></svg></div>
+        <div class="pay-details">
+          <div class="pay-name">GCash</div>
+          <div class="pay-desc">Pay via GCash mobile wallet — instant confirmation</div>
+        </div>
+      </div>
+      <div class="pay-card" data-pay="maya">
+        <div class="pay-icon maya" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7.5 12 4l8 3.5v9L12 20l-8-3.5z"/><path d="m8 10 4 2 4-2M12 12v5"/></svg></div>
+        <div class="pay-details">
+          <div class="pay-name">Maya (PayMaya)</div>
+          <div class="pay-desc">Pay via Maya digital wallet or linked card</div>
+        </div>
+      </div>
+      <div class="pay-card" data-pay="card">
+        <div class="pay-icon card" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h3"/></svg></div>
+        <div class="pay-details">
+          <div class="pay-name">Credit / Debit Card</div>
+          <div class="pay-desc">Visa, Mastercard, JCB accepted — secure processing</div>
+        </div>
+      </div>
+      <div class="pay-card" data-pay="bank">
+        <div class="pay-icon bank" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 9 9-5 9 5"/><path d="M5 10v7M9 10v7M15 10v7M19 10v7M3 19h18M2 21h20"/><path d="M4 9h16"/></svg></div>
+        <div class="pay-details">
+          <div class="pay-name">Bank Transfer (InstaPay / PESONet)</div>
+          <div class="pay-desc">Direct bank transfer — verification within 24 hours</div>
+        </div>
+      </div>
+      <div class="pay-card" data-pay="later">
+        <div class="pay-icon later" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
+        <div class="pay-details">
+          <div class="pay-name">Pay Later</div>
+          <div class="pay-desc">Book now, settle the balance anytime from your Billing page</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goToStep(4)">Back</button>
+      <button class="btn btn-primary" id="nextFromStep5" disabled>
+        Complete Transaction
+        <svg viewBox="0 0 24 24" width="16" height="16"><path d="M20 6L9 17l-5-5" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- RECEIPT OVERLAY -->
+<div class="receipt-overlay" id="receiptOverlay">
+  <div class="receipt-card">
+    <div class="receipt-success">
+      <div class="receipt-success-icon">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <h2>Transaction Complete!</h2>
+      <p>Your appointment has been successfully booked and confirmed.</p>
+    </div>
+    <div class="receipt-box" id="receiptBox"></div>
+    <div class="receipt-notification">
+      <span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        Dashboard updated with your new appointment!
+      </span>
+    </div>
+    <button class="receipt-btn" id="receiptDoneBtn">
+      Back to Patient Dashboard
+      <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14m-7-7 7 7-7 7" stroke="currentColor" fill="none" stroke-width="2"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== REAL SERVICES & DOCTORS =====
+   Replaces the hardcoded proposalServices array and the static
+   4-doctor list. Services come from your real catalog; doctors are
+   fetched fresh per-service based on a simple specialty keyword match. */
+
+const state = {
+  selectedService: null, selectedDoctor: null,
+  selectedDate: null, selectedTime: null,
+  notes: '', paymentMethod: null,
+  bloodType: '', heightCm: '', weightKg: '', allergies: []
+};
+
+let currentServices = [];
+
+async function fetchServices(){
+  try{
+    const res = await fetch('/api/services');
+    const data = await res.json();
+    currentServices = data.services || [];
+  }catch(err){
+    console.error('Failed to load services:', err);
+    currentServices = [];
+  }
+}
+
+// REPLACES the old renderServices + filterCategory functions.
+// Maps each tab button to a real main category name, and actually
+// filters currentServices by it instead of showing everything always.
+
+const CATEGORY_MAP = {
+  cat1: 'General Medical & Consultations',
+  cat2: 'Pharmacy Services',
+  cat3: 'Diagnostics & Hospital Referrals',
+};
+
+let activeCategoryFilter = 'all';
+
+function renderServices() {
+  const container = document.getElementById('servicesContainer');
+  container.innerHTML = '';
+
+  const filtered = activeCategoryFilter === 'all'
+    ? currentServices
+    : currentServices.filter(s => s.main_category_name === CATEGORY_MAP[activeCategoryFilter]);
+
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--ink-soft);">No services in this category yet.</div>';
+    return;
+  }
+
+  // Group by real sub-category, preserving the order they already
+  // come back in from the API (main category, then sub-category).
+  const groups = [];
+  filtered.forEach(s => {
+    let group = groups.find(g => g.name === s.sub_category_name);
+    if (!group) { group = { name: s.sub_category_name, items: [] }; groups.push(group); }
+    group.items.push(s);
+  });
+
+  groups.forEach(group => {
+    const heading = document.createElement('div');
+    heading.className = 'subcat-title';
+    heading.textContent = group.name;
+    container.appendChild(heading);
+
+    const grid = document.createElement('div');
+    grid.className = 'service-grid';
+
+    group.items.forEach(s => {
+      const card = document.createElement('div');
+      card.className = 'service-card' + (state.selectedService && state.selectedService.service_id === s.service_id ? ' selected' : '');
+      card.innerHTML =
+        '<div>' +
+          '<div class="service-name">' + s.service_name + '</div>' +
+          '<div class="service-desc">' + (s.description || '') + '</div>' +
+        '</div>' +
+        '<div class="service-meta"><span>' + (s.estimated_duration_minutes ? s.estimated_duration_minutes + ' min' : '') + '</span><span>₱' + Number(s.standard_price).toLocaleString() + '</span></div>';
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        state.selectedService = s;
+        state.selectedDoctor = null;
+        document.getElementById('nextFromStep1').disabled = false;
+      });
+      grid.appendChild(card);
+    });
+
+    container.appendChild(grid);
+  });
+}
+
+function filterCategory(catId, btn) {
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  activeCategoryFilter = catId;
+  renderServices();
+}
+
+// Exact match against your real 21-service catalog — one specialty
+// per service, chosen to fit what that visit actually is. A few
+// services (Pharmacist Medication Consultation, Drug Allergy
+// Checking, Blood Sugar Testing) are pharmacy-side, not doctor
+// consultations — but every appointment still needs a Doctor per
+// the schema, so those default to General Practice rather than
+// pretending a doctor specialty exists for them.
+const SERVICE_SPECIALTY_MAP = {
+  'Adult Consultation': 'General Practice',
+  'Pediatric (Child) Consultation': 'Pediatrics',
+  'Routine Blood Pressure Check': 'General Practice',
+  'Medical Certificate Issuance': 'General Practice',
+  'Pre-Employment Checkup': 'General Practice',
+  'Cardiology (Heart) Consultation': 'Cardiology',
+  'Dermatology (Skin) Consultation': 'Dermatology',
+  'OB/GYN (Women\'s Health) Consultation': 'OB/GYN',
+  'Orthopedic (Bone/Joint) Consultation': 'Orthopedics',
+  'Basic Wound Cleaning & Bandaging': 'General Practice',
+  'Nebulizer Treatment for Asthma': 'Pulmonology',
+  'Ear Cleaning / Flushing': 'General Practice',
+  'Pharmacist Medication Consultation': 'General Practice',
+  'Drug Allergy Checking & CPOE Review': 'General Practice',
+  'Blood Sugar Testing (Point of Care)': 'General Practice',
+  'Complete Blood Count (CBC)': 'Laboratory Medicine',
+  'Fasting Blood Sugar (FBS) Test': 'Laboratory Medicine',
+  'Routine Urinalysis': 'Laboratory Medicine',
+  'Routine Chest X-Ray': 'Radiology',
+  'Standard ECG (Heart Monitor)': 'Cardiology',
+  'General Hospital Admitting Referral': 'General Practice',
+};
+
+function specialtyForService(serviceName){
+  return SERVICE_SPECIALTY_MAP[serviceName] || 'General Practice';
+}
+
+async function renderDoctorsForSelectedService(){
+  const container = document.querySelector('.doctor-list');
+  container.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--ink-soft);">Loading available doctors…</div>';
+
+  if (!state.selectedService) return;
+  const specialty = specialtyForService(state.selectedService.service_name);
+
+  let doctors = [];
+  try{
+    const res = await fetch(`/api/doctors?specialization=${encodeURIComponent(specialty)}`);
+    const data = await res.json();
+    doctors = data.doctors || [];
+  }catch(err){
+    console.error('Failed to load doctors:', err);
+  }
+
+  if (doctors.length === 0){
+    container.innerHTML = `<div style="text-align:center;padding:2rem;color:var(--ink-soft);">No ${specialty} doctors are currently available.</div>`;
+    return;
+  }
+
+  container.innerHTML = doctors.map(d => {
+    const initials = d.full_name.replace('Dr. ','').split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+    return `
+      <div class="doctor-card" data-doctor-id="${d.user_id}">
+        <div class="doctor-avatar sage">${initials}</div>
+        <div class="doctor-info">
+          <div class="doctor-name">${d.full_name}</div>
+          <div class="doctor-spec">${d.specialization || specialty}</div>
+          <div class="doctor-avail">Available</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.querySelectorAll('.doctor-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      const doctorId = card.dataset.doctorId;
+      const name = card.querySelector('.doctor-name').textContent;
+      const spec = card.querySelector('.doctor-spec').textContent;
+      state.selectedDoctor = { id: doctorId, display: name + ' — ' + spec };
+      document.getElementById('nextFromStep3').disabled = false;
+    });
+  });
+}
+
+// ===== STEP 2: MEDICAL INFO =====
+// Loads whatever the patient already has on file (if anything), lets
+// them update blood type / height / weight / allergies, and saves it
+// straight to their profile via /api/patient-medical-info. This is
+// profile-level data, not tied to this specific appointment, so it
+// saves as soon as they continue rather than waiting for the final
+// booking submission.
+function renderAllergyList() {
+  const container = document.getElementById('allergyList');
+  if (state.allergies.length === 0) {
+    container.innerHTML = `<div style="color:var(--ink-soft);font-size:0.85rem;">No allergies added yet.</div>`;
+    return;
+  }
+  container.innerHTML = state.allergies.map((a, i) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:0.6rem 0.9rem;">
+      <div><strong>${a.allergenDescription}</strong> <span style="color:var(--ink-soft);font-size:0.82rem;">· ${a.severity}</span></div>
+      <button type="button" data-remove-allergy="${i}" style="background:none;border:none;cursor:pointer;color:var(--ink-soft);font-size:1rem;line-height:1;">&times;</button>
+    </div>
+  `).join('');
+  container.querySelectorAll('[data-remove-allergy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.allergies.splice(Number(btn.dataset.removeAllergy), 1);
+      renderAllergyList();
+    });
+  });
+}
+
+document.getElementById('addAllergyBtn').addEventListener('click', () => {
+  const nameInput = document.getElementById('allergyNameInput');
+  const severityInput = document.getElementById('allergySeverityInput');
+  const name = nameInput.value.trim();
+  if (!name) return;
+  state.allergies.push({ allergenDescription: name, severity: severityInput.value });
+  nameInput.value = '';
+  renderAllergyList();
+});
+
+async function loadMedicalInfoStep() {
+  const rawSession = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+  if (!rawSession) return;
+  const session = JSON.parse(rawSession);
+
+  try {
+    const res = await fetch(`/api/patient-medical-info?patientId=${session.patient.id}`);
+    if (res.ok) {
+      const data = await res.json();
+      document.getElementById('bloodTypeInput').value = data.patient.blood_type || '';
+      document.getElementById('heightInput').value = data.patient.height_cm || '';
+      document.getElementById('weightInput').value = data.patient.weight_kg || '';
+      state.allergies = (data.allergies || []).map(a => ({
+        allergenDescription: a.allergen_description,
+        severity: a.severity,
+        reactionDescription: a.reaction_description
+      }));
+    }
+  } catch (err) {
+    console.error('Failed to load medical info:', err);
+  }
+  renderAllergyList();
+}
+
+document.getElementById('nextFromStep2').addEventListener('click', async () => {
+  const rawSession = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+  if (!rawSession) {
+    window.location.href = 'login.html';
+    return;
+  }
+  const session = JSON.parse(rawSession);
+  state.bloodType = document.getElementById('bloodTypeInput').value;
+  state.heightCm = document.getElementById('heightInput').value;
+  state.weightKg = document.getElementById('weightInput').value;
+
+  try {
+    await fetch('/api/patient-medical-info', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patientId: session.patient.id,
+        bloodType: state.bloodType || null,
+        heightCm: state.heightCm || null,
+        weightKg: state.weightKg || null,
+        allergies: state.allergies
+      })
+    });
+  } catch (err) {
+    console.error('Failed to save medical info:', err);
+    // Don't block the booking flow over this — it's profile info, not
+    // required for the appointment itself.
+  }
+
+  goToStep(3);
+});
+
+document.getElementById('nextFromStep3').addEventListener('click', () => goToStep(4));
+
+// STEP TRANSITIONS
+function goToStep(n) {
+  document.querySelectorAll('.booking-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  document.querySelectorAll('.step').forEach(s => {
+    const step = parseInt(s.dataset.step);
+    s.classList.remove('active', 'done');
+    if (step < n) s.classList.add('done');
+    if (step === n) s.classList.add('active');
+  });
+  document.querySelectorAll('.step-line').forEach((l, i) => { l.classList.toggle('done', i < n - 1); });
+  if (n === 2) loadMedicalInfoStep();
+  if (n === 3) renderDoctorsForSelectedService();
+  if (n === 4) renderCalendar();
+  if (n === 5) populateSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('nextFromStep1').addEventListener('click', () => goToStep(2));
+
+fetchServices().then(renderServices);
+
+// CALENDAR
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+let calMonth = today.getMonth(), calYear = today.getFullYear();
+const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+function renderCalendar() {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+    const lbl = document.createElement('div');
+    lbl.className = 'cal-day-label'; lbl.textContent = d; grid.appendChild(lbl);
+  });
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  for (let i = 0; i < firstDay; i++) { const e = document.createElement('div'); e.className = 'cal-day empty'; grid.appendChild(e); }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dayEl = document.createElement('div');
+    dayEl.className = 'cal-day'; dayEl.textContent = d;
+    const thisDate = new Date(calYear, calMonth, d);
+    const isPast = thisDate < today;
+    const isToday = thisDate.getTime() === today.getTime();
+    if (isToday) dayEl.classList.add('today');
+    if (isPast) {
+      dayEl.classList.add('disabled');
+    } else {
+      if (state.selectedDate && state.selectedDate.getDate() === d && state.selectedDate.getMonth() === calMonth && state.selectedDate.getFullYear() === calYear) dayEl.classList.add('selected');
+      dayEl.addEventListener('click', () => {
+        document.querySelectorAll('.cal-day').forEach(el => el.classList.remove('selected'));
+        dayEl.classList.add('selected');
+        state.selectedDate = new Date(calYear, calMonth, d);
+        renderTimeSlots();
+        checkStep4Ready();
+      });
+    }
+    grid.appendChild(dayEl);
+  }
+  document.getElementById('calMonth').textContent = monthNames[calMonth] + ' ' + calYear;
+
+  // Can't navigate to a month before the current one — there's nothing
+  // bookable back there.
+  const isCurrentMonth = calYear === today.getFullYear() && calMonth === today.getMonth();
+  const prevBtn = document.getElementById('calPrev');
+  prevBtn.disabled = isCurrentMonth;
+  prevBtn.style.opacity = isCurrentMonth ? '0.3' : '1';
+  prevBtn.style.cursor = isCurrentMonth ? 'default' : 'pointer';
+}
+document.getElementById('calPrev').addEventListener('click', () => {
+  if (calYear === today.getFullYear() && calMonth === today.getMonth()) return;
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar();
+});
+document.getElementById('calNext').addEventListener('click', () => { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); });
+
+const morningTimes = ['8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM'];
+const afternoonTimes = ['1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM'];
+
+function renderTimeSlots() {
+  const mC = document.getElementById('morningSlots'); const aC = document.getElementById('afternoonSlots');
+  mC.innerHTML = ''; aC.innerHTML = '';
+  morningTimes.forEach(t => { const b = document.createElement('button'); b.className = 'time-slot' + (state.selectedTime === t ? ' selected' : ''); b.textContent = t; b.addEventListener('click', () => selectTime(t, b)); mC.appendChild(b); });
+  afternoonTimes.forEach(t => { const b = document.createElement('button'); b.className = 'time-slot' + (state.selectedTime === t ? ' selected' : ''); b.textContent = t; b.addEventListener('click', () => selectTime(t, b)); aC.appendChild(b); });
+}
+function selectTime(t, btn) { document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected')); btn.classList.add('selected'); state.selectedTime = t; checkStep4Ready(); }
+function checkStep4Ready() { document.getElementById('nextFromStep4').disabled = !(state.selectedDate && state.selectedTime); }
+
+document.getElementById('nextFromStep4').addEventListener('click', () => {
+  state.notes = document.getElementById('notesInput').value;
+  goToStep(5);
+});
+
+// STEP 4 SUMMARY
+function populateSummary() {
+  const s = state.selectedService;
+  document.getElementById('sumService').textContent = s ? s.service_name : '—';
+  document.getElementById('sumDoctor').textContent = state.selectedDoctor ? state.selectedDoctor.display : '—';
+  document.getElementById('sumDate').textContent = state.selectedDate ? state.selectedDate.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' }) : '—';
+  document.getElementById('sumTime').textContent = state.selectedTime || '—';
+  document.getElementById('sumFee').textContent = s ? '₱' + Number(s.standard_price).toLocaleString() : '—';
+}
+
+// PAYMENT SELECTION
+document.querySelectorAll('.pay-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.pay-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    state.paymentMethod = card.dataset.pay;
+    document.getElementById('nextFromStep5').disabled = false;
+  });
+});
+
+// ===== REAL BOOKING SUBMISSION =====
+// Replaces the localStorage save with an actual call to
+// /api/book-appointment. Requires a logged-in patient session
+// (same everwell_session key used everywhere else).
+
+document.getElementById('nextFromStep5').addEventListener('click', async () => {
+  const rawSession = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+  if (!rawSession) {
+    window.location.href = 'login.html';
+    return;
+  }
+  const session = JSON.parse(rawSession);
+  const s = state.selectedService;
+  // Short labels matching what the billing admin dashboard uses
+  // (Cash/Card/GCash) — keeps payment_method values consistent
+  // across both booking and billing admin, and avoids risking an
+  // unexpectedly short varchar limit with long display names.
+  // 'later' maps to null on purpose — no payment is recorded yet,
+  // so the invoice book-appointment.js creates stays 'unpaid' and
+  // the patient settles it later from their Billing page.
+  const paymentMethodValue = { cash: 'Cash', gcash: 'GCash', maya: 'Maya', card: 'Card', bank: 'Bank Transfer', later: null }[state.paymentMethod];
+  // for the database's single scheduled_at column.
+  const [time, meridiem] = state.selectedTime.split(' ');
+  let [hours, minutes] = time.split(':').map(Number);
+  if (meridiem === 'PM' && hours !== 12) hours += 12;
+  if (meridiem === 'AM' && hours === 12) hours = 0;
+  const scheduledAt = new Date(state.selectedDate);
+  scheduledAt.setHours(hours, minutes, 0, 0);
+
+  const btn = document.getElementById('nextFromStep5');
+  btn.disabled = true;
+  btn.textContent = 'Booking...';
+
+  let appointment = null;
+  try {
+    const res = await fetch('/api/book-appointment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patientId: session.patient.id,
+        doctorId: state.selectedDoctor.id,
+        serviceId: s.service_id,
+        appointmentType: 'scheduled',
+        scheduledAt: scheduledAt.toISOString(),
+        notes: state.notes || null,
+        paymentMethod: paymentMethodValue,
+      }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      showToast(data.error || 'Booking failed, please try again', 'error');
+      btn.disabled = false;
+      btn.innerHTML = 'Complete Transaction <svg viewBox="0 0 24 24" width="16" height="16"><path d="M20 6L9 17l-5-5" stroke="currentColor" fill="none" stroke-width="2"/></svg>';
+      return;
+    }
+
+    appointment = data.appointment;
+  } catch (err) {
+    console.error('Booking error:', err);
+    showToast('Something went wrong. Please try again.', 'error');
+    btn.disabled = false;
+    btn.innerHTML = 'Complete Transaction <svg viewBox="0 0 24 24" width="16" height="16"><path d="M20 6L9 17l-5-5" stroke="currentColor" fill="none" stroke-width="2"/></svg>';
+    return;
+  }
+
+  const dateStr = state.selectedDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const feeDisplay = '₱' + Number(s.standard_price).toLocaleString();
+  const payNames = { cash: 'Cash Payment', gcash: 'GCash', maya: 'Maya (PayMaya)', card: 'Credit / Debit Card', bank: 'Bank Transfer (InstaPay)', later: 'Pay Later' };
+  const payingLater = state.paymentMethod === 'later';
+
+  document.querySelector('#receiptOverlay .receipt-success h2').textContent = payingLater ? 'Appointment Booked!' : 'Transaction Complete!';
+  document.querySelector('#receiptOverlay .receipt-success p').textContent = payingLater
+    ? 'Your appointment is confirmed. Your balance is due — pay anytime from Billing.'
+    : 'Your appointment has been successfully booked and confirmed.';
+
+  document.getElementById('receiptBox').innerHTML =
+    '<div class="receipt-row"><span class="r-label">Appointment ID</span><span class="r-value">' + appointment.appointment_id + '</span></div>' +
+    '<div class="receipt-divider"></div>' +
+    '<div class="receipt-row"><span class="r-label">Service</span><span class="r-value">' + s.service_name + '</span></div>' +
+    '<div class="receipt-row"><span class="r-label">Practitioner</span><span class="r-value">' + state.selectedDoctor.display + '</span></div>' +
+    '<div class="receipt-row"><span class="r-label">Date & Time</span><span class="r-value">' + dateStr + ' at ' + state.selectedTime + '</span></div>' +
+    '<div class="receipt-row"><span class="r-label">Payment</span><span class="r-value">' + (payNames[state.paymentMethod] || '—') + '</span></div>' +
+    (state.notes ? '<div class="receipt-row"><span class="r-label">Notes</span><span class="r-value">' + state.notes.substring(0, 60) + (state.notes.length > 60 ? '...' : '') + '</span></div>' : '') +
+    '<div class="receipt-divider"></div>' +
+    '<div class="receipt-total"><span>' + (payingLater ? 'Amount Due' : 'Total') + '</span><span>' + feeDisplay + '</span></div>';
+
+  document.getElementById('receiptOverlay').classList.add('show');
+  showToast('Appointment booked successfully!');
+
+  const doneBtn = document.getElementById('receiptDoneBtn');
+  if(payingLater){
+    doneBtn.innerHTML = 'Go to Billing <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14m-7-7 7 7-7 7" stroke="currentColor" fill="none" stroke-width="2"/></svg>';
+    doneBtn.dataset.redirect = 'my-medical-records.html#billing';
+  } else {
+    doneBtn.innerHTML = 'Back to Patient Dashboard <svg viewBox="0 0 24 24" width="16" height="16"><path d="M5 12h14m-7-7 7 7-7 7" stroke="currentColor" fill="none" stroke-width="2"/></svg>';
+    doneBtn.dataset.redirect = 'patient-dashboard.html';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = 'Complete Transaction <svg viewBox="0 0 24 24" width="16" height="16"><path d="M20 6L9 17l-5-5" stroke="currentColor" fill="none" stroke-width="2"/></svg>';
+});
+
+document.getElementById('receiptDoneBtn').addEventListener('click', (e) => {
+  document.getElementById('receiptOverlay').classList.remove('show');
+  const dest = e.currentTarget.dataset.redirect || 'patient-dashboard.html';
+  showToast(dest.includes('billing') ? 'Redirecting to your billing...' : 'Redirecting to your dashboard...');
+  setTimeout(() => { window.location.href = dest; }, 1200);
+});
+
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  if (type === 'error') { t.style.background = '#8B2E2E'; } else { t.style.background = ''; }
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// INIT
+document.addEventListener('DOMContentLoaded', () => { renderTimeSlots(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everwell Medical Clinic — Patient Dashboard</title>
+<meta name="description" content="Your Everwell patient dashboard — manage appointments, view diagnostic results, pharmacy prescriptions, and hospital referrals.">
+<meta name="theme-color" content="#16211A">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#F1F3EC;--bg-soft:#E7ECE1;--cream:#FAF8F3;--ink:#1E2A22;--ink-soft:#4A554C;
+  --sage:#4F6B57;--sage-light:#8AA491;--sage-deep:#16211A;--clay:#DCCAB3;--gold:#B99B67;
+  --line:rgba(30,42,34,0.12);--radius-sm:8px;--radius-md:18px;--radius-lg:22px;--radius-xl:100px;
+  --shadow-sm:0 2px 8px rgba(22,33,26,0.06);--shadow-md:0 8px 24px rgba(22,33,26,0.1);
+  --focus-ring:0 0 0 3px rgba(79,107,87,0.45);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--ink);font-family:'Instrument Sans',sans-serif;font-weight:400;
+  min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden;cursor:default;
+}
+a{color:inherit;text-decoration:none;}
+
+nav{
+  position:sticky;top:0;z-index:100;
+  display:grid;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:1rem;
+  padding:1.1rem 4vw;
+  background:rgba(250,248,243,0.92);
+  backdrop-filter:blur(10px);
+  box-shadow:0 1px 0 var(--line);
+}
+.nav-mark{
+  font-family:'Fraunces',serif;font-size:1.5rem;font-weight:500;
+  letter-spacing:-0.015em;display:inline-flex;align-items:baseline;color:var(--ink);
+  justify-self:start;
+}
+.nav-mark em{font-style:italic;font-weight:400;color:var(--sage);}
+.nav-links{display:flex;align-items:center;gap:1.5rem;justify-self:center;}
+.nav-link{font-size:0.85rem;font-weight:500;color:var(--ink-soft);transition:color .2s;}
+.nav-link:hover, .nav-link.active{color:var(--sage-deep);}
+.nav-right{display:flex;align-items:center;gap:1.2rem;justify-self:end;}
+.nav-user{
+  display:flex;align-items:center;gap:0.6rem;
+  font-size:0.88rem;font-weight:500;color:var(--ink-soft);
+}
+.nav-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--sage);color:var(--cream);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:0.85rem;font-weight:500;
+}
+.nav-logout{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  font-size:0.82rem;color:var(--ink-soft);
+  background:none;border:none;cursor:pointer;
+  transition:color .3s;
+}
+.nav-logout:hover{color:#8B2E2E;}
+.nav-logout svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+@media (max-width:820px){
+  nav{grid-template-columns:auto auto;}
+  .nav-links{display:none;}
+}
+
+.dashboard{
+  flex:1;padding:2rem 4vw 3rem;max-width:1240px;width:100%;margin:0 auto;
+}
+.dash-header{
+  display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:2rem;
+  opacity:0;transform:translateY(18px);
+  animation:fadeUp .7s cubic-bezier(.16,1,.3,1) forwards;animation-delay:.15s;
+}
+.dash-header-title h1{
+  font-family:'Fraunces',serif;font-weight:400;font-size:1.8rem;
+  letter-spacing:-0.01em;color:var(--sage-deep);
+}
+.dash-header-title p{font-size:0.88rem;color:var(--ink-soft);margin-top:0.3rem;}
+.btn-book-primary{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  padding:0.75rem 1.4rem;border-radius:var(--radius-xl);
+  background:var(--sage-deep);color:var(--cream);
+  font-size:0.85rem;font-weight:500;transition:all .3s ease;
+  box-shadow:var(--shadow-sm);
+}
+.btn-book-primary:hover{background:var(--sage);transform:translateY(-1px);}
+.btn-book-primary svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+
+.stats-row{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;
+  margin-bottom:2rem;
+}
+.stat-card{
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.3rem 1.4rem;position:relative;overflow:hidden;
+  opacity:0;transform:translateY(16px);
+  animation:fadeUp .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+.stat-card:nth-child(1){animation-delay:.2s;}
+.stat-card:nth-child(2){animation-delay:.3s;}
+.stat-card:nth-child(3){animation-delay:.4s;}
+.stat-card:nth-child(4){animation-delay:.5s;}
+.stat-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:0.8rem;
+}
+.stat-icon svg{
+  width:22px;height:22px;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  fill:none;
+}
+.stat-icon.sage{background:rgba(79,107,87,0.16);color:var(--sage-deep);}
+.stat-icon.clay{background:rgba(220,202,179,0.45);color:#7C623C;}
+.stat-icon.gold{background:rgba(185,155,103,0.22);color:#8C6D2D;}
+.stat-icon.ink{background:rgba(30,42,34,0.12);color:var(--sage-deep);}
+.stat-value{font-family:'Fraunces',serif;font-size:1.5rem;font-weight:500;color:var(--sage-deep);}
+.stat-label{font-size:0.78rem;color:var(--ink-soft);margin-top:0.2rem;}
+
+.content-grid{
+  display:grid;grid-template-columns:1fr 340px;gap:1.5rem;
+}
+@media(max-width:960px){.content-grid{grid-template-columns:1fr;}}
+
+.card{
+  background:var(--cream);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:1.5rem;margin-bottom:1.5rem;
+  opacity:0;transform:translateY(16px);
+  animation:fadeUp .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;
+}
+.card-title{
+  font-family:'Fraunces',serif;font-size:1.15rem;font-weight:400;color:var(--sage-deep);
+  display:flex;align-items:center;gap:0.5rem;
+}
+.card-action{
+  font-size:0.78rem;color:var(--sage);font-weight:600;
+  transition:color .3s;cursor:pointer;background:none;border:none;
+  display:inline-flex;align-items:center;gap:0.3rem;
+}
+.card-action:hover{color:var(--sage-deep);}
+
+.appt-list{display:flex;flex-direction:column;gap:0.8rem;}
+.appt-item{
+  display:flex;align-items:center;gap:1rem;
+  padding:1rem 1.1rem;border-radius:var(--radius-sm);
+  background:var(--bg);border:1px solid var(--line);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.appt-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-sm);}
+.appt-date{
+  width:52px;text-align:center;flex-shrink:0;
+  padding:0.4rem;background:var(--cream);border-radius:10px;border:1px solid var(--line);
+}
+.appt-date .day{font-family:'Fraunces',serif;font-size:1.25rem;font-weight:500;color:var(--sage-deep);line-height:1;}
+.appt-date .month{font-size:0.68rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.04em;}
+.appt-info{flex:1;}
+.appt-category{font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--sage);}
+.appt-service{font-size:0.9rem;font-weight:500;color:var(--ink);margin:0.1rem 0;}
+.appt-meta{font-size:0.78rem;color:var(--ink-soft);}
+.appt-status{
+  padding:0.3rem 0.7rem;border-radius:var(--radius-xl);
+  font-size:0.72rem;font-weight:500;letter-spacing:0.02em;
+}
+.appt-status.confirmed{background:rgba(79,107,87,0.12);color:var(--sage);}
+.appt-status.pending{background:rgba(185,155,103,0.15);color:var(--gold);}
+
+.services-catalog{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.8rem;
+  margin-top:1rem;
+}
+.cat-item{
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:0.9rem 1rem;transition:all .25s ease;
+}
+.cat-item:hover{border-color:var(--sage-light);transform:translateY(-2px);}
+.cat-tag{font-size:0.68rem;font-weight:600;text-transform:uppercase;color:var(--sage);letter-spacing:0.04em;}
+.cat-title{font-size:0.88rem;font-weight:500;color:var(--ink);margin:0.2rem 0;}
+.cat-price{font-size:0.78rem;color:var(--ink-soft);}
+.cat-btn{
+  margin-top:0.6rem;font-size:0.75rem;font-weight:600;color:var(--sage);
+  display:inline-flex;align-items:center;gap:0.2rem;
+}
+
+.rx-list{display:flex;flex-direction:column;gap:0.7rem;}
+.rx-item{
+  display:flex;align-items:center;gap:0.8rem;
+  padding:0.8rem 1rem;border-radius:var(--radius-sm);
+  background:var(--bg);border:1px solid var(--line);
+}
+.rx-badge{
+  width:32px;height:32px;border-radius:8px;
+  background:rgba(220,202,179,0.35);color:#A08C6A;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.rx-badge svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;}
+.rx-details{flex:1;}
+.rx-name{font-size:0.85rem;font-weight:500;color:var(--ink);}
+.rx-sub{font-size:0.75rem;color:var(--ink-soft);}
+.rx-status{font-size:0.7rem;padding:0.2rem 0.5rem;border-radius:4px;background:rgba(79,107,87,0.1);color:var(--sage);font-weight:500;}
+
+/* REFERRALS WIDGET */
+.ref-card{
+  background:linear-gradient(135deg, var(--sage-deep) 0%, #2A3B30 100%);
+  color:var(--cream);border-radius:var(--radius-md);padding:1.4rem;margin-bottom:1.5rem;
+}
+.ref-card h3{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:400;margin-bottom:0.4rem;color:#E7ECE1;}
+.ref-card p{font-size:0.8rem;color:rgba(250,248,243,0.75);line-height:1.4;margin-bottom:1rem;}
+.ref-pill{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  padding:0.4rem 0.8rem;border-radius:var(--radius-xl);
+  background:rgba(255,255,255,0.12);font-size:0.75rem;color:var(--cream);
+}
+
+/* HEALTH VITAL SUMMARY */
+.vitals-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+.vital-box{
+  background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);
+  padding:0.8rem 0.9rem;
+}
+.vital-label{font-size:0.72rem;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.03em;}
+.vital-val{font-size:1.05rem;font-weight:600;color:var(--sage-deep);margin-top:0.2rem;}
+
+/* QUICK ACCESS BUTTONS */
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;}
+.quick-link{
+  display:flex;flex-direction:column;align-items:center;gap:0.5rem;
+  padding:0.9rem 0.6rem;border-radius:var(--radius-sm);
+  background:var(--bg);border:1px solid var(--line);
+  font-size:0.78rem;font-weight:500;color:var(--ink-soft);
+  text-align:center;transition:all .25s ease;
+}
+.quick-link:hover{background:var(--bg-soft);border-color:var(--sage-light);color:var(--sage);transform:translateY(-2px);}
+.quick-link:active,.nav-link:active,.card-action:active,.btn-book-primary:active{transform:translateY(1px) scale(0.97);}
+.quick-link.clicking,.nav-link.clicking,.card-action.clicking,.btn-book-primary.clicking{transform:translateY(1px) scale(0.97);box-shadow:inset 0 2px 8px rgba(22,33,26,0.12);}
+.quick-link svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.6;}
+.page-transition-overlay{position:fixed;inset:0;background:linear-gradient(135deg,var(--cream),var(--bg-soft));opacity:0;transform:translateY(20px) scale(0.98);pointer-events:none;z-index:9999;transition:opacity .24s ease, transform .24s ease;}
+body.page-transitioning{overflow:hidden;}
+body.page-transitioning .page-transition-overlay{opacity:1;transform:translateY(0) scale(1);} 
+
+@media(max-width:600px){
+  .dashboard{padding:1.5rem 3vw 3rem;}
+  .dash-header{flex-direction:column;align-items:flex-start;gap:1rem;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div class="page-transition-overlay" aria-hidden="true"></div>
+
+<nav>
+  <a href="patient-dashboard.html" class="nav-mark">Ever<em>well</em></a>
+
+  <div class="nav-links">
+    <a href="patient-homepage.html" class="nav-link">Home</a>
+    <a href="patient-dashboard.html" class="nav-link active">Dashboard</a>
+    <a href="my-medical-records.html" class="nav-link">My Records</a>
+    <a href="my-medical-records.html#referrals" class="nav-link">Referral Status</a>
+    <a href="patient-booking.html" class="nav-link">Book Appointment</a>
+  </div>
+
+  <div class="nav-right">
+    <div class="nav-user">
+      <div class="nav-avatar"></div>
+<span></span>
+    </div>
+    <a href="homepage.html" id="logoutButton" class="nav-logout" title="Log out">
+      <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
+  </div>
+</nav>
+
+<main class="dashboard">
+  <div class="dash-header">
+    <div class="dash-header-title">
+      <h1>Welcome back, Juan</h1>
+      <p>Everwell Electronic Health Record & Clinic Portal — Manage consultations, prescriptions, & lab tests.</p>
+    </div>
+    <a href="patient-booking.html" class="btn-book-primary">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Book New Appointment
+    </a>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-icon sage">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+          <path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statApptCount">—</div>
+      <div class="stat-label">Upcoming Appointments</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon clay">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7z"/>
+          <line x1="8.5" y1="8.5" x2="15.5" y2="15.5"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statRxCount">—</div>
+      <div class="stat-label">Prescriptions (CPOE Verified)</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon gold">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <path d="M10 9H8"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statLab">—</div>
+      <div class="stat-label">Lab & LIS Diagnostics</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon ink">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+      <div class="stat-value" id="statVitals">—</div>
+      <div class="stat-label">Vitals & SOAP History</div>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    
+    <!-- LEFT COLUMN -->
+    <div>
+      
+      <!-- APPOINTMENTS CARD -->
+      <div class="card" style="animation-delay:.35s">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Your Scheduled Appointments
+          </h2>
+          <a href="patient-booking.html" class="card-action">Book Service +</a>
+        </div>
+        
+        <div class="appt-list" id="appointmentsList">
+          <div style="text-align:center;padding:2rem;color:var(--ink-soft);font-size:0.88rem;">Loading your appointments…</div>
+        </div>
+      </div>
+
+      <!-- PROPOSAL SERVICES CATALOG PREVIEW -->
+      <div class="card" style="animation-delay:.45s">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
+            Everwell Clinic Services
+          </h2>
+          <a href="patient-booking.html" class="card-action">View All Services &rarr;</a>
+        </div>
+        <p style="font-size:0.82rem;color:var(--ink-soft);">Select a consultation, pharmacy order, or lab test from our official proposal catalog:</p>
+        
+        <div class="services-catalog">
+          <div class="cat-item">
+            <div class="cat-tag">General Medical</div>
+            <div class="cat-title">Adult & Pediatric Checkups</div>
+            <div class="cat-price">₱500 – ₱600 • 30 mins</div>
+            <a href="patient-booking.html" class="cat-btn">Book Checkup &rarr;</a>
+          </div>
+
+          <div class="cat-item">
+            <div class="cat-tag">Specialty Outpatient</div>
+            <div class="cat-title">Cardiology & Dermatology</div>
+            <div class="cat-price">₱1,200 – ₱1,500 • 45 mins</div>
+            <a href="patient-booking.html" class="cat-btn">Book Specialist &rarr;</a>
+          </div>
+
+          <div class="cat-item">
+            <div class="cat-tag">Pharmacy</div>
+            <div class="cat-title">Drug Allergy & Refill Check</div>
+            <div class="cat-price">₱200 • CPOE Integrated</div>
+            <a href="patient-booking.html" class="cat-btn">Consult Pharmacy &rarr;</a>
+          </div>
+
+          <div class="cat-item">
+            <div class="cat-tag">Diagnostics & Lab</div>
+            <div class="cat-title">CBC, Urinalysis & Chest X-Ray</div>
+            <div class="cat-price">₱200 – ₱1,200 • LIS Sync</div>
+            <a href="patient-booking.html" class="cat-btn">Book Lab Test &rarr;</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="animation-delay:.55s">
+        <div class="card-header">
+          <h2 class="card-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7z"/></svg>
+            Active Prescriptions (Everwell Pharmacy CPOE)
+          </h2>
+          <span style="font-size:0.75rem;color:var(--sage);font-weight:500;">Drug-Allergy Checked</span>
+        </div>
+
+        <div class="rx-list" id="rxList">
+          <div style="padding:1rem 0.2rem;color:var(--ink-soft);font-size:0.88rem;line-height:1.6;">
+            Loading your prescriptions…
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div>
+      
+      <!-- EXTERNAL HOSPITAL REFERRAL SYSTEM -->
+      <div class="ref-card">
+        <h3>Hospital Referral Tool</h3>
+        <p>When emergency higher-level care is required, Everwell transfers your vital signs, SOAP notes, and EHR records directly to nearby partner hospitals.</p>
+        <div class="ref-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          Integrated Referral Ready
+        </div>
+        <div style="margin-top:0.8rem;"><a href="my-medical-records.html#referrals" style="font-size:0.78rem;font-weight:600;color:var(--cream);display:inline-flex;align-items:center;gap:0.35rem;">View referral status →</a></div>
+      </div>
+
+      <!-- VITALS & SOAP NOTES -->
+      <div class="card" style="animation-delay:.4s">
+        <div class="card-header">
+          <h2 class="card-title">Patient Vitals Summary</h2>
+          <a href="my-medical-records.html?filter=verified" class="card-action">View Full History</a>
+        </div>
+        <div id="vitalsSummary" style="padding:0.2rem 0;color:var(--ink-soft);font-size:0.88rem;line-height:1.6;">
+          Loading your vitals…
+        </div>
+      </div>
+
+      <!-- LAB & IMAGING RESULTS -->
+      <div class="card" style="animation-delay:.45s">
+        <div class="card-header">
+          <h2 class="card-title">Lab & Imaging Results</h2>
+        </div>
+        <div id="labResultsList" style="padding:0.2rem 0;color:var(--ink-soft);font-size:0.88rem;line-height:1.6;">
+          Loading your results…
+        </div>
+      </div>
+
+      <!-- QUICK DASHBOARD ACTIONS -->
+      <div class="card" style="animation-delay:.5s">
+        <div class="card-header">
+          <h2 class="card-title">Quick Actions</h2>
+        </div>
+        <div class="quick-grid">
+          <a href="patient-booking.html" class="quick-link">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg>
+            Book Appointment
+          </a>
+          <a href="patient-booking.html?cat=pharmacy" class="quick-link">
+            <svg viewBox="0 0 24 24"><path d="M10.5 20.5l10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7z"/></svg>
+            Rx Refill
+          </a>
+          <a href="patient-booking.html?cat=lab" class="quick-link">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+            Lab Test
+          </a>
+          <a href="my-medical-records.html" class="quick-link">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+            My Records
+          </a>
+          <a href="my-medical-records.html#referrals" class="quick-link">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Referral Status
+          </a>
+          <a href="patient-homepage.html" class="quick-link">
+            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Clinic Home
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</main>
+
+<script>
+function attachButtonPressAnimation(){
+  document.querySelectorAll('.quick-link, .nav-link, .card-action, .btn-book-primary').forEach(link => {
+    link.addEventListener('click', function(event){
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+      const href = this.getAttribute('href') || '';
+      const targetPage = href.split('#')[0];
+      const currentPage = window.location.pathname.split('/').pop();
+      this.classList.remove('clicking');
+      void this.offsetWidth;
+      this.classList.add('clicking');
+      if (targetPage && targetPage !== currentPage && targetPage.endsWith('.html')) {
+        event.preventDefault();
+        document.body.classList.add('page-transitioning');
+        setTimeout(() => { window.location.href = href; }, 220);
+      } else {
+        setTimeout(() => this.classList.remove('clicking'), 220);
+      }
+    });
+  });
+}
+
+// ===== AUTH GUARD =====
+// Uses the same 'everwell_session' key set by login.html — this page
+// used to check a completely different, unrelated fake key.
+const rawSession = sessionStorage.getItem('everwell_session') || localStorage.getItem('everwell_session');
+
+if (!rawSession) {
+	window.location.href = 'login.html';
+}
+
+const session = rawSession ? JSON.parse(rawSession) : null;
+
+function handleLogout(event){
+  event.preventDefault();
+  sessionStorage.removeItem('everwell_session');
+  localStorage.removeItem('everwell_session');
+  window.location.href = 'homepage.html';
+}
+
+function applyDashboardUser(){
+  if (!session) return;
+  const rawFullName = session.patient.fullName || 'Patient';
+  const fullName = rawFullName
+    .trim()
+    .split(/\s+/)
+    .filter((part, index, parts) => index === 0 || part.toLowerCase() !== parts[index - 1].toLowerCase())
+    .join(' ');
+  const firstName = fullName.split(/\s+/)[0];
+  const navName = document.querySelector('.nav-user span');
+  const headerTitle = document.querySelector('.dash-header-title h1');
+  const avatar = document.querySelector('.nav-avatar');
+  if (navName) navName.textContent = fullName;
+  if (headerTitle) headerTitle.textContent = `Welcome, ${firstName}`;
+  if (avatar) avatar.textContent = fullName.split(/\s+/).map(p=>p[0]).join('').slice(0,2).toUpperCase();
+}
+
+// Real appointments, fetched for this specific logged-in patient.
+// Note: fee/category aren't stored directly on appointments (those live
+// in a separate services/billing table we haven't wired into this view
+// yet), so those columns are left out here rather than faked.
+async function loadAppointments() {
+  const container = document.getElementById('appointmentsList');
+  if (!session) return;
+
+  let appointments = [];
+  try {
+    const res = await fetch(`/api/appointments?patientId=${session.patient.id}`);
+    const data = await res.json();
+    appointments = data.appointments || [];
+    // Newest scheduled date first, regardless of the order the API sends them in.
+    appointments.sort((a, b) => new Date(b.scheduled_at) - new Date(a.scheduled_at));
+  } catch (err) {
+    console.error('Failed to load appointments:', err);
+  }
+
+  document.getElementById('statApptCount').textContent = appointments.length;
+
+  if (appointments.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:2rem;color:var(--ink-soft);font-size:0.88rem;">
+        No upcoming appointments scheduled.<br>
+        <a href="patient-booking.html" style="color:var(--sage);font-weight:600;margin-top:0.5rem;display:inline-block;">+ Book an Appointment Now</a>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = appointments.map((appt) => {
+    const dt = new Date(appt.scheduled_at);
+    const day = dt.getDate();
+    const month = dt.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    const timeStr = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const isPending = appt.status === 'scheduled' || appt.status === 'checked-in';
+
+    return `
+      <div class="appt-item">
+        <div class="appt-date">
+          <div class="day">${day}</div>
+          <div class="month">${month}</div>
+        </div>
+                <div class="appt-info">
+          <div class="appt-category">${appt.doctor_name || 'Doctor TBA'}</div>
+          <div class="appt-service">${appt.service_name || 'General Consultation'}</div>
+          <div class="appt-meta">${dt.toLocaleDateString()} at ${timeStr}</div>
+        </div>
+        <span class="appt-status ${isPending ? 'pending' : 'confirmed'}">${appt.status}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function escapeHtmlDash(str){
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ----- Prescriptions -----
+// /api/prescriptions returns one flat row per prescribed item (a
+// prescription can have several medications), so we group rows back
+// into one card per prescription_id before rendering.
+async function loadPrescriptions() {
+  const statEl = document.getElementById('statRxCount');
+  const container = document.getElementById('rxList');
+  if (!session) return;
+
+  let rows = [];
+  try {
+    const res = await fetch(`/api/prescriptions?patientId=${session.patient.id}`);
+    if (res.ok) {
+      const data = await res.json();
+      rows = data.prescriptions || [];
+    } else {
+      console.error('Prescriptions request failed:', res.status);
+    }
+  } catch (err) {
+    console.error('Failed to load prescriptions:', err);
+  }
+
+  // Group flat rows into one entry per prescription_id
+  const byPrescription = {};
+  rows.forEach(row => {
+    if (!byPrescription[row.prescription_id]) {
+      byPrescription[row.prescription_id] = {
+        prescription_id: row.prescription_id,
+        doctor_name: row.doctor_name,
+        prescribed_at: row.prescribed_at,
+        validation_status: row.validation_status,
+        visit_date: row.visit_date,
+        service_name: row.service_name,
+        items: []
+      };
+    }
+    if (row.prescription_item_id) {
+      byPrescription[row.prescription_id].items.push(row);
+    }
+  });
+
+  const prescriptions = Object.values(byPrescription)
+    .sort((a, b) => new Date(b.prescribed_at) - new Date(a.prescribed_at));
+
+  const activeCount = prescriptions.filter(p => p.validation_status === 'validated').length;
+  statEl.textContent = `${activeCount} Active`;
+
+  if (prescriptions.length === 0) {
+    container.innerHTML = `
+      <div style="padding:1rem 0.2rem;color:var(--ink-soft);font-size:0.88rem;line-height:1.6;">
+        No active prescriptions yet. Once your doctor or pharmacist adds medication details, they will appear here.
+      </div>
+    `;
+    return;
+  }
+
+  const STATUS_LABEL = { pending: 'Pending', validated: 'Validated', rejected: 'Rejected' };
+  const DISPENSE_LABEL = { pending: 'Awaiting pickup', dispensed: 'Dispensed', cancelled: 'Cancelled' };
+
+  container.innerHTML = prescriptions.map(p => {
+    const dt = new Date(p.prescribed_at);
+    const dateStr = dt.toLocaleDateString();
+    const visitStr = p.visit_date
+      ? `From your ${p.service_name ? p.service_name + ' ' : ''}visit on ${new Date(p.visit_date).toLocaleDateString()}`
+      : 'Not linked to a specific visit';
+    const itemsHtml = p.items.length ? p.items.map(item => {
+      const drugName = item.brand_name || item.generic_name || 'Medication';
+      const strengthBit = item.strength ? ` ${escapeHtmlDash(item.strength)}` : '';
+      return `
+        <div style="display:block;padding:0.6rem 0;border-top:1px solid var(--line);">
+          <div style="font-weight:600;">${escapeHtmlDash(drugName)}${strengthBit}</div>
+          <div style="font-size:0.8rem;color:var(--ink-soft);margin-top:0.15rem;">
+            ${escapeHtmlDash(item.dosage || '')}${item.frequency ? ' · ' + escapeHtmlDash(item.frequency) : ''}${item.duration_days ? ' · ' + item.duration_days + ' days' : ''}
+          </div>
+          <div style="font-size:0.78rem;color:var(--ink-soft);margin-top:0.2rem;">
+            ${DISPENSE_LABEL[item.dispensing_status] || escapeHtmlDash(item.dispensing_status)}
+          </div>
+        </div>
+      `;
+    }).join('') : `<div style="display:block;padding:0.5rem 0;color:var(--ink-soft);font-size:0.82rem;">No medication items recorded.</div>`;
+
+    return `
+      <div style="display:block;padding:0.9rem 0;border-bottom:1px solid var(--line);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:0.85rem;color:var(--ink-soft);">${escapeHtmlDash(p.doctor_name)} · ${dateStr}</div>
+          <span class="appt-status ${p.validation_status === 'validated' ? 'confirmed' : 'pending'}">${STATUS_LABEL[p.validation_status] || escapeHtmlDash(p.validation_status)}</span>
+        </div>
+        <div style="font-size:0.76rem;color:var(--ink-soft);margin-top:0.15rem;">${escapeHtmlDash(visitStr)}</div>
+        ${itemsHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+// ----- Vitals & SOAP history -----
+// /api/medical-records already returns each record's SOAP fields joined
+// with that visit's triage_vitals (if recorded), sorted newest first.
+// We just show the most recent one here — no clinical judgment (like
+// labeling vitals "Normal") gets made on our end, just what was recorded.
+async function loadVitals() {
+  const statEl = document.getElementById('statVitals');
+  const container = document.getElementById('vitalsSummary');
+  if (!session) return;
+
+  let records = [];
+  try {
+    const res = await fetch(`/api/medical-records?patientId=${session.patient.id}`);
+    if (res.ok) {
+      const data = await res.json();
+      records = data.records || [];
+    } else {
+      console.error('Medical records request failed:', res.status);
+    }
+  } catch (err) {
+    console.error('Failed to load medical records:', err);
+  }
+
+  const hasVitals = r => r.blood_pressure || r.pulse_rate_bpm || r.temperature_celsius || r.weight_kg;
+  const recordedCount = records.filter(hasVitals).length;
+  statEl.textContent = recordedCount > 0 ? `${recordedCount} Recorded` : 'None yet';
+
+  if (records.length === 0) {
+    container.innerHTML = `
+      No vitals or SOAP notes yet. After your first consultation or visit, your recorded measurements will appear here.
+    `;
+    return;
+  }
+
+  // Already sorted newest-first by the API (ORDER BY mr.created_at DESC)
+  const latest = records[0];
+  const dateStr = new Date(latest.created_at).toLocaleDateString();
+
+  const vitalsHtml = hasVitals(latest) ? `
+    <div class="vitals-grid" style="margin-top:0.8rem;">
+      ${latest.blood_pressure ? `<div style="background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:0.6rem 0.8rem;"><div style="font-size:0.7rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);">BP</div><div style="font-weight:600;">${escapeHtmlDash(latest.blood_pressure)}</div></div>` : ''}
+      ${latest.pulse_rate_bpm ? `<div style="background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:0.6rem 0.8rem;"><div style="font-size:0.7rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);">HR</div><div style="font-weight:600;">${latest.pulse_rate_bpm} bpm</div></div>` : ''}
+      ${latest.temperature_celsius ? `<div style="background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:0.6rem 0.8rem;"><div style="font-size:0.7rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);">Temp</div><div style="font-weight:600;">${latest.temperature_celsius}°C</div></div>` : ''}
+      ${latest.weight_kg ? `<div style="background:var(--bg);border:1px solid var(--line);border-radius:var(--radius-sm);padding:0.6rem 0.8rem;"><div style="font-size:0.7rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);">Weight</div><div style="font-weight:600;">${latest.weight_kg} kg</div></div>` : ''}
+    </div>
+  ` : `<div style="padding:0.4rem 0;color:var(--ink-soft);font-size:0.84rem;">No vitals recorded for this visit.</div>`;
+
+  container.innerHTML = `
+    <div style="font-size:0.85rem;color:var(--ink-soft);">${escapeHtmlDash(latest.doctor_name)} · ${dateStr}</div>
+    ${latest.diagnosis_description ? `<div style="font-weight:600;margin-top:0.3rem;">${escapeHtmlDash(latest.diagnosis_description)}</div>` : ''}
+    ${latest.assessment ? `<div style="font-size:0.84rem;color:var(--ink-soft);margin-top:0.2rem;">${escapeHtmlDash(latest.assessment)}</div>` : ''}
+    ${vitalsHtml}
+  `;
+}
+
+// ----- Lab & imaging results -----
+// /api/lab-results returns every lab/imaging service the patient has
+// booked, with real result_summary/result_file_url when staff have
+// entered them. No values are invented here — an 'ordered' status with
+// no result yet just shows as pending, not a fake reading.
+async function loadLabResults() {
+  const statEl = document.getElementById('statLab');
+  const container = document.getElementById('labResultsList');
+  if (!session) return;
+
+  let results = [];
+  try {
+    const res = await fetch(`/api/lab-results?patientId=${session.patient.id}`);
+    if (res.ok) {
+      const data = await res.json();
+      results = data.results || [];
+    } else {
+      console.error('Lab results request failed:', res.status);
+    }
+  } catch (err) {
+    console.error('Failed to load lab results:', err);
+  }
+
+  const readyCount = results.filter(r => r.status === 'completed').length;
+  if (results.length === 0) {
+    statEl.textContent = 'None yet';
+  } else if (readyCount > 0) {
+    statEl.textContent = `${readyCount} Ready`;
+  } else {
+    statEl.textContent = 'Pending';
+  }
+
+  if (results.length === 0) {
+    container.innerHTML = `
+      No lab or imaging orders yet. Once a test is ordered, it'll appear here.
+    `;
+    return;
+  }
+
+  container.innerHTML = results.map(r => {
+    const visitDate = new Date(r.scheduled_at).toLocaleDateString();
+    const isReady = r.status === 'completed';
+    const statusPill = isReady
+      ? `<span class="appt-status confirmed">Ready</span>`
+      : `<span class="appt-status pending">Pending</span>`;
+
+    const body = isReady
+      ? `
+        <div style="margin-top:0.4rem;font-size:0.85rem;">
+          ${r.result_summary ? escapeHtmlDash(r.result_summary) : 'Marked complete — no written summary was entered.'}
+        </div>
+        ${r.result_file_url ? `<a href="${escapeHtmlDash(r.result_file_url)}" target="_blank" rel="noopener" style="font-size:0.8rem;font-weight:600;color:var(--sage);display:inline-block;margin-top:0.4rem;">View attached file &rarr;</a>` : ''}
+        ${r.resulted_at ? `<div style="font-size:0.76rem;color:var(--ink-soft);margin-top:0.3rem;">Resulted ${new Date(r.resulted_at).toLocaleDateString()}</div>` : ''}
+      `
+      : `<div style="margin-top:0.4rem;font-size:0.84rem;color:var(--ink-soft);">Results not entered yet.</div>`;
+
+    return `
+      <div style="display:block;padding:0.9rem 0;border-bottom:1px solid var(--line);">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-weight:600;">${escapeHtmlDash(r.service_name)}</div>
+            <div style="font-size:0.82rem;color:var(--ink-soft);">${escapeHtmlDash(r.doctor_name)} · ${visitDate}</div>
+          </div>
+          ${statusPill}
+        </div>
+        ${body}
+      </div>
+    `;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const logoutButton = document.getElementById('logoutButton');
+  if (logoutButton) {
+    logoutButton.addEventListener('click', handleLogout);
+  }
+  applyDashboardUser();
+  loadAppointments();
+  loadPrescriptions();
+  loadVitals();
+  loadLabResults();
+});
+
+</script>
+</body>
+</html>

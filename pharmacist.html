@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everwell Medical Clinic — Pharmacist Dashboard</title>
+<meta name="description" content="Everwell pharmacist dashboard — manage prescriptions, drug safety, and inventory.">
+<meta name="theme-color" content="#16211A">
+
+<!-- Preconnect hints -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg: #F1F3EC;
+--bg-soft: #E7ECE1;
+--cream: #FAF8F3;
+--ink: #1E2A22;
+--ink-soft: #4A554C;
+--sage: #4F6B57;
+--sage-light: #8AA491;
+--sage-deep: #16211A;
+--clay: #DCCAB3;
+--gold: #B99B67;
+--line: rgba(30,42,34,0.12);
+--radius-sm: 8px;
+--radius-md: 18px;
+--radius-lg: 22px;
+--radius-xl: 100px;
+--transition-fast: 0.2s ease;
+--transition-med: 0.35s ease;
+--shadow-sm: 0 2px 8px rgba(22,33,26,0.06);
+--shadow-md: 0 8px 24px rgba(22,33,26,0.1);
+--shadow-lg: 0 16px 48px rgba(22,33,26,0.14);
+--focus-ring: 0 0 0 3px rgba(79,107,87,0.45);
+--danger: #8B2E2E;
+--danger-light: #C25A5A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+background:var(--bg);
+color:var(--ink);
+font-family:'Instrument Sans',sans-serif;
+font-weight:400;
+min-height:100vh;
+}
+a{color:inherit;text-decoration:none;}
+:focus-visible{outline:2px solid var(--sage);outline-offset:2px;}
+.skip-link{
+position:fixed;top:-100px;left:1rem;z-index:999;
+background:var(--sage-deep);color:var(--cream);
+padding:0.7rem 1.2rem;border-radius:var(--radius-sm);
+font-size:0.85rem;transition:top .2s ease;
+}
+.skip-link:focus{top:0.8rem;}
+
+/* NAV */
+.admin-nav{
+position:fixed;top:0;left:0;width:100%;z-index:100;
+background:var(--sage-deep);
+display:flex;align-items:center;justify-content:space-between;
+padding:1.2rem 4vw;
+}
+.nav-left{display:flex;align-items:center;gap:2rem;}
+.nav-menu-btn{
+display:none;align-items:center;justify-content:center;
+width:36px;height:36px;border-radius:8px;
+background:transparent;border:1px solid rgba(250,248,243,0.2);
+color:var(--cream);cursor:pointer;
+transition:background .25s;
+}
+.nav-menu-btn:hover{background:rgba(250,248,243,0.08);}
+.nav-menu-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;}
+.nav-mark{
+font-family:'Fraunces',serif;font-size:1.4rem;font-weight:500;
+letter-spacing:-0.015em;color:var(--cream);
+}
+.nav-mark em{font-style:italic;font-weight:400;color:var(--sage-light);}
+.nav-brand-sep{width:1px;height:20px;background:rgba(250,248,243,0.2);}
+.nav-label{font-size:0.72rem;letter-spacing:0.18em;text-transform:uppercase;color:rgba(250,248,243,0.55);font-weight:500;}
+.nav-right{display:flex;align-items:center;gap:1.2rem;}
+.nav-avatar{
+width:32px;height:32px;border-radius:50%;
+background:var(--sage);color:var(--cream);
+display:flex;align-items:center;justify-content:center;
+font-size:0.78rem;font-weight:500;
+cursor:pointer;
+}
+.nav-logout{
+font-size:0.82rem;color:rgba(250,248,243,0.5);
+transition:color .3s;
+}
+.nav-logout:hover{color:var(--cream);}
+
+/* LAYOUT */
+.admin-body{
+display:flex;
+padding-top:60px;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+.sidebar{
+width:240px;
+background:var(--cream);
+border-right:1px solid var(--line);
+position:fixed;top:60px;bottom:0;left:0;
+padding:1.5rem 0;
+overflow-y:auto;
+z-index:50;
+}
+.sidebar-section{margin-bottom:1.6rem;}
+.sidebar-label{
+font-size:0.68rem;letter-spacing:0.16em;text-transform:uppercase;
+color:var(--ink-soft);opacity:0.55;font-weight:500;
+padding:0 1.2rem;margin-bottom:0.6rem;
+}
+.sidebar-link{
+display:flex;align-items:center;gap:0.75rem;
+padding:0.6rem 1.2rem;
+font-size:0.85rem;color:var(--ink-soft);
+transition:color .3s, background .3s;
+border-left:2px solid transparent;
+cursor:pointer;
+}
+.sidebar-link:hover{color:var(--sage-deep);background:rgba(30,42,34,0.03);}
+.sidebar-link.active{
+color:var(--sage-deep);font-weight:500;
+background:rgba(79,107,87,0.08);
+border-left-color:var(--sage);
+}
+.sidebar-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sidebar-badge{
+margin-left:auto;
+font-size:0.68rem;font-weight:600;
+background:var(--sage-deep);color:var(--cream);
+padding:0.15rem 0.5rem;border-radius:100px;
+}
+
+/* MAIN CONTENT */
+.admin-main{
+margin-left:240px;flex:1;
+padding:2rem 2.4rem;
+}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:2rem;}
+.page-header h1{
+font-family:'Fraunces',serif;font-weight:400;
+font-size:1.8rem;color:var(--sage-deep);letter-spacing:-0.01em;
+}
+.page-header p{font-size:0.88rem;color:var(--ink-soft);margin-top:0.3rem;}
+
+/* STAT CARDS */
+.stats-row{
+display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;
+margin-bottom:2.4rem;
+}
+.stat-card{
+background:var(--cream);
+border:1px solid var(--line);
+border-radius:var(--radius-md);
+padding:1.4rem;
+}
+.stat-card .stat-icon{
+width:36px;height:36px;border-radius:50%;
+background:var(--bg-soft);
+display:flex;align-items:center;justify-content:center;
+margin-bottom:0.8rem;
+}
+.stat-card .stat-icon svg{width:18px;height:18px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.stat-card .stat-value{
+font-family:'Fraunces',serif;font-size:1.8rem;color:var(--sage-deep);
+}
+.stat-card .stat-label{
+font-size:0.78rem;color:var(--ink-soft);margin-top:0.2rem;
+}
+.stat-card .stat-change{
+font-size:0.72rem;margin-top:0.4rem;
+}
+.stat-card .stat-change.up{color:var(--sage);}
+.stat-card .stat-change.down{color:var(--danger-light);}
+
+/* CARDS */
+.card{
+background:var(--cream);
+border:1px solid var(--line);
+border-radius:var(--radius-md);
+padding:1.6rem;
+margin-bottom:1.6rem;
+}
+.card-header{
+display:flex;align-items:center;justify-content:space-between;
+margin-bottom:1.2rem;
+}
+.card-header h3{
+font-family:'Fraunces',serif;font-weight:500;font-size:1.08rem;color:var(--sage-deep);
+}
+.card-header .card-action{
+font-size:0.8rem;color:var(--sage);transition:color .3s;
+cursor:pointer;
+}
+.card-header .card-action:hover{color:var(--sage-deep);}
+
+/* TABLE */
+.admin-table{width:100%;border-collapse:collapse;}
+.admin-table th{
+font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;
+color:var(--ink-soft);opacity:0.7;font-weight:500;
+text-align:left;padding:0.7rem 0.8rem;border-bottom:1px solid var(--line);
+}
+.admin-table td{
+padding:0.8rem 0.8rem;font-size:0.85rem;color:var(--ink);
+border-bottom:1px solid var(--line);
+}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-table tr:hover td{background:rgba(30,42,34,0.02);}
+
+.status-pill{
+display:inline-block;font-size:0.72rem;font-weight:500;
+padding:0.2rem 0.6rem;border-radius:100px;
+}
+.status-pill.pending{background:rgba(185,155,103,0.15);color:var(--gold);}
+.status-pill.flagged{background:rgba(139,46,46,0.1);color:var(--danger-light);}
+.status-pill.completed, .status-pill.validated{background:rgba(79,107,87,0.1);color:var(--sage);}
+.status-pill.low-stock{background:rgba(139,46,46,0.1);color:var(--danger-light);}
+
+/* GRID LAYOUT */
+.content-grid{
+display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;
+}
+
+/* QUICK ACTIONS */
+.quick-actions{
+display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;
+}
+.quick-btn{
+display:flex;align-items:center;gap:0.6rem;
+padding:0.9rem 1rem;
+background:var(--bg-soft);
+border:1px solid var(--line);
+border-radius:var(--radius-sm);
+font-size:0.82rem;color:var(--ink);
+cursor:pointer;
+transition:background .3s, border-color .3s;
+}
+.quick-btn:hover{background:var(--cream);border-color:var(--sage-light);}
+.quick-btn svg{width:16px;height:16px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+
+/* ACTIVITY */
+.activity-list{list-style:none;}
+.activity-item{
+display:flex;align-items:flex-start;gap:0.8rem;
+padding:0.7rem 0;
+border-bottom:1px solid var(--line);
+}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{
+width:8px;height:8px;border-radius:50%;
+background:var(--sage);flex-shrink:0;margin-top:0.35rem;
+}
+.activity-text{font-size:0.82rem;color:var(--ink);line-height:1.5;}
+.activity-time{font-size:0.72rem;color:var(--ink-soft);opacity:0.6;margin-top:0.15rem;}
+
+/* TOAST */
+.toast{
+position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(80px);
+background:var(--sage-deep);color:var(--cream);
+padding:0.9rem 1.8rem;border-radius:var(--radius-xl);
+font-size:0.85rem;font-weight:500;
+box-shadow:var(--shadow-lg);
+opacity:0;pointer-events:none;
+transition:transform 0.4s ease, opacity 0.4s ease;
+z-index:200;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.toast.error{background:#8B2E2E;}
+.toast.success{background:var(--sage);}
+
+/* MOBILE */
+@media(max-width:980px){
+.stats-row{grid-template-columns:repeat(2,1fr);}
+.content-grid{grid-template-columns:1fr;}
+}
+@media(max-width:760px){
+.sidebar{
+transform:translateX(-100%);
+transition:transform var(--transition-med);
+box-shadow:var(--shadow-lg);
+}
+.sidebar.open{transform:translateX(0);}
+.sidebar-scrim{
+position:fixed;inset:60px 0 0 0;z-index:49;
+background:rgba(22,33,26,0.4);
+opacity:0;pointer-events:none;transition:opacity var(--transition-med);
+}
+.sidebar-scrim.open{opacity:1;pointer-events:auto;}
+.nav-menu-btn{display:inline-flex;}
+.admin-main{margin-left:0;padding:1.4rem 1.2rem;}
+.stats-row{grid-template-columns:1fr 1fr;}
+.sidebar-link{padding:0.8rem 1.2rem;}
+}
+
+/* PRELOADER */
+.preloader{
+position:fixed;inset:0;z-index:2000;
+background:var(--sage-deep);
+display:flex;align-items:center;justify-content:center;
+transition:transform .8s cubic-bezier(.65,0,.35,1);
+}
+.preloader-mark{
+font-family:'Fraunces',serif;font-size:2rem;color:var(--cream);
+letter-spacing:-0.01em;overflow:hidden;
+}
+.preloader-mark span{
+display:inline-block;
+opacity:0;
+transform:translateY(100%);
+animation:letterUp .6s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes letterUp{
+to{opacity:1;transform:translateY(0);}
+}
+.preloader.done{transform:translateY(-100%);}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+
+/* TOOLBAR / SEARCH */
+.section-toolbar{
+display:flex;align-items:center;justify-content:space-between;
+gap:1rem;flex-wrap:wrap;margin-bottom:1.2rem;
+}
+.search-input{
+flex:1;min-width:180px;max-width:320px;
+padding:0.65rem 1rem;
+border-radius:var(--radius-sm);
+border:1px solid var(--line);
+background:var(--cream);
+font-size:0.85rem;color:var(--ink);outline:none;
+transition:border-color .2s, box-shadow .2s;
+}
+.search-input:focus{border-color:var(--sage);box-shadow:var(--focus-ring);}
+
+/* BUTTONS */
+.btn-primary{
+background:var(--sage-deep);color:var(--cream);border:none;
+padding:0.65rem 1.3rem;border-radius:var(--radius-xl);
+font-size:0.82rem;font-weight:500;cursor:pointer;
+display:inline-flex;align-items:center;gap:0.45rem;
+transition:background .25s, transform .2s;
+}
+.btn-primary:hover{background:var(--sage);}
+.btn-primary:active{transform:scale(0.97);}
+.btn-primary svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;}
+
+.btn-secondary{
+background:var(--bg-soft);color:var(--ink);border:1px solid var(--line);
+padding:0.65rem 1.2rem;border-radius:var(--radius-xl);
+font-size:0.82rem;font-weight:500;cursor:pointer;
+transition:background .25s;
+}
+.btn-secondary:hover{background:var(--cream);}
+
+.icon-btn{
+background:none;border:none;cursor:pointer;color:var(--ink-soft);
+padding:0.35rem;border-radius:6px;
+transition:color .2s, background .2s;
+display:inline-flex;
+}
+.icon-btn:hover{color:var(--sage-deep);background:rgba(30,42,34,0.06);}
+.icon-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+
+/* PHARMACY SPECIFIC */
+.allergy-banner{
+background:rgba(139,46,46,0.08);border:1px solid rgba(139,46,46,0.2);
+border-radius:var(--radius-sm);
+padding:0.8rem 1rem;margin-bottom:1rem;
+display:flex;align-items:center;gap:0.6rem;
+}
+.allergy-banner svg{width:16px;height:16px;stroke:var(--danger);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.allergy-banner span{font-size:0.82rem;color:var(--danger);}
+.allergy-banner strong{font-weight:600;}
+
+.filter-bar{
+display:flex;align-items:center;gap:0.6rem;margin-bottom:1rem;flex-wrap:wrap;
+}
+.filter-btn{
+padding:0.35rem 0.8rem;border-radius:100px;
+font-size:0.75rem;font-weight:500;
+background:var(--bg-soft);color:var(--ink-soft);
+border:1px solid var(--line);cursor:pointer;
+transition:background .3s, color .3s;
+}
+.filter-btn.active{background:var(--sage-deep);color:var(--cream);border-color:var(--sage-deep);}
+.filter-btn:hover{border-color:var(--sage);}
+
+.drug-alert{
+background:rgba(139,46,46,0.08);border:1px solid rgba(139,46,46,0.2);
+border-radius:var(--radius-sm);
+padding:0.9rem 1rem;margin-bottom:0.8rem;
+}
+.drug-alert h5{font-size:0.82rem;color:var(--danger);margin-bottom:0.3rem;font-weight:600;}
+.drug-alert p{font-size:0.78rem;color:var(--ink-soft);line-height:1.4;}
+
+/* MODAL */
+.modal-overlay{
+position:fixed;inset:0;z-index:800;
+background:rgba(22,33,26,0.55);backdrop-filter:blur(3px);
+display:flex;align-items:center;justify-content:center;padding:2rem;
+opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+.modal-box{
+position:relative;background:var(--cream);border-radius:var(--radius-lg);
+padding:2rem 2rem 1.8rem;width:100%;max-width:440px;
+box-shadow:var(--shadow-lg);
+transform:translateY(14px) scale(.98);transition:transform .3s ease;
+}
+.modal-overlay.open .modal-box{transform:translateY(0) scale(1);}
+.modal-close{
+position:absolute;top:1.2rem;right:1.2rem;
+background:none;border:none;cursor:pointer;color:var(--ink-soft);
+}
+.modal-close svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.5;}
+.modal-title{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--sage-deep);margin-bottom:1.4rem;}
+
+.form-group{margin-bottom:1.2rem;}
+.form-label{display:block;font-size:0.75rem;font-weight:600;color:var(--ink-soft);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.05em;}
+.form-input, .form-select, .form-textarea{
+width:100%;padding:0.75rem 0.9rem;border-radius:var(--radius-sm);
+border:1px solid var(--line);background:var(--bg-soft);
+font-size:0.88rem;color:var(--ink);outline:none;font-family:inherit;
+transition:border-color .2s, box-shadow .2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus{border-color:var(--sage);box-shadow:var(--focus-ring);background:var(--cream);}
+.form-textarea{height:100px;resize:vertical;}
+.modal-submit{
+width:100%;padding:0.85rem;border:none;border-radius:var(--radius-xl);
+background:var(--sage-deep);color:var(--cream);
+font-size:0.88rem;font-weight:600;cursor:pointer;
+transition:background .25s;margin-top:0.4rem;
+}
+.modal-submit:hover{background:var(--sage);}
+
+</style>
+</head>
+<body>
+
+<div class="preloader" id="preloader">
+<div class="preloader-mark" id="preloaderMark">Everwell</div>
+</div>
+
+<a href="#main-content" class="skip-link">Skip to content</a>
+
+<!-- NAV -->
+<nav class="admin-nav">
+<div class="nav-left">
+<button class="nav-menu-btn" id="menuToggle" aria-label="Toggle menu">
+<svg viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+</button>
+<span class="nav-mark">Ever<em>well</em></span>
+<span class="nav-brand-sep"></span>
+<span class="nav-label">Pharmacist</span>
+</div>
+<div class="nav-right">
+<div class="nav-avatar" title="Pharmacist User">PH</div>
+<a href="homepage.html" class="nav-logout">Log Out</a>
+</div>
+</nav>
+
+<div class="admin-body">
+<div class="sidebar-scrim" id="sidebarScrim"></div>
+<aside class="sidebar" id="sidebar">
+<div class="sidebar-section">
+<div class="sidebar-label">Overview</div>
+<a class="sidebar-link active" data-section="dashboard">
+<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+Dashboard
+</a>
+<a class="sidebar-link" data-section="prescriptions">
+<svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg>
+Prescriptions
+<span class="sidebar-badge" id="badgeRxPending">0</span>
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">Safety & Inventory</div>
+<a class="sidebar-link" data-section="safety">
+<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+Safety Alerts
+<span class="sidebar-badge" id="badgeFlagged" style="background:var(--danger);">0</span>
+</a>
+<a class="sidebar-link" data-section="inventory">
+<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+Inventory
+<span class="sidebar-badge" id="badgeInventoryCount" style="background:var(--gold);">0</span>
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">Records</div>
+<a class="sidebar-link" data-section="history">
+<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+Medication History
+</a>
+<a class="sidebar-link" data-section="consultations">
+<svg viewBox="0 0 24 24"><path d="M9 12h6M12 9v6M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
+Consultations
+</a>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-label">System</div>
+<a class="sidebar-link" data-section="settings">
+<svg viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+Settings
+</a>
+</div>
+</aside>
+
+<!-- MAIN -->
+<main class="admin-main" id="main-content" tabindex="-1">
+
+<!-- ===================== DASHBOARD ===================== -->
+<section class="section active" id="section-dashboard">
+<div class="page-header">
+<h1>Pharmacist Dashboard</h1>
+<p>Welcome back. Here is the current pharmacy status at Everwell Medical Clinic.</p>
+</div>
+
+<div class="stats-row">
+<div class="stat-card">
+<div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 01-8 0"/></svg></div>
+<div class="stat-value" id="statRxPending">0</div>
+<div class="stat-label">Pending Rx</div>
+<div class="stat-change down">Prescriptions to validate</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg></div>
+<div class="stat-value" id="statFlagged">0</div>
+<div class="stat-label">Safety Alerts</div>
+<div class="stat-change down">Action required</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+<div class="stat-value" id="statLowStock">0</div>
+<div class="stat-label">Low Stock</div>
+<div class="stat-change down">Reorder needed</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+<div class="stat-value" id="statDispensedToday">0</div>
+<div class="stat-label">Dispensed Today</div>
+<div class="stat-change up">Validated today</div>
+</div>
+</div>
+
+<div class="content-grid">
+<div class="card">
+<div class="card-header">
+<h3>Recent Rx Requests</h3>
+<a class="card-action" onclick="goToSection('prescriptions')">View All →</a>
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Patient</th><th>Medication</th><th>Status</th></tr>
+</thead>
+<tbody id="dashRxBody"></tbody>
+</table>
+</div>
+
+<div class="card">
+<div class="card-header">
+<h3>Recent Activity</h3>
+</div>
+<ul class="activity-list" id="dashActivityList"></ul>
+</div>
+</div>
+
+<div class="card" style="margin-top:0.4rem;">
+<div class="card-header">
+<h3>Quick Actions</h3>
+</div>
+<div class="quick-actions">
+<button class="quick-btn" onclick="goToSection('inventory'); setTimeout(()=>filterInventory('OTC'), 100);">
+<svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+OTC Sale
+</button>
+<button class="quick-btn" onclick="goToSection('inventory')">
+<svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+Manage Inventory
+</button>
+<button class="quick-btn" onclick="goToSection('history'); setTimeout(()=>document.getElementById('historySearch').focus(), 100);">
+<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+Med History Lookup
+</button>
+<button class="quick-btn" onclick="openConsultLogModal()">
+<svg viewBox="0 0 24 24"><path d="M9 12h6M12 9v6M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
+Log Consultation
+</button>
+</div>
+</div>
+</section>
+
+<!-- ===================== PRESCRIPTIONS ===================== -->
+<section class="section" id="section-prescriptions">
+<div class="page-header">
+<h1>Prescription Queue</h1>
+<p>Validate and process medication requests from clinical staff.</p>
+</div>
+<div class="card">
+<div class="section-toolbar">
+<div class="filter-bar" id="rxFilterBar">
+<button class="filter-btn active" data-filter="All">All</button>
+<button class="filter-btn" data-filter="Pending">Pending</button>
+<button class="filter-btn" data-filter="Flagged">Flagged</button>
+<button class="filter-btn" data-filter="Completed">Validated</button>
+</div>
+<input type="text" class="search-input" id="rxSearch" placeholder="Search patient or medication…">
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Patient</th><th>Medication</th><th>Date</th><th>Status</th><th></th></tr>
+</thead>
+<tbody id="rxQueueBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== SAFETY ALERTS ===================== -->
+<section class="section" id="section-safety">
+<div class="page-header">
+<h1>Drug Safety Alerts</h1>
+<p>Critical warnings regarding allergies, drug interactions, and patient safety.</p>
+</div>
+<div class="card">
+<div class="card-header">
+<h3>Active Safety Flags</h3>
+</div>
+<div id="drugAlertsBody">
+<!-- Alerts injected here -->
+</div>
+</div>
+</section>
+
+<!-- ===================== INVENTORY ===================== -->
+<section class="section" id="section-inventory">
+<div class="page-header">
+<h1>Pharmacy Inventory</h1>
+<p>Manage medication stock levels, OTC items, and reorder points.</p>
+</div>
+<div class="card">
+<div class="section-toolbar">
+<div class="filter-bar" id="invFilterBar">
+<button class="filter-btn active" data-filter="All">All</button>
+<button class="filter-btn" data-filter="Prescription">Prescription</button>
+<button class="filter-btn" data-filter="OTC">OTC</button>
+<button class="filter-btn" data-filter="Low">Low Stock</button>
+</div>
+<button class="btn-primary" onclick="openItemModal()">
+<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+Add Item
+</button>
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Item</th><th>Type</th><th>Batch Number</th><th>Expiry Date</th><th>Stock</th><th>Reorder Level</th><th>Unit Cost</th><th></th></tr>
+</thead>
+<tbody id="inventoryBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== MEDICATION HISTORY ===================== -->
+<section class="section" id="section-history">
+<div class="page-header">
+<h1>Medication History</h1>
+<p>Review past prescriptions and dispensing history for patients.</p>
+</div>
+<div class="card">
+<div class="section-toolbar">
+<input type="text" class="search-input" id="historySearch" placeholder="Search by patient name…">
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Patient</th><th>Medication</th><th>Date</th><th>Status</th></tr>
+</thead>
+<tbody id="historyBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== CONSULTATIONS ===================== -->
+<section class="section" id="section-consultations">
+<div class="page-header">
+<h1>Consultation Log</h1>
+<p>Records of pharmacist-led patient counseling and medication reviews.</p>
+</div>
+<div class="card">
+<div class="section-toolbar">
+<button class="btn-primary" onclick="openConsultLogModal()">
+<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+Log Consultation
+</button>
+</div>
+<table class="admin-table">
+<thead>
+<tr><th>Patient</th><th>Service</th><th>Date</th><th>Notes</th></tr>
+</thead>
+<tbody id="consultationsBody"></tbody>
+</table>
+</div>
+</section>
+
+<!-- ===================== SETTINGS ===================== -->
+<section class="section" id="section-settings">
+<div class="page-header">
+<h1>Settings</h1>
+<p>Pharmacist profile and dashboard preferences.</p>
+</div>
+<div class="card settings-form">
+<form id="settingsForm">
+<div class="form-group">
+<label class="form-label">Display Name</label>
+<input class="form-input" id="settingDisplayName" name="displayName" placeholder="e.g. Pharmacist Cruz">
+</div>
+<button type="submit" class="modal-submit" style="width:auto;padding:0.75rem 1.6rem;">Save Settings</button>
+</form>
+</div>
+</section>
+
+</main>
+</div>
+
+<!-- GENERIC MODAL -->
+<div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<button type="button" class="modal-close" id="modalCloseBtn" aria-label="Close">
+<svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+</button>
+<h3 class="modal-title" id="modalTitle">Title</h3>
+<form id="modalForm"></form>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========================================================
+   DATA LAYER (localStorage)
+   ======================================================== */
+const K = {
+    patients: 'everwell_patients',
+    activity: 'everwell_admin_activity',
+    settings: 'everwell_clinic_settings',
+    inventory: 'everwell_pharmacy_inventory',
+    prescriptions: 'everwell_prescriptions',
+    consultations: 'everwell_consultations'
+};
+
+function lsGet(key, fallback){ try{ const raw = localStorage.getItem(key); return raw!==null ? JSON.parse(raw) : fallback; }catch(e){ return fallback; } }
+function lsSet(key, val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function escapeHtml(str){ return String(str==null?'':str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function logActivity(text){
+    const list = lsGet(K.activity, []);
+    list.unshift({text, time: new Date().toISOString()});
+    lsSet(K.activity, list.slice(0,30));
+}
+
+/* ========================================================
+   UI LOGIC
+   ======================================================== */
+function goToSection(id){
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+    
+    const target = document.getElementById('section-' + id);
+    if(target) target.classList.add('active');
+    
+    const link = document.querySelector(`.sidebar-link[data-section="${id}"]`);
+    if(link) link.classList.add('active');
+    
+    window.scrollTo(0,0);
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarScrim').classList.remove('open');
+    
+    render();
+}
+
+function showToast(msg, type='success'){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast ' + type;
+    setTimeout(() => t.classList.add('show'), 10);
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Modal handling
+const modalOverlay = document.getElementById('modalOverlay');
+const modalForm = document.getElementById('modalForm');
+const modalTitle = document.getElementById('modalTitle');
+
+function openModal(title, html, onSave){
+    modalTitle.textContent = title;
+    modalForm.innerHTML = html;
+    modalOverlay.classList.add('open');
+    modalForm.onsubmit = (e) => {
+        e.preventDefault();
+        onSave(new FormData(modalForm));
+        modalOverlay.classList.remove('open');
+    };
+}
+
+document.getElementById('modalCloseBtn').onclick = () => modalOverlay.classList.remove('open');
+modalOverlay.onclick = (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('open'); };
+
+/* ========================================================
+   SEED & RENDER
+   ======================================================== */
+function seedIfEmpty(){
+    if(!localStorage.getItem(K.inventory)){
+        // Inventory now comes from the real database via
+        // /api/pharmacy-inventory — nothing to seed here anymore.
+        lsSet(K.inventory, []);
+    }
+    if(!localStorage.getItem(K.prescriptions)){
+        // Prescriptions now come from the real database via
+        // /api/pharmacy-queue — nothing to seed here anymore.
+        lsSet(K.prescriptions, []);
+    }
+}
+
+/* ========================================================
+   REAL PRESCRIPTION QUEUE (Neon, via /api)
+   ======================================================== */
+let currentQueue = [];
+
+let activeRxFilter = 'All';
+
+function filterRx(filter){
+    activeRxFilter = filter || 'All';
+    document.querySelectorAll('#rxFilterBar .filter-btn').forEach(button => {
+        const isActive = button.dataset.filter === activeRxFilter;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+    render();
+}
+
+function getFilteredQueue(){
+    const search = (document.getElementById('rxSearch')?.value || '').trim().toLowerCase();
+    return currentQueue.filter(r => {
+        const matchesStatus = activeRxFilter === 'All' || r.status === activeRxFilter;
+        const matchesSearch = !search || `${r.patient} ${r.med}`.toLowerCase().includes(search);
+        return matchesStatus && matchesSearch;
+    });
+}
+
+async function fetchPharmacyQueue(){
+    try{
+        const res = await fetch('/api/pharmacy-queue');
+        if(res.ok){
+            const data = await res.json();
+            currentQueue = (data.queue || []).map(row => ({
+                id: row.prescription_item_id,
+                prescriptionId: row.prescription_id,
+                patient: `${row.first_name} ${row.last_name}`,
+                med: row.brand_name || row.generic_name,
+                date: row.prescribed_at ? row.prescribed_at.slice(0,10) : '',
+                status: row.validation_status === 'rejected' ? 'Flagged'
+                    : (row.dispensing_status === 'dispensed' ? 'Completed' : 'Pending'),
+                note: row.rejection_reason || null
+            }));
+        } else {
+            currentQueue = [];
+        }
+    }catch(e){
+        console.error('Failed to load pharmacy queue:', e);
+        currentQueue = [];
+    }
+}
+
+/* ========================================================
+   REAL INVENTORY (Neon, via /api)
+   ======================================================== */
+let currentInventory = [];
+let currentMedications = [];
+
+async function fetchInventory(){
+    try{
+        const res = await fetch('/api/pharmacy-inventory');
+        if(res.ok){
+            const data = await res.json();
+            currentInventory = (data.inventory || []).map(row => ({
+                id: row.inventory_id,
+                medicationId: row.medication_id,
+                name: row.brand_name || row.generic_name,
+                type: row.requires_prescription ? 'Prescription' : 'OTC',
+                stock: row.quantity_on_hand,
+                reorder: row.reorder_level,
+                batch: row.batch_number,
+                expiry: row.expiry_date,
+                unitCost: row.unit_cost
+            }));
+        } else {
+            currentInventory = [];
+        }
+    }catch(e){
+        console.error('Failed to load inventory:', e);
+        currentInventory = [];
+    }
+}
+
+async function fetchMedicationsList(){
+    try{
+        const res = await fetch('/api/medications');
+        if(res.ok){
+            const data = await res.json();
+            currentMedications = data.medications || [];
+        } else {
+            currentMedications = [];
+        }
+    }catch(e){
+        console.error('Failed to load medications:', e);
+        currentMedications = [];
+    }
+}
+
+let currentConsultations = [];
+
+async function fetchConsultations(){
+    try{
+        const res = await fetch('/api/consultation-log');
+        if(res.ok){
+            const data = await res.json();
+            currentConsultations = (data.consultations || []).map(c => ({
+                id: c.consultation_id,
+                patient: c.patient_name,
+                service: c.service,
+                notes: c.notes,
+                date: c.consultation_date ? c.consultation_date.slice(0,10) : ''
+            }));
+        } else {
+            currentConsultations = [];
+        }
+    }catch(e){
+        console.error('Failed to load consultations:', e);
+        currentConsultations = [];
+    }
+}
+
+function render(){
+    const inventory = currentInventory;
+    const rx = currentQueue;
+    const activity = lsGet(K.activity, []);
+    const consults = currentConsultations;
+
+    // Badges
+    const pendingRx = rx.filter(r => r.status === 'Pending').length;
+    const flaggedRx = rx.filter(r => r.status === 'Flagged').length;
+    const lowStock = inventory.filter(i => i.stock <= i.reorder).length;
+
+    document.getElementById('badgeRxPending').textContent = pendingRx;
+    document.getElementById('badgeFlagged').textContent = flaggedRx;
+    document.getElementById('badgeInventoryCount').textContent = inventory.length;
+
+    // Dashboard Stats
+    if(document.getElementById('section-dashboard').classList.contains('active')){
+        document.getElementById('statRxPending').textContent = pendingRx;
+        document.getElementById('statFlagged').textContent = flaggedRx;
+        document.getElementById('statLowStock').textContent = lowStock;
+        document.getElementById('statDispensedToday').textContent = rx.filter(r => r.status === 'Completed').length;
+
+        const dashRxBody = document.getElementById('dashRxBody');
+        dashRxBody.innerHTML = rx.slice(0,5).map(r => `
+            <tr>
+                <td>${escapeHtml(r.patient)}</td>
+                <td>${escapeHtml(r.med)}</td>
+                <td><span class="status-pill ${r.status.toLowerCase()}">${r.status}</span></td>
+            </tr>
+        `).join('');
+
+        const dashActivityList = document.getElementById('dashActivityList');
+        dashActivityList.innerHTML = activity.slice(0,5).map(a => `
+            <li class="activity-item">
+                <div class="activity-dot"></div>
+                <div class="activity-text">
+                    <div>${escapeHtml(a.text)}</div>
+                    <div class="activity-time">${new Date(a.time).toLocaleTimeString()}</div>
+                </div>
+            </li>
+        `).join('');
+    }
+
+    // Prescription Queue
+    if(document.getElementById('section-prescriptions').classList.contains('active')){
+        const body = document.getElementById('rxQueueBody');
+        const filteredRx = getFilteredQueue();
+        body.innerHTML = filteredRx.map(r => `
+            <tr>
+                <td>${escapeHtml(r.patient)}</td>
+                <td>${escapeHtml(r.med)}</td>
+                <td>${r.date}</td>
+                <td><span class="status-pill ${r.status.toLowerCase()}">${r.status}</span></td>
+                <td style="text-align:right">
+                    <button class="icon-btn" onclick="validateRx('${r.id}')" title="Validate"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></button>
+                    <button class="icon-btn" onclick="rejectRx('${r.prescriptionId}')" title="Reject"><svg viewBox="0 0 24 24"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></button>
+                </td>
+            </tr>
+        `).join('');
+        if(!filteredRx.length){
+            body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:1.5rem;">No prescriptions match this filter.</td></tr>';
+        }
+    }
+
+    // Inventory
+    if(document.getElementById('section-inventory').classList.contains('active')){
+        const body = document.getElementById('inventoryBody');
+        body.innerHTML = inventory.map(i => `
+            <tr class="${i.stock <= i.reorder ? 'low-stock-row' : ''}">
+                <td>${escapeHtml(i.name)}</td>
+                <td>${escapeHtml(i.type)}</td>
+                <td>${escapeHtml(i.batch || '—')}</td>
+                <td>${i.expiry ? escapeHtml(new Date(i.expiry).toLocaleDateString('en-US')) : '—'}</td>
+                <td>${escapeHtml(i.stock)}</td>
+                <td>${escapeHtml(i.reorder)}</td>
+                <td>${i.unitCost != null ? '$' + Number(i.unitCost).toFixed(2) : '—'}</td>
+                <td style="text-align:right">
+                    <button class="icon-btn" onclick="editItem('${i.id}')"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    // Safety Alerts
+    if(document.getElementById('section-safety').classList.contains('active')){
+        const alertsBody = document.getElementById('drugAlertsBody');
+        const flagged = rx.filter(r => r.status === 'Flagged');
+        if(flagged.length === 0){
+            alertsBody.innerHTML = '<p style="color:var(--ink-soft);opacity:0.6;">No active safety flags.</p>';
+        } else {
+            alertsBody.innerHTML = flagged.map(r => `
+                <div class="drug-alert">
+                    <h5>${escapeHtml(r.patient)} - ${escapeHtml(r.med)}</h5>
+                    <p>${escapeHtml(r.note || 'Safety flag raised by clinical staff.')}</p>
+                </div>
+            `).join('');
+        }
+    }
+
+    // History
+    if(document.getElementById('section-history').classList.contains('active')){
+        const body = document.getElementById('historyBody');
+        body.innerHTML = rx.filter(r => r.status === 'Completed').map(r => `
+            <tr>
+                <td>${escapeHtml(r.patient)}</td>
+                <td>${escapeHtml(r.med)}</td>
+                <td>${r.date}</td>
+                <td><span class="status-pill completed">Dispensed</span></td>
+            </tr>
+        `).join('');
+    }
+
+    // Consultations
+    if(document.getElementById('section-consultations').classList.contains('active')){
+        const body = document.getElementById('consultationsBody');
+        body.innerHTML = consults.map(c => `
+            <tr>
+                <td>${escapeHtml(c.patient)}</td>
+                <td>${escapeHtml(c.service)}</td>
+                <td>${c.date}</td>
+                <td>${escapeHtml(c.notes)}</td>
+            </tr>
+        `).join('');
+    }
+}
+
+/* ========================================================
+   ACTIONS
+   ======================================================== */
+async function validateRx(id){
+    try{
+        const res = await fetch('/api/pharmacy-dispense', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ prescriptionItemId: id })
+        });
+        const data = await res.json();
+        if(res.ok){
+            logActivity(`Validated and dispensed prescription item #${id}`);
+            showToast('Prescription validated and dispensed');
+            await fetchPharmacyQueue();
+            render();
+        } else {
+            showToast(data.error || 'Could not validate this prescription', 'error');
+        }
+    }catch(e){
+        console.error('Validate/dispense failed:', e);
+        showToast('Something went wrong. Please try again.', 'error');
+    }
+}
+
+async function rejectRx(prescriptionId){
+    const reason = prompt('Why is this prescription being flagged/rejected?');
+    if(!reason || !reason.trim()) return;
+
+    try{
+        const res = await fetch('/api/pharmacy-reject', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ prescriptionId, reason: reason.trim() })
+        });
+        const data = await res.json();
+        if(res.ok){
+            logActivity(`Flagged and rejected prescription #${prescriptionId}`);
+            showToast('Prescription flagged as unsafe');
+            await fetchPharmacyQueue();
+            render();
+        } else {
+            showToast(data.error || 'Could not reject this prescription', 'error');
+        }
+    }catch(e){
+        console.error('Reject failed:', e);
+        showToast('Something went wrong. Please try again.', 'error');
+    }
+}
+
+function openItemModal(){
+    const options = currentMedications.map(m =>
+        `<option value="${m.medication_id}">${escapeHtml(m.brand_name || m.generic_name)}${m.strength ? ' — ' + escapeHtml(m.strength) : ''}</option>`
+    ).join('');
+    const html = `
+        <div class="form-group">
+            <label class="form-label">Medication</label>
+            <select class="form-select" name="medicationId" required>${options}</select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Batch Number</label>
+            <input class="form-input" name="batchNumber">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Expiry Date</label>
+            <input class="form-input" type="date" name="expiryDate">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Quantity on Hand</label>
+            <input class="form-input" type="number" name="quantityOnHand" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Reorder Level</label>
+            <input class="form-input" type="number" name="reorderLevel" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Unit Cost</label>
+            <input class="form-input" type="number" step="0.01" name="unitCost">
+        </div>
+        <button type="submit" class="modal-submit">Add to Inventory</button>
+    `;
+    openModal('Add Inventory Item', html, async (data) => {
+        try{
+            const res = await fetch('/api/pharmacy-inventory', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    medicationId: data.get('medicationId'),
+                    batchNumber: data.get('batchNumber'),
+                    expiryDate: data.get('expiryDate') || null,
+                    quantityOnHand: parseInt(data.get('quantityOnHand')),
+                    reorderLevel: parseInt(data.get('reorderLevel')),
+                    unitCost: data.get('unitCost') ? parseFloat(data.get('unitCost')) : null
+                })
+            });
+            if(res.ok){
+                logActivity(`Added inventory batch for medication #${data.get('medicationId')}`);
+                showToast('Item added to inventory');
+                await fetchInventory();
+                render();
+            } else {
+                const err = await res.json().catch(() => ({}));
+                showToast(err.error || 'Could not add this item', 'error');
+            }
+        }catch(e){
+            console.error('Add inventory failed:', e);
+            showToast('Something went wrong. Please try again.', 'error');
+        }
+    });
+}
+
+function editItem(id){
+    const item = currentInventory.find(i => String(i.id) === String(id));
+    if(!item){
+        showToast('Could not find this inventory item', 'error');
+        return;
+    }
+    const html = `
+        <div class="form-group">
+            <label class="form-label">Medication</label>
+            <input class="form-input" value="${escapeHtml(item.name)}" disabled>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Batch Number</label>
+            <input class="form-input" name="batchNumber" value="${escapeHtml(item.batch || '')}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Expiry Date</label>
+            <input class="form-input" type="date" name="expiryDate" value="${item.expiry ? item.expiry.slice(0,10) : ''}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Quantity on Hand</label>
+            <input class="form-input" type="number" name="quantityOnHand" required value="${item.stock}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Reorder Level</label>
+            <input class="form-input" type="number" name="reorderLevel" required value="${item.reorder}">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Unit Cost</label>
+            <input class="form-input" type="number" step="0.01" name="unitCost" value="${item.unitCost != null ? item.unitCost : ''}">
+        </div>
+        <button type="submit" class="modal-submit">Save Changes</button>
+    `;
+    openModal('Edit Inventory Item', html, async (data) => {
+        try{
+            const res = await fetch('/api/pharmacy-inventory', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    inventoryId: item.id,
+                    batchNumber: data.get('batchNumber'),
+                    expiryDate: data.get('expiryDate') || null,
+                    quantityOnHand: parseInt(data.get('quantityOnHand')),
+                    reorderLevel: parseInt(data.get('reorderLevel')),
+                    unitCost: data.get('unitCost') ? parseFloat(data.get('unitCost')) : null
+                })
+            });
+            if(res.ok){
+                logActivity(`Updated inventory item #${item.id}`);
+                showToast('Inventory item updated');
+                await fetchInventory();
+                render();
+            } else {
+                const err = await res.json().catch(() => ({}));
+                showToast(err.error || 'Could not update this item', 'error');
+            }
+        }catch(e){
+            console.error('Update inventory failed:', e);
+            showToast('Something went wrong. Please try again.', 'error');
+        }
+    });
+}
+
+function openConsultLogModal(){
+    const html = `
+        <div class="form-group">
+            <label class="form-label">Patient Name</label>
+            <input class="form-input" name="patient" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Service Type</label>
+            <input class="form-input" name="service" placeholder="e.g. Med Review, Counseling" required>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Consultation Notes</label>
+            <textarea class="form-textarea" name="notes"></textarea>
+        </div>
+        <button type="submit" class="modal-submit">Save Log</button>
+    `;
+    openModal('Log Consultation', html, async (data) => {
+        try{
+            const res = await fetch('/api/consultation-log', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    patient: data.get('patient'),
+                    service: data.get('service'),
+                    notes: data.get('notes')
+                })
+            });
+            if(res.ok){
+                logActivity(`Logged consultation for ${data.get('patient')}`);
+                showToast('Consultation logged');
+                await fetchConsultations();
+                render();
+            } else {
+                const err = await res.json().catch(() => ({}));
+                showToast(err.error || 'Could not log this consultation', 'error');
+            }
+        }catch(e){
+            console.error('Log consultation failed:', e);
+            showToast('Something went wrong. Please try again.', 'error');
+        }
+    });
+}
+
+// Sidebar Mobile Toggle
+document.getElementById('menuToggle').onclick = () => {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebarScrim').classList.add('open');
+};
+document.getElementById('sidebarScrim').onclick = () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarScrim').classList.remove('open');
+};
+
+// Init
+(async function(){
+    seedIfEmpty();
+    await Promise.all([fetchPharmacyQueue(), fetchInventory(), fetchMedicationsList(), fetchConsultations()]);
+
+    // Sidebar links
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+        link.onclick = () => goToSection(link.dataset.section);
+    });
+
+    document.querySelectorAll('#rxFilterBar .filter-btn').forEach(button => {
+        button.setAttribute('aria-pressed', String(button.classList.contains('active')));
+        button.onclick = () => filterRx(button.dataset.filter);
+    });
+    document.getElementById('rxSearch').addEventListener('input', render);
+    
+    // Preloader
+    const preloader = document.getElementById('preloader');
+    const mark = document.getElementById('preloaderMark');
+    mark.innerHTML = mark.textContent.split('').map((ch,i) => `<span style="animation-delay:${0.15+i*0.025}s">${ch===' '?'&nbsp;':ch}</span>`).join('');
+    setTimeout(() => {
+        preloader.classList.add('done');
+        setTimeout(() => preloader.remove(), 800);
+    }, 800);
+    
+    render();
+})();
+
+</script>
+</body>
+</html>
