@@ -351,6 +351,7 @@ nav{
   .service-grid{grid-template-columns:1fr;}
   .cal-grid{gap:2px;}
   .step-line{width:16px;}
+  .medical-fields{grid-template-columns:1fr !important;}
 }
 </style>
 </head>
@@ -406,7 +407,7 @@ nav{
     <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:1.15rem;color:var(--sage-deep);margin-bottom:0.4rem;">Your Medical Info</h3>
     <p style="color:var(--ink-soft);font-size:0.9rem;margin-bottom:1.5rem;">This helps your care team prepare for your visit. All fields are optional and update your patient profile.</p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem;">
+    <div class="medical-fields" style="display:grid;grid-template-columns:minmax(0,420px);gap:1rem;margin-bottom:1.5rem;">
       <div>
         <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;">Blood Type</label>
         <select id="bloodTypeInput" class="notes-area" style="height:auto;padding:0.7rem;">
@@ -420,14 +421,6 @@ nav{
           <option value="O+">O+</option>
           <option value="O-">O-</option>
         </select>
-      </div>
-      <div>
-        <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;">Height (cm)</label>
-        <input type="number" id="heightInput" class="notes-area" style="height:auto;padding:0.7rem;" placeholder="e.g. 165" min="0" step="0.1">
-      </div>
-      <div>
-        <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;color:var(--ink-soft);margin-bottom:0.5rem;">Weight (kg)</label>
-        <input type="number" id="weightInput" class="notes-area" style="height:auto;padding:0.7rem;" placeholder="e.g. 61" min="0" step="0.1">
       </div>
     </div>
 
@@ -609,7 +602,7 @@ const state = {
   selectedService: null, selectedDoctor: null,
   selectedDate: null, selectedTime: null,
   notes: '', paymentMethod: null,
-  bloodType: '', heightCm: '', weightKg: '', allergies: []
+  bloodType: '', allergies: []
 };
 
 let currentServices = [];
@@ -783,7 +776,7 @@ async function renderDoctorsForSelectedService(){
 
 // ===== STEP 2: MEDICAL INFO =====
 // Loads whatever the patient already has on file (if anything), lets
-// them update blood type / height / weight / allergies, and saves it
+// them update blood type / allergies, and saves it
 // straight to their profile via /api/patient-medical-info. This is
 // profile-level data, not tied to this specific appointment, so it
 // saves as soon as they continue rather than waiting for the final
@@ -828,8 +821,6 @@ async function loadMedicalInfoStep() {
     if (res.ok) {
       const data = await res.json();
       document.getElementById('bloodTypeInput').value = data.patient.blood_type || '';
-      document.getElementById('heightInput').value = data.patient.height_cm || '';
-      document.getElementById('weightInput').value = data.patient.weight_kg || '';
       state.allergies = (data.allergies || []).map(a => ({
         allergenDescription: a.allergen_description,
         severity: a.severity,
@@ -850,8 +841,6 @@ document.getElementById('nextFromStep2').addEventListener('click', async () => {
   }
   const session = JSON.parse(rawSession);
   state.bloodType = document.getElementById('bloodTypeInput').value;
-  state.heightCm = document.getElementById('heightInput').value;
-  state.weightKg = document.getElementById('weightInput').value;
 
   try {
     await fetch('/api/patient-medical-info', {
@@ -860,8 +849,6 @@ document.getElementById('nextFromStep2').addEventListener('click', async () => {
       body: JSON.stringify({
         patientId: session.patient.id,
         bloodType: state.bloodType || null,
-        heightCm: state.heightCm || null,
-        weightKg: state.weightKg || null,
         allergies: state.allergies
       })
     });
