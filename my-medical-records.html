@@ -995,7 +995,7 @@ function renderMedicalRecords(){
       .map(appt => {
       const clinicDate = clinicDateParts(appt.scheduled_at);
       const dayNum = clinicDate.day;
-      const monthAbbr = new Date(`${clinicDate.year}-${clinicDate.month}-${clinicDate.day}T12:00:00`).toLocaleString('en-US', { month: 'short' });
+      const monthAbbr = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(clinicDate.month) - 1] || '—';
       const title = appt.service_name || 'Consultation Visit';
       const doctorName = appt.doctor_name || 'Doctor TBA';
       const matched = findMatchingRecord(appt);
