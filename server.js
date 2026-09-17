@@ -30,6 +30,21 @@ app.use((req, res, next) => {
   next();
 });
 
+// Block direct access to backend source/config files before static
+// serving kicks in — we don't want visitors reading server.js,
+// package.json, or peeking into lib/ or api/ as raw files.
+const blockedPaths = ['/server.js', '/package.json', '/package-lock.json'];
+app.use((req, res, next) => {
+  if (
+    blockedPaths.includes(req.path) ||
+    req.path.startsWith('/lib/') ||
+    req.path.startsWith('/node_modules/')
+  ) {
+    return res.status(404).send('Not found');
+  }
+  next();
+});
+
 const apiDir = path.join(__dirname, 'api');
 
 if (fs.existsSync(apiDir)) {
@@ -61,9 +76,9 @@ if (fs.existsSync(apiDir)) {
   });
 }
 
-app.get('/', (req, res) => {
-  res.send('Everwell Medical Clinic API is running.');
-});
+// Serve your HTML/CSS/JS frontend files (homepage.html, login.html, etc.)
+// This also automatically serves index.html at the root URL "/".
+app.use(express.static(__dirname));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
