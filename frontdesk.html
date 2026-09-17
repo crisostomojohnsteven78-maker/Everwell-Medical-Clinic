@@ -1044,6 +1044,13 @@ async function completeAppointment(appointmentId){
    ======================================================== */
 let currentPatients = [];
 
+function formatPatientName(firstName, lastName){
+	const first = String(firstName || '').trim();
+	const last = String(lastName || '').trim();
+	if(!last || first.toLocaleLowerCase() === last.toLocaleLowerCase()) return first || last;
+	return `${first} ${last}`.trim();
+}
+
 async function fetchPatients(){
 	try{
 		const [contactRes, allergyRes] = await Promise.all([
@@ -1053,10 +1060,10 @@ async function fetchPatients(){
 		const contacts = (await contactRes.json()).patients || [];
 		const allergyMap = {};
 		((await allergyRes.json()).patients || []).forEach(p => { allergyMap[p.patient_id] = p.allergies; });
-		currentPatients = contacts.map(p => ({
-			patientId: p.patient_id,
-			name: `${p.first_name} ${p.last_name}`,
-			email: p.email,
+			currentPatients = contacts.map(p => ({
+				patientId: p.patient_id,
+				name: formatPatientName(p.first_name, p.last_name),
+				email: p.email,
 			phone: p.contact_number,
 			allergies: allergyMap[p.patient_id] || ''
 		})).sort((a,b)=>a.name.localeCompare(b.name));
