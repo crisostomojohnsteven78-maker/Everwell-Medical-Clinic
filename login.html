@@ -535,7 +535,8 @@ Apple
 <div class="form-group" style="animation-delay:.2s">
 <label class="form-label" for="signupPassword">Password</label>
 <div class="password-wrap">
-<input class="form-input" type="password" id="signupPassword" placeholder="At least 8 characters" required autocomplete="new-password" minlength="8">
+<!-- Password strength is advisory; the API only needs a non-empty password. -->
+<input class="form-input" type="password" id="signupPassword" placeholder="Enter a password" required autocomplete="new-password">
 <button type="button" class="password-toggle" aria-label="Toggle password visibility">
 <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 </button>
