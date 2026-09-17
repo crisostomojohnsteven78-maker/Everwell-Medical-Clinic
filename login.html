@@ -874,7 +874,18 @@ return;
 }
 
 showToast(successMsg, 'success');
-setTimeout(()=>{ if(redirectUrl) window.location.href = redirectUrl; }, 900);
+if(form.id === 'signupForm'){
+	// Signup does not create an authenticated session, so do not briefly
+	// navigate to the protected homepage and get redirected back to login.
+	setTimeout(()=>{
+		form.reset();
+		setActiveTab('login');
+		const loginEmail = document.getElementById('loginEmail');
+		if(loginEmail) loginEmail.value = email;
+	}, 900);
+} else if(redirectUrl){
+	setTimeout(()=>{ window.location.href = redirectUrl; }, 600);
+}
 
 } catch (err){
 btn.classList.remove('loading');
@@ -885,7 +896,7 @@ showToast('Something went wrong. Please try again.', 'error');
 }
 
 handleSubmit(document.getElementById('loginForm'), 'Logging you in...', 'patient-homepage.html');
-handleSubmit(document.getElementById('signupForm'), 'Account created! Welcome to Everwell.', 'patient-homepage.html');
+handleSubmit(document.getElementById('signupForm'), 'Account created! Please log in to continue.', null);
 </script>
 </body>
 </html>
