@@ -23,8 +23,15 @@ module.exports = async (req, res) => {
     password,
   } = req.body;
 
-  // Required fields — everything else in `patients` is nullable per the schema
-  if (!firstName || !lastName || !dateOfBirth || !username || !password) {
+  // Required fields — everything else in `patients` is nullable per the schema.
+  // Password strength is intentionally not checked here: any non-empty password
+  // is valid for signup and is hashed below before it is stored.
+  const requiredFields = { firstName, lastName, dateOfBirth, username, password };
+  const hasMissingRequiredField = Object.values(requiredFields).some(
+    (value) => typeof value !== 'string' || value.trim() === ''
+  );
+
+  if (hasMissingRequiredField) {
     return res.status(400).json({
       error: 'First name, last name, date of birth, username, and password are required',
     });
