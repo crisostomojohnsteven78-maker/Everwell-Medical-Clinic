@@ -875,9 +875,6 @@ async function fetchPharmacyQueue(){
                 patient: `${row.first_name} ${row.last_name}`,
                 med: row.brand_name || row.generic_name,
                 date: row.prescribed_at ? row.prescribed_at.slice(0,10) : '',
-                prescribedAt: row.prescribed_at || null,
-                validatedAt: row.validated_at || null,
-                rejectedAt: row.rejected_at || null,
                 status: row.validation_status === 'rejected' ? 'Flagged'
                     : (row.dispensing_status === 'dispensed' ? 'Completed' : 'Pending'),
                 note: row.rejection_reason || null
@@ -889,27 +886,6 @@ async function fetchPharmacyQueue(){
         console.error('Failed to load pharmacy queue:', e);
         currentQueue = [];
     }
-}
-
-function getRecentActivities(){
-    const localActivities = lsGet(K.activity, []).map(a => ({
-        text: a.text, time: a.time, source: 'local-' + a.time + '-' + a.text
-    }));
-    const queueActivities = [];
-    currentQueue.forEach(r => {
-        if(r.validatedAt){
-            queueActivities.push({text: `Prescription dispensed: ${r.med || 'Medication'} for ${r.patient}`, time: r.validatedAt, source: `validated-${r.id}`});
-        } else if(r.rejectedAt || r.status === 'Flagged'){
-            queueActivities.push({text: `Prescription flagged: ${r.med || 'Medication'} for ${r.patient}`, time: r.rejectedAt || r.prescribedAt, source: `flagged-${r.id}`});
-        } else if(r.prescribedAt){
-            queueActivities.push({text: `Prescription received: ${r.med || 'Medication'} for ${r.patient}`, time: r.prescribedAt, source: `received-${r.id}`});
-        }
-    });
-    return [...localActivities, ...queueActivities]
-        .filter(a => a.time && !Number.isNaN(new Date(a.time).getTime()))
-        .sort((a,b) => new Date(b.time) - new Date(a.time))
-        .filter((a, i, list) => list.findIndex(x => x.source === a.source) === i)
-        .slice(0, 5);
 }
 
 /* ========================================================
@@ -958,6 +934,48 @@ async function fetchMedicationsList(){
     }
 }
 
+let currentPatients = [];
+
+async function fetchPatients(){
+    try{
+        const res = await fetch('/api/patients');
+        if(res.ok){
+            const data = await res.json();
+            currentPatients = (data.patients || []).map(row => ({
+                id: row.patient_id,
+                name: `${row.first_name || ''} ${row.last_name || ''}`.trim()
+            }));
+        } else {
+            currentPatients = [];
+        }
+    }catch(e){
+        console.error('Failed to load patients:', e);
+        currentPatients = [];
+    }
+}
+
+let currentAppointments = [];
+
+async function fetchAppointments(){
+    try{
+        const res = await fetch('/api/appointments');
+        if(res.ok){
+            const data = await res.json();
+            currentAppointments = (data.appointments || []).map(row => ({
+                patientId: row.patient_id,
+                patient: `${row.patient_first_name || ''} ${row.patient_last_name || ''}`.trim(),
+                service: row.service_name || '',
+                date: row.scheduled_at ? row.scheduled_at.slice(0,10) : ''
+            }));
+        } else {
+            currentAppointments = [];
+        }
+    }catch(e){
+        console.error('Failed to load appointments:', e);
+        currentAppointments = [];
+    }
+}
+
 let currentConsultations = [];
 
 async function fetchConsultations(){
@@ -984,7 +1002,7 @@ async function fetchConsultations(){
 function render(){
     const inventory = currentInventory;
     const rx = currentQueue;
-    const activity = getRecentActivities();
+    const activity = lsGet(K.activity, []);
     const consults = currentConsultations;
 
     // Badges
@@ -1013,7 +1031,7 @@ function render(){
         `).join('');
 
         const dashActivityList = document.getElementById('dashActivityList');
-        dashActivityList.innerHTML = activity.length ? activity.map(a => `
+        dashActivityList.innerHTML = activity.slice(0,5).map(a => `
             <li class="activity-item">
                 <div class="activity-dot"></div>
                 <div class="activity-text">
@@ -1021,7 +1039,7 @@ function render(){
                     <div class="activity-time">${new Date(a.time).toLocaleTimeString()}</div>
                 </div>
             </li>
-        `).join('') : '<li style="color:var(--ink-soft);font-size:0.82rem;padding:0.7rem 0;">No recent pharmacy activity yet.</li>';
+        `).join('');
     }
 
     // Prescription Queue
@@ -1282,14 +1300,34 @@ function editItem(id){
 }
 
 function openConsultLogModal(){
+    const patientOptions = currentPatients.length
+        ? currentPatients.map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('')
+        : '';
+
+    const medOptions = currentMedications.map(m =>
+        `<option value="${m.medication_id}">${escapeHtml(m.brand_name || m.generic_name)}${m.strength ? ' — ' + escapeHtml(m.strength) : ''}</option>`
+    ).join('');
+
     const html = `
         <div class="form-group">
             <label class="form-label">Patient Name</label>
-            <input class="form-input" name="patient" required>
+            <select class="form-select" name="patientId" id="consultPatientSelect" required>
+                <option value="" disabled selected>${currentPatients.length ? 'Select a patient…' : 'No patients found'}</option>
+                ${patientOptions}
+            </select>
         </div>
         <div class="form-group">
             <label class="form-label">Service Type</label>
-            <input class="form-input" name="service" placeholder="e.g. Med Review, Counseling" required>
+            <select class="form-select" name="service" id="consultServiceSelect" required disabled>
+                <option value="" disabled selected>Select a patient first…</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Prescription</label>
+            <select class="form-select" name="prescriptionMedicationId">
+                <option value="">No prescription</option>
+                ${medOptions}
+            </select>
         </div>
         <div class="form-group">
             <label class="form-label">Consultation Notes</label>
@@ -1298,18 +1336,23 @@ function openConsultLogModal(){
         <button type="submit" class="modal-submit">Save Log</button>
     `;
     openModal('Log Consultation', html, async (data) => {
+        const patientId = data.get('patientId');
+        const patientObj = currentPatients.find(p => String(p.id) === String(patientId));
+        const patientName = patientObj ? patientObj.name : '';
         try{
             const res = await fetch('/api/consultation-log', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({
-                    patient: data.get('patient'),
+                    patient: patientName,
+                    patientId: patientId,
                     service: data.get('service'),
+                    prescriptionMedicationId: data.get('prescriptionMedicationId') || null,
                     notes: data.get('notes')
                 })
             });
             if(res.ok){
-                logActivity(`Logged consultation for ${data.get('patient')}`);
+                logActivity(`Logged consultation for ${patientName}`);
                 showToast('Consultation logged');
                 await fetchConsultations();
                 render();
@@ -1321,6 +1364,23 @@ function openConsultLogModal(){
             console.error('Log consultation failed:', e);
             showToast('Something went wrong. Please try again.', 'error');
         }
+    });
+
+    // Patient -> Service Type: populate real appointments for the chosen patient
+    const patientSelect = document.getElementById('consultPatientSelect');
+    const serviceSelect = document.getElementById('consultServiceSelect');
+    patientSelect.addEventListener('change', () => {
+        const pid = patientSelect.value;
+        const patientAppts = currentAppointments.filter(a => String(a.patientId) === String(pid));
+        const uniqueServices = [...new Set(patientAppts.map(a => a.service).filter(Boolean))];
+        serviceSelect.disabled = false;
+        const realOptions = uniqueServices.map(s => `<option value="${escapeHtml(s)}">${escapeHtml(s)}</option>`).join('');
+        const placeholder = uniqueServices.length
+            ? '<option value="" disabled selected>Select an appointment…</option>'
+            : '<option value="" disabled selected>No appointments on file — pick a type below</option>';
+        const fallbackOptions = ['Med Review', 'Counseling', 'Follow-up', 'Other']
+            .map(s => `<option value="${s}">${s}</option>`).join('');
+        serviceSelect.innerHTML = placeholder + realOptions + fallbackOptions;
     });
 }
 
@@ -1337,7 +1397,7 @@ document.getElementById('sidebarScrim').onclick = () => {
 // Init
 (async function(){
     seedIfEmpty();
-    await Promise.all([fetchPharmacyQueue(), fetchInventory(), fetchMedicationsList(), fetchConsultations()]);
+    await Promise.all([fetchPharmacyQueue(), fetchInventory(), fetchMedicationsList(), fetchConsultations(), fetchPatients(), fetchAppointments()]);
 
     // Sidebar links
     document.querySelectorAll('.sidebar-link').forEach(link => {
