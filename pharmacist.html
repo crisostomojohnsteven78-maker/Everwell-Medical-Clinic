@@ -769,6 +769,16 @@ function uid(){ return Date.now().toString(36) + Math.random().toString(36).slic
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 function escapeHtml(str){ return String(str==null?'':str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
+// Some test/seed accounts were signed up with a single-word name, which
+// stores the same value in both first_name and last_name. Avoid showing
+// that as a doubled name like "everwell everwell".
+function formatPatientName(first, last){
+    first = (first || '').trim();
+    last = (last || '').trim();
+    if(!last || last.toLowerCase() === first.toLowerCase()) return first;
+    return `${first} ${last}`.trim();
+}
+
 function logActivity(text){
     const list = lsGet(K.activity, []);
     list.unshift({text, time: new Date().toISOString()});
@@ -872,7 +882,7 @@ async function fetchPharmacyQueue(){
             currentQueue = (data.queue || []).map(row => ({
                 id: row.prescription_item_id,
                 prescriptionId: row.prescription_id,
-                patient: `${row.first_name} ${row.last_name}`,
+                patient: formatPatientName(row.first_name, row.last_name),
                 med: row.brand_name || row.generic_name,
                 date: row.prescribed_at ? row.prescribed_at.slice(0,10) : '',
                 status: row.validation_status === 'rejected' ? 'Flagged'
@@ -943,7 +953,7 @@ async function fetchPatients(){
             const data = await res.json();
             currentPatients = (data.patients || []).map(row => ({
                 id: row.patient_id,
-                name: `${row.first_name || ''} ${row.last_name || ''}`.trim()
+                name: formatPatientName(row.first_name, row.last_name)
             }));
         } else {
             currentPatients = [];
@@ -963,7 +973,7 @@ async function fetchAppointments(){
             const data = await res.json();
             currentAppointments = (data.appointments || []).map(row => ({
                 patientId: row.patient_id,
-                patient: `${row.patient_first_name || ''} ${row.patient_last_name || ''}`.trim(),
+                patient: formatPatientName(row.patient_first_name, row.patient_last_name),
                 service: row.service_name || '',
                 date: row.scheduled_at ? row.scheduled_at.slice(0,10) : ''
             }));
@@ -1031,7 +1041,7 @@ function render(){
         `).join('');
 
         const dashActivityList = document.getElementById('dashActivityList');
-        dashActivityList.innerHTML = activity.slice(0,5).map(a => `
+        dashActivityList.innerHTML = activity.length ? activity.slice(0,5).map(a => `
             <li class="activity-item">
                 <div class="activity-dot"></div>
                 <div class="activity-text">
@@ -1039,7 +1049,11 @@ function render(){
                     <div class="activity-time">${new Date(a.time).toLocaleTimeString()}</div>
                 </div>
             </li>
-        `).join('');
+        `).join('') : `
+            <li class="activity-item" style="color:var(--ink-soft); opacity:0.7;">
+                <div class="activity-text">No recent activity yet. Actions like validating a prescription or updating inventory will show up here.</div>
+            </li>
+        `;
     }
 
     // Prescription Queue
