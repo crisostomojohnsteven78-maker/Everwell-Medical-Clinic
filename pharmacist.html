@@ -1143,6 +1143,7 @@ function render(){
    ACTIONS
    ======================================================== */
 async function validateRx(id){
+    const rxItem = currentQueue.find(r => String(r.id) === String(id));
     try{
         const res = await fetch('/api/pharmacy-dispense', {
             method: 'POST',
@@ -1151,7 +1152,8 @@ async function validateRx(id){
         });
         const data = await res.json();
         if(res.ok){
-            logActivity(`Validated and dispensed prescription item #${id}`);
+            const label = rxItem ? `${rxItem.med} for ${rxItem.patient}` : `item #${id}`;
+            logActivity(`Validated and dispensed ${label}`);
             showToast('Prescription validated and dispensed');
             await fetchPharmacyQueue();
             render();
@@ -1168,6 +1170,7 @@ async function rejectRx(prescriptionId){
     const reason = prompt('Why is this prescription being flagged/rejected?');
     if(!reason || !reason.trim()) return;
 
+    const rxItem = currentQueue.find(r => String(r.prescriptionId) === String(prescriptionId));
     try{
         const res = await fetch('/api/pharmacy-reject', {
             method: 'POST',
@@ -1176,7 +1179,8 @@ async function rejectRx(prescriptionId){
         });
         const data = await res.json();
         if(res.ok){
-            logActivity(`Flagged and rejected prescription #${prescriptionId}`);
+            const label = rxItem ? `${rxItem.med} for ${rxItem.patient}` : `#${prescriptionId}`;
+            logActivity(`Flagged and rejected ${label}`);
             showToast('Prescription flagged as unsafe');
             await fetchPharmacyQueue();
             render();
@@ -1235,7 +1239,9 @@ function openItemModal(){
                 })
             });
             if(res.ok){
-                logActivity(`Added inventory batch for medication #${data.get('medicationId')}`);
+                const med = currentMedications.find(m => String(m.medication_id) === String(data.get('medicationId')));
+                const medName = med ? (med.brand_name || med.generic_name) : `medication #${data.get('medicationId')}`;
+                logActivity(`Added inventory batch for ${medName}`);
                 showToast('Item added to inventory');
                 await fetchInventory();
                 render();
@@ -1298,7 +1304,7 @@ function editItem(id){
                 })
             });
             if(res.ok){
-                logActivity(`Updated inventory item #${item.id}`);
+                logActivity(`Updated inventory item: ${item.name}`);
                 showToast('Inventory item updated');
                 await fetchInventory();
                 render();
@@ -1366,7 +1372,7 @@ function openConsultLogModal(){
                 })
             });
             if(res.ok){
-                logActivity(`Logged consultation for ${patientName}`);
+                logActivity(`Logged consultation (${data.get('service')}) for ${patientName}`);
                 showToast('Consultation logged');
                 await fetchConsultations();
                 render();
