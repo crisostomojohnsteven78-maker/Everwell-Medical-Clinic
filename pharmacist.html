@@ -875,6 +875,9 @@ async function fetchPharmacyQueue(){
                 patient: `${row.first_name} ${row.last_name}`,
                 med: row.brand_name || row.generic_name,
                 date: row.prescribed_at ? row.prescribed_at.slice(0,10) : '',
+                prescribedAt: row.prescribed_at || null,
+                validatedAt: row.validated_at || null,
+                rejectedAt: row.rejected_at || null,
                 status: row.validation_status === 'rejected' ? 'Flagged'
                     : (row.dispensing_status === 'dispensed' ? 'Completed' : 'Pending'),
                 note: row.rejection_reason || null
@@ -886,6 +889,27 @@ async function fetchPharmacyQueue(){
         console.error('Failed to load pharmacy queue:', e);
         currentQueue = [];
     }
+}
+
+function getRecentActivities(){
+    const localActivities = lsGet(K.activity, []).map(a => ({
+        text: a.text, time: a.time, source: 'local-' + a.time + '-' + a.text
+    }));
+    const queueActivities = [];
+    currentQueue.forEach(r => {
+        if(r.validatedAt){
+            queueActivities.push({text: `Prescription dispensed: ${r.med || 'Medication'} for ${r.patient}`, time: r.validatedAt, source: `validated-${r.id}`});
+        } else if(r.rejectedAt || r.status === 'Flagged'){
+            queueActivities.push({text: `Prescription flagged: ${r.med || 'Medication'} for ${r.patient}`, time: r.rejectedAt || r.prescribedAt, source: `flagged-${r.id}`});
+        } else if(r.prescribedAt){
+            queueActivities.push({text: `Prescription received: ${r.med || 'Medication'} for ${r.patient}`, time: r.prescribedAt, source: `received-${r.id}`});
+        }
+    });
+    return [...localActivities, ...queueActivities]
+        .filter(a => a.time && !Number.isNaN(new Date(a.time).getTime()))
+        .sort((a,b) => new Date(b.time) - new Date(a.time))
+        .filter((a, i, list) => list.findIndex(x => x.source === a.source) === i)
+        .slice(0, 5);
 }
 
 /* ========================================================
@@ -960,7 +984,7 @@ async function fetchConsultations(){
 function render(){
     const inventory = currentInventory;
     const rx = currentQueue;
-    const activity = lsGet(K.activity, []);
+    const activity = getRecentActivities();
     const consults = currentConsultations;
 
     // Badges
@@ -989,7 +1013,7 @@ function render(){
         `).join('');
 
         const dashActivityList = document.getElementById('dashActivityList');
-        dashActivityList.innerHTML = activity.slice(0,5).map(a => `
+        dashActivityList.innerHTML = activity.length ? activity.map(a => `
             <li class="activity-item">
                 <div class="activity-dot"></div>
                 <div class="activity-text">
@@ -997,7 +1021,7 @@ function render(){
                     <div class="activity-time">${new Date(a.time).toLocaleTimeString()}</div>
                 </div>
             </li>
-        `).join('');
+        `).join('') : '<li style="color:var(--ink-soft);font-size:0.82rem;padding:0.7rem 0;">No recent pharmacy activity yet.</li>';
     }
 
     // Prescription Queue
