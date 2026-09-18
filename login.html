@@ -296,6 +296,7 @@ border-radius:var(--radius-sm);
 transition:border-color .3s, box-shadow .3s, transform .2s;
 outline:none;
 }
+.password-wrap .form-input{padding-right:3.1rem;}
 .form-input:focus{
 border-color:var(--sage);
 box-shadow:var(--focus-ring);
@@ -304,12 +305,14 @@ box-shadow:var(--focus-ring);
 
 .password-wrap{position:relative;}
 .password-toggle{
-position:absolute;right:0.8rem;top:50%;transform:translateY(-50%);
+position:absolute;right:0.55rem;top:50%;transform:translateY(-50%);
+width:36px;height:36px;display:flex;align-items:center;justify-content:center;
 background:none;border:none;cursor:pointer;
 color:var(--ink-soft);opacity:0.6;
-transition:opacity .3s, transform .3s;
+transition:opacity .3s, transform .2s;
 }
-.password-toggle:hover{opacity:1;transform:translateY(-50%) scale(1.1);}
+.password-toggle:hover{opacity:1;transform:translateY(-50%) scale(1.05);}
+.password-toggle:focus-visible{outline:2px solid var(--sage);outline-offset:2px;border-radius:50%;}
 .password-toggle svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
 
 /* password strength meter */
@@ -487,7 +490,7 @@ Back to Home
 <label class="form-label" for="loginPassword">Password</label>
 <div class="password-wrap">
 <input class="form-input" type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
-<button type="button" class="password-toggle" aria-label="Toggle password visibility">
+<button type="button" class="password-toggle" aria-label="Show password" aria-pressed="false" aria-controls="loginPassword">
 <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 </button>
 </div>
@@ -537,7 +540,7 @@ Apple
 <div class="password-wrap">
 <!-- Password strength is advisory; the API only needs a non-empty password. -->
 <input class="form-input" type="password" id="signupPassword" placeholder="Enter a password" required autocomplete="new-password">
-<button type="button" class="password-toggle" aria-label="Toggle password visibility">
+<button type="button" class="password-toggle" aria-label="Show password" aria-pressed="false" aria-controls="signupPassword">
 <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 </button>
 </div>
@@ -707,10 +710,19 @@ setActiveTab(tab.dataset.tab);
 
 /* ===== PASSWORD TOGGLE ===== */
 document.querySelectorAll('.password-toggle').forEach(btn=>{
-btn.addEventListener('click', ()=>{
-const input = btn.parentElement.querySelector('input');
-input.type = input.type === 'password' ? 'text' : 'password';
-});
+ const input = document.getElementById(btn.getAttribute('aria-controls')) || btn.parentElement.querySelector('input');
+ if(!input) return;
+ const eyeIcon = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+ const eyeOffIcon = '<path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 4.2A10.8 10.8 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-3.1 4.1M6.6 6.6C3.6 8.7 1 12 1 12s4 8 11 8a10.9 10.9 0 0 0 4.1-.8"/>';
+ const icon = btn.querySelector('svg');
+ const setState = (visible) => {
+   input.type = visible ? 'text' : 'password';
+   btn.setAttribute('aria-pressed', String(visible));
+   btn.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
+   if(icon) icon.innerHTML = visible ? eyeOffIcon : eyeIcon;
+ };
+ setState(false);
+ btn.addEventListener('click', ()=>setState(input.type === 'password'));
 });
 
 /* ===== FOCUS STATE ON FORM GROUPS ===== */
